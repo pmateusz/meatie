@@ -1,0 +1,71 @@
+name: Test
+on:
+  workflow_call:
+    inputs:
+      python_version:
+        type: string
+        description: 'Python version'
+        required: true
+  workflow_dispatch:
+    inputs:
+      python_version:
+        type: string
+        description: 'Python version'
+        required: true
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      branch: ${{ github.head_ref || github.ref_name }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - id: setup-python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ inputs.python_version }}
+
+      - name: Restore poetry from cache
+        id: cache-poetry-restore
+        uses: actions/cache/restore@v3
+        with:
+          path: ~/.local
+          key: test/poetry/runner/${{ runner.os }}/python/${{ steps.setup-python.outputs.python-version }}
+
+      - name: Install poetry
+        if: steps.cache-poetry-restore.outputs.cache-hit != 'true'
+        uses: snok/install-poetry@v1
+        with:
+          virtualenvs-create: true
+          virtualenvs-in-project: true
+          installer-parallel: true
+
+      - name: Check poetry version
+        run: echo POETRY_VERSION=$(poetry --version | grep -oP '\d+.\d+.\d+') >> $GITHUB_ENV
+
+      - name: Save poetry cache
+        id: cache-poetry-save
+        uses: actions/cache/save@v3
+        with:
+          path: ~/.local
+          key: test/poetry/runner/${{ runner.os }}/python/${{ steps.setup-python.outputs.python-version }}/version/${{ env.POETRY_VERSION }}
+
+      - name: Cache virtual environment
+        id: cache-venv
+        uses: actions/cache@v3
+        with:
+          path: .venv
+          key: test/branch/${{ env.branch }}/runner/${{ runner.os }}/python/${{ steps.setup-python.outputs.python-version }}/hash/${{ hashFiles('poetry.lock') }}
+
+      - name: Install dependencies
+        if: steps.cache-venv.outputs.cache-hit != 'true'
+        run: poetry install --no-interaction --no-root --with=test --with=pydantic
+
+      - name: Install project
+        run: poetry install --no-interaction
+
+      - name: Run pytest
+        run: poetry run pytest

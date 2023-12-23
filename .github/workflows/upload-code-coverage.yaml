@@ -1,0 +1,39 @@
+name: Upload Code Coverage
+on: [ workflow_dispatch ]
+concurrency:
+  group: upload-code-coverage
+jobs:
+  upload-code-coverage:
+    timeout-minutes: 5
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+      - id: setup-python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: snok/install-poetry@v1
+        with:
+          virtualenvs-create: true
+          virtualenvs-in-project: true
+          installer-parallel: true
+      - id: cache-venv
+        uses: actions/cache@v3
+        with:
+          path: .venv
+          key: upload-code-coverage/runner/${{ runner.os }}/python/${{ steps.setup-python.outputs.python-version }}/hash/${{ hashFiles('**/poetry.lock') }}
+      - name: Install dependencies
+        if: steps.cache-venv.outputs.cache-hit != 'true'
+        run: poetry install --no-interaction --no-root --with=test --with=pydantic
+      - run: poetry install --no-interaction
+      - run: poetry run coverage run -m pytest
+      - run: poetry run coverage xml --include="src/*"
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          fail_ci_if_error: true
+          file: coverage.xml
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}

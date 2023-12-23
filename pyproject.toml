@@ -1,0 +1,46 @@
+[tool.poetry]
+name = "meatie"
+version = "0.0.1"
+description = "Meatie is a Python metaprogramming library that eliminates the need for boilerplate code when integrating with REST APIs. The library generates code for calling a REST API based on method signatures annotated with type hints. Ribeye abstracts away mechanics related to HTTP communication, such as building URLs, encoding query parameters, parsing, and dumping Pydantic models. With some modest additional configuration effort, generated HTTP clients offer rate limiting, retries, and caching."
+authors = ["pmateusz <pmateusz@users.noreply.github.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = ">=3.9"
+aiohttp = ">=3.7.0"
+typing-extensions = ">=4.7.0"
+
+[tool.poetry.group.test]
+optional = true
+
+[tool.poetry.group.test.dependencies]
+coverage = ">=7.4.0"
+pytest = ">=7.4.3"
+pytest-asyncio = ">=0.23.2"
+
+[tool.poetry.group.pre-commit]
+optional = true
+
+[tool.poetry.group.pre-commit.dependencies]
+pre-commit = ">=3.6.0"
+virtualenv = ">=20.25.0"
+
+[tool.poetry.group.pydantic]
+optional = true
+
+[tool.poetry.group.pydantic.dependencies]
+pydantic = ">=2.0.0"
+pydantic-settings = ">=2.0.0"
+
+
+[tool.pytest.ini_options]
+log_cli = true
+pythonpath = ["src"]
+addopts = ["--import-mode=importlib"]
+
+[tool.mypy]
+mypy_path = ["$MYPY_CONFIG_FILE_DIR/src"]
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
