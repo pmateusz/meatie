@@ -1,0 +1,14 @@
+name: CI
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - 'src/**'
+      - 'tests/**'
+concurrency:
+  group: ci
+jobs:
+  check-branch:
+    uses: ./.github/workflows/check-branch.yaml
+    secrets: inherit

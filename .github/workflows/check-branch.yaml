@@ -1,0 +1,12 @@
+name: Check Branch
+on: [ workflow_call, pull_request ]
+jobs:
+  lint:
+    uses: ./.github/workflows/lint.yaml
+    with:
+      python_version: 3.12
+  test:
+    needs: [ lint ]
+    uses: ./.github/workflows/test.yaml
+    with:
+      python_version: 3.12
