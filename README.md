@@ -1,5 +1,32 @@
 # Meatie: Generate methods for calling REST APIs using type hints
 
+[![GitHub Test Badge][1]][2] [![codecov.io][3]][4] [![pypi.org][5]][6] [![versions][7]][8]
+[![downloads][9]][10] [![License][11]][12]
+
+[1]: https://github.com/pmateusz/meatie/actions/workflows/ci.yaml/badge.svg "GitHub CI Badge"
+
+[2]: https://github.com/pmateusz/meatie/actions "GitHub Actions Page"
+
+[3]: https://codecov.io/gh/pmateusz/meatie/branch/master/graph/badge.svg?branch=master "Coverage Badge"
+
+[4]: https://codecov.io/gh/pmateusz/meatie?branch=master "Codecov site"
+
+[5]: https://img.shields.io/pypi/v/meatie.svg "Pypi Latest Version Badge"
+
+[6]: https://pypi.python.org/pypi/meatie "Pypi site"
+
+[7]:https://img.shields.io/pypi/pyversions/meatie.svg
+
+[8]: https://github.com/pmateusz/meatie
+
+[9]: https://static.pepy.tech/badge/meatie
+
+[10]: https://pepy.tech/project/meatie
+
+[11]: https://img.shields.io/github/license/pmateusz/meatie "License Badge"
+
+[12]: https://opensource.org/license/bsd-3-clause "License"
+
 Meatie is a Python metaprogramming library that eliminates the need for boilerplate code when integrating with REST
 APIs. The library generates code for calling a REST API based on method signatures annotated with type hints. Meatie
 abstracts away mechanics related to HTTP communication, such as building URLs, encoding query parameters, parsing, and
