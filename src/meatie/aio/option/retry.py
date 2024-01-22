@@ -10,6 +10,7 @@ from http import HTTPStatus
 from typing import Awaitable, Callable, Optional
 
 import aiohttp
+
 from meatie.aio import (
     Client,
     Context,

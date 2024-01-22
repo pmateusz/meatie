@@ -4,8 +4,9 @@
 
 from typing import Any, Awaitable, Callable, Optional, Protocol, TypeVar
 
-from meatie.internal.types import T_Out
 from typing_extensions import Self
+
+from meatie.internal.types import T_Out
 
 from . import Request, Response
 

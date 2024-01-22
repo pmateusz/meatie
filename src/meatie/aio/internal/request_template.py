@@ -16,10 +16,11 @@ from typing import (
     get_type_hints,
 )
 
+from typing_extensions import Awaitable, Self
+
 from meatie.aio.internal import JsonAdapter, TypeAdapter, get_adapter
 from meatie.internal.http import Method, Request
 from meatie.internal.types import PT
-from typing_extensions import Awaitable, Self
 
 
 @dataclass(frozen=True)

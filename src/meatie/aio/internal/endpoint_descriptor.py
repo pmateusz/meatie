@@ -17,6 +17,8 @@ from typing import (
 )
 
 from aiohttp import ClientResponse
+from typing_extensions import Self
+
 from meatie.aio import (
     Client,
     Context,
@@ -25,7 +27,6 @@ from meatie.aio import (
     Request,
 )
 from meatie.internal.types import PT
-from typing_extensions import Self
 
 from .request_template import RequestTemplate, ResponseBodyT
 

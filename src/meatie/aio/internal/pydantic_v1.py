@@ -6,10 +6,11 @@ from inspect import isclass
 from typing import Any, Generic
 
 import pydantic.json
-from meatie.aio import Response
-from meatie.internal.types import T
 from pydantic import BaseModel
 from typing_extensions import is_typeddict
+
+from meatie.aio import Response
+from meatie.internal.types import T
 
 
 class PydanticV1TypeAdapter(Generic[T]):
