@@ -5,7 +5,7 @@
 
 [1]: https://github.com/pmateusz/meatie/actions/workflows/ci.yaml/badge.svg "GitHub CI Badge"
 
-[2]: https://github.com/pmateusz/meatie/actions "GitHub Actions Page"
+[2]: https://github.com/pmateusz/meatie/actions/workflows/ci.yaml "GitHub Actions Page"
 
 [3]: https://codecov.io/gh/pmateusz/meatie/branch/master/graph/badge.svg?branch=master "Coverage Badge"
 
@@ -67,7 +67,7 @@ class OnlineStore(Client):
 
 ### Cache
 
-Cache result for given TTL (in seconds).
+Cache result for given TTL.
 
 ```python
 from aiohttp import ClientSession

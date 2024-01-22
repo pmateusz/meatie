@@ -61,4 +61,7 @@ class Client:
         exc_val: Optional[BaseException],
         exc_tb: Any,
     ) -> None:
+        await self.close()
+
+    async def close(self) -> None:
         await self.session.close()
