@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "meatie"
-version = "0.0.2"
+version = "0.0.3"
 description = "Meatie is a Python metaprogramming library that eliminates the need for boilerplate code when integrating with REST APIs. The library generates code for calling a REST API based on method signatures annotated with type hints. Ribeye abstracts away mechanics related to HTTP communication, such as building URLs, encoding query parameters, parsing, and dumping Pydantic models. With some modest additional configuration effort, generated HTTP clients offer rate limiting, retries, and caching."
 authors = ["pmateusz <pmateusz@users.noreply.github.com>"]
 readme = "README.md"
