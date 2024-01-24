@@ -21,7 +21,6 @@ from typing_extensions import Self
 
 from meatie.aio import (
     Client,
-    Context,
     Method,
     Operator,
     Request,
@@ -98,29 +97,7 @@ class EndpointOption(Protocol):
         ...
 
 
-class _BoundEndpointDescriptor(Generic[PT, ResponseBodyT]):
-    def __init__(
-        self,
-        instance: Client,
-        operators: Iterable[Operator[Client, ResponseBodyT]],
-        template: RequestTemplate[Any, ResponseBodyT],
-    ) -> None:
-        self.__instance = instance
-        self.__operators = list(operators)
-        self.__operators.append(self.__make_request)
-        self.__template = template
-
-    async def __call__(self, *args: PT.args, **kwargs: PT.kwargs) -> ResponseBodyT:
-        request = self.__template.build_request(*args, **kwargs)
-        context = _Context[PT, ResponseBodyT](self.__instance, self.__operators, request)
-        return await context.proceed()
-
-    async def __make_request(self, context: Context[Client, ResponseBodyT]) -> ResponseBodyT:
-        response = await self.__instance.make_request(context.request)
-        return await self.__template.response_decoder.from_response(response)
-
-
-class _Context(Generic[PT, ResponseBodyT]):
+class _Context(Generic[ResponseBodyT]):
     def __init__(
         self, client: Client, operators: list[Operator[Client, ResponseBodyT]], request: Request
     ) -> None:
@@ -143,3 +120,26 @@ class _Context(Generic[PT, ResponseBodyT]):
             return result
         finally:
             self.__next_step = current_step
+
+
+class _BoundEndpointDescriptor(Generic[PT, ResponseBodyT]):
+    def __init__(
+        self,
+        instance: Client,
+        operators: Iterable[Operator[Client, ResponseBodyT]],
+        template: RequestTemplate[Any, ResponseBodyT],
+    ) -> None:
+        self.__instance = instance
+        self.__operators = list(operators)
+        self.__operators.append(self.__make_request)  # type: ignore[arg-type]
+        self.__template = template
+
+    async def __call__(self, *args: PT.args, **kwargs: PT.kwargs) -> ResponseBodyT:
+        request = self.__template.build_request(*args, **kwargs)
+        context = _Context[ResponseBodyT](self.__instance, self.__operators, request)
+        return await context.proceed()
+
+    async def __make_request(self, context: _Context[ResponseBodyT]) -> ResponseBodyT:
+        response = await self.__instance.make_request(context.request)
+        context.response = response
+        return await self.__template.response_decoder.from_response(response)
