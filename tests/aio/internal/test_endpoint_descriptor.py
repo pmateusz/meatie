@@ -145,7 +145,7 @@ async def test_get_with_send_optional_parameter(mock_tools: MockTools) -> None:
 def test_falls_back_to_get_if_method_name_cannot_be_inferred() -> None:
     # GIVEN
     template = Mock(spec=RequestTemplate, method=None)
-    descriptor = EndpointDescriptor[[], Any](template)
+    descriptor = EndpointDescriptor[Any, Any](template)
 
     # WHEN
     descriptor.__set_name__(object, "list_products")
