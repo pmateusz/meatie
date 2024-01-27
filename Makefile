@@ -1,4 +1,4 @@
-.PHONY: init install install-pydantic-v1 install-pydantic-v2 clean check
+.PHONY: init install install-pydantic-v1 install-pydantic-v2 clean test-cover check
 SHELL := /bin/bash
 
 init:
@@ -19,6 +19,9 @@ install-pydantic-v2:
 clean:
 	.venv/bin/deactivate
 	rm -Rf .venv
+
+test-cover:
+	poetry run coverage run -m pytest
 
 check:
 	pre-commit run --all

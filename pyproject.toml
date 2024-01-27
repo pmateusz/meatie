@@ -38,11 +38,21 @@ pydantic-settings = ">=2.0.0"
 
 [tool.pytest.ini_options]
 log_cli = true
-pythonpath = ["src"]
+pythonpath = ["src", "tests/tools"]
 addopts = ["--import-mode=importlib"]
 
 [tool.mypy]
-mypy_path = ["$MYPY_CONFIG_FILE_DIR/src"]
+mypy_path = ["$MYPY_CONFIG_FILE_DIR/src", "$MYPY_CONFIG_FILE_DIR/tests/tools"]
+
+[tool.coverage.run]
+branch = true
+omit = ["src/meatie/aio/internal/adapter/pydantic_v1.py", "tests/*"]
+
+[tool.coverage.report]
+exclude_also = [
+    "class .*\\bProtocol\\):",
+    "\\.\\.\\."
+]
 
 [build-system]
 requires = ["poetry-core"]
