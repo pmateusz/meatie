@@ -3,7 +3,6 @@
 
 import inspect
 import re
-from dataclasses import dataclass
 from enum import Enum
 from typing import (
     Any,
@@ -23,9 +22,26 @@ from meatie.internal.http import Method, Request
 from meatie.internal.types import PT
 
 
-@dataclass(frozen=True)
+class Kind(Enum):
+    UNKNOWN = 0
+    PATH = 1
+    QUERY = 2
+    BODY = 3
+
+
 class ApiRef:
-    name: str
+    __slots__ = ("name",)
+
+    def __init__(self, name: str) -> None:
+        self.name = name
+
+    def __hash__(self) -> int:
+        return hash(self.name)
+
+    def __eq__(self, other: Any) -> bool:
+        if isinstance(other, ApiRef):
+            return self.name == other.name
+        return False
 
     @classmethod
     def from_signature(cls, parameter: inspect.Parameter) -> Self:
@@ -35,18 +51,27 @@ class ApiRef:
         return cls(name=parameter.name)
 
 
-class Kind(Enum):
-    UNKNOWN = 0
-    PATH = 1
-    QUERY = 2
-    BODY = 3
-
-
-@dataclass(unsafe_hash=True)
 class Parameter:
-    kind: Kind
-    name: str
-    api_ref: str
+    __slots__ = ("kind", "name", "api_ref", "default_value")
+
+    def __init__(self, kind: Kind, name: str, api_ref: str, default_value: Any = None) -> None:
+        self.kind = kind
+        self.name = name
+        self.api_ref = api_ref
+        self.default_value = default_value
+
+    def __hash__(self) -> int:
+        return hash(self.name)
+
+    def __eq__(self, other: Any) -> bool:
+        if isinstance(other, Parameter):
+            return (
+                self.name == other.name
+                and self.kind == other.kind
+                and self.api_ref == other.api_ref
+                and self.default_value == other.default_value
+            )
+        return False
 
 
 _param_pattern = re.compile(r"{(?P<name>[a-zA-Z_]\w*?)}")
@@ -92,82 +117,75 @@ class RequestTemplate(Generic[RequestBodyT, ResponseBodyT]):
     __slots__ = (
         "method",
         "template",
-        "parameters",
+        "params",
         "request_encoder",
         "response_decoder",
-        "__parameter_by_name",
+        "__param_by_name",
     )
 
     def __init__(
         self,
         template: PathTemplate,
-        parameters: Iterable[Parameter],
+        params: list[Parameter],
         request_encoder: TypeAdapter[RequestBodyT],
         response_decoder: TypeAdapter[ResponseBodyT],
         method: Optional[Method],
     ) -> None:
         self.method = method
         self.template = template
-        self.parameters = parameters
+        self.params = params
         self.request_encoder = request_encoder
         self.response_decoder = response_decoder
 
-        self.__parameter_by_name: dict[str, Parameter] = {}
-        for parameter in self.parameters:
-            self.__parameter_by_name[parameter.name] = parameter
+        self.__param_by_name: dict[str, Parameter] = {}
+        for param in self.params:
+            self.__param_by_name[param.name] = param
 
     def build_request(self, *args: Any, **kwargs: Any) -> Request:
         if self.method is None:
             raise RuntimeError("'method' is None")
 
-        bound_parameter_names = set()
+        if len(args) > len(self.params):
+            raise RuntimeError("Too many arguments passed to the function.")
 
-        value_by_parameter = {}
+        value_by_param = {}
+        for index, value in enumerate(args):
+            param = self.params[index]
+            value_by_param[param] = value
+
+        for param in self.params:
+            if param.default_value is None or param in value_by_param:
+                continue
+            value_by_param[param] = param.default_value
+
         for name, value in kwargs.items():
-            parameter_opt = self.__parameter_by_name.get(name)
-            if parameter_opt is None:
-                raise ValueError(f"Parameter '{name}' is not mentioned in the endpoint definition")
+            param_opt = self.__param_by_name.get(name)
+            if param_opt is None:
+                raise ValueError(f"Parameter '{name}' is not mentioned in the endpoint definition.")
 
-            value_by_parameter[parameter_opt] = value
-            bound_parameter_names.add(name)
-
-        unbound_parameters = [
-            parameter
-            for parameter in self.parameters
-            if parameter.name not in bound_parameter_names
-        ]
-        num_unbound_params = len(unbound_parameters)
-        num_args = len(args)
-        if num_args > num_unbound_params:
-            raise ValueError(
-                "Too many arguments passed to the function."
-                f" Value '{args[num_unbound_params]}' is not bound to any parameter."
-            )
-        if num_args < num_unbound_params:
-            raise ValueError(
-                f"Too few arguments passed to the function. Parameter '{unbound_parameters[num_args]}' is unbound."
-            )
-
-        for parameter, value in zip(unbound_parameters, args):
-            value_by_parameter[parameter] = value
+            if value is None:
+                if param_opt in value_by_param:
+                    del value_by_param[param_opt]
+            else:
+                value_by_param[param_opt] = value
 
         path_kwargs = {}
         query_kwargs = {}
         body_value: Any = None
-        for parameter, value in value_by_parameter.items():
-            if parameter.kind == Kind.PATH:
-                path_kwargs[parameter.api_ref] = value
+        for param, value in value_by_param.items():
+            if param.kind == Kind.PATH:
+                path_kwargs[param.api_ref] = value
                 continue
 
-            if parameter.kind == Kind.QUERY:
-                query_kwargs[parameter.api_ref] = value
+            if param.kind == Kind.QUERY:
+                query_kwargs[param.api_ref] = value
                 continue
 
-            if parameter.kind == Kind.BODY:
+            if param.kind == Kind.BODY:
                 body_value = value
                 continue
 
-            raise NotImplementedError(f"Kind {parameter.kind} is not supported")
+            raise NotImplementedError(f"Kind {param.kind} is not supported")
 
         if body_value is not None:
             body_json = self.request_encoder.to_json(body_value)
@@ -207,7 +225,10 @@ class RequestTemplate(Generic[RequestBodyT, ResponseBodyT]):
             elif api_ref.name in template:
                 kind = Kind.PATH
 
-            parameter = Parameter(kind, param_name, api_ref.name)
+            default_value = None
+            if sig_param.default is not inspect.Parameter.empty:
+                default_value = sig_param.default
+            parameter = Parameter(kind, param_name, api_ref.name, default_value)
             parameters.append(parameter)
 
         return cls.validate_object(
@@ -218,7 +239,7 @@ class RequestTemplate(Generic[RequestBodyT, ResponseBodyT]):
     def validate_object(
         cls,
         template: PathTemplate,
-        parameters: Iterable[Parameter],
+        params: Iterable[Parameter],
         signature: inspect.Signature,
         request_encoder: TypeAdapter[RequestBodyT],
         response_decoder: TypeAdapter[ResponseBodyT],
@@ -232,19 +253,19 @@ class RequestTemplate(Generic[RequestBodyT, ResponseBodyT]):
             raise ValueError("'path' must start with '/'")
 
         visited_api_refs = set()
-        for parameter in parameters:
-            if parameter.name == "self":
+        for param in params:
+            if param.name == "self":
                 raise ValueError("Parameter 'self' is forbidden")
 
-            if parameter.api_ref in visited_api_refs:
-                raise ValueError(f"Multiple parameters have name '{parameter.api_ref}'")
+            if param.api_ref in visited_api_refs:
+                raise ValueError(f"Multiple parameters have name '{param.api_ref}'")
 
-            if parameter.kind == Kind.PATH and parameter.api_ref not in template:
+            if param.kind == Kind.PATH and param.api_ref not in template:
                 raise ValueError(
-                    f"Parameter '{parameter.api_ref}' is not present in the path '{template}'"
+                    f"Parameter '{param.api_ref}' is not present in the path '{template}'"
                 )
 
-            visited_api_refs.add(parameter.api_ref)
+            visited_api_refs.add(param.api_ref)
 
         missing_api_refs = set(template.parameters) - visited_api_refs
         for api_ref in missing_api_refs:
@@ -252,4 +273,4 @@ class RequestTemplate(Generic[RequestBodyT, ResponseBodyT]):
                 f"Parameter '{api_ref}' is not present in the method signature '{signature}'"
             )
 
-        return cls(template, parameters, request_encoder, response_decoder, method)
+        return cls(template, list(params), request_encoder, response_decoder, method)
