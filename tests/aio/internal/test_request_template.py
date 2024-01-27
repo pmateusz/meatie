@@ -2,11 +2,12 @@
 #  Use of this source code is governed by a BSD-style license that can be found in the LICENSE file.
 
 import inspect
-from typing import Annotated, Any
+from typing import Annotated, Any, Optional
 from unittest.mock import Mock
 
 import pytest
 from meatie.aio.internal import JsonAdapter
+from meatie.aio.internal.adapter import NoneAdapter
 from meatie.aio.internal.request_template import (
     ApiRef,
     Kind,
@@ -135,6 +136,26 @@ def test_build_template() -> None:
     assert {"orderBy": "price"} == request.query_params
 
 
+def test_build_template_with_default_value() -> None:
+    # GIVEN
+    template = RequestTemplate(
+        PathTemplate.from_string("/api/v1/orders"),
+        [
+            Parameter(Kind.QUERY, "limit", "limit", 100),
+        ],
+        NoneAdapter,
+        JsonAdapter,
+        "GET",
+    )
+
+    # WHEN
+    request = template.build_request()
+
+    # THEN
+    assert "/api/v1/orders" == request.path
+    assert {"limit": 100} == request.query_params
+
+
 def test_create_template_from_signature() -> None:
     # GIVEN
     path_template = PathTemplate.from_string("/api/v1/order/{order_id}/position")
@@ -155,4 +176,40 @@ def test_create_template_from_signature() -> None:
     assert [
         Parameter(Kind.PATH, "order_id", "order_id"),
         Parameter(Kind.QUERY, "sort_by", "orderBy"),
-    ] == request.parameters
+    ] == request.params
+
+
+def test_create_template_from_signature_with_parameter_with_default_value() -> None:
+    # GIVEN
+    path_template = PathTemplate.from_string("/api/v1/orders")
+
+    async def get_orders(limit: int = 100) -> list[Any]:
+        return []
+
+    # WHEN
+    request: RequestTemplate[None, list[Any]] = RequestTemplate.from_callable(
+        get_orders, path_template, "GET"
+    )
+
+    # THEN
+    assert "GET" == request.method
+    assert path_template == request.template
+    assert [Parameter(Kind.QUERY, "limit", "limit", 100)] == request.params
+
+
+def test_create_template_from_signature_with_optional_parameter() -> None:
+    # GIVEN
+    path_template = PathTemplate.from_string("/api/v1/orders")
+
+    async def get_orders(offset: Optional[int] = None) -> list[Any]:
+        return []
+
+    # WHEN
+    request: RequestTemplate[None, list[Any]] = RequestTemplate.from_callable(
+        get_orders, path_template, "GET"
+    )
+
+    # THEN
+    assert "GET" == request.method
+    assert path_template == request.template
+    assert [Parameter(Kind.QUERY, "offset", "offset", None)] == request.params
