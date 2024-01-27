@@ -185,7 +185,7 @@ class RequestTemplate(Generic[RequestBodyT, ResponseBodyT]):
                 body_value = value
                 continue
 
-            raise NotImplementedError(f"Kind {param.kind} is not supported")
+            raise NotImplementedError(f"Kind {param.kind} is not supported")  # pragma: no cover
 
         if body_value is not None:
             body_json = self.request_encoder.to_json(body_value)

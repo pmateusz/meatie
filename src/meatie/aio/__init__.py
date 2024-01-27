@@ -6,13 +6,13 @@
 from meatie.internal.number import INF
 from meatie.internal.http import Method, Request
 from meatie.internal.time_ import Time, Duration, DAY, HOUR, MINUTE
-from meatie.internal.error import MeatieError, RateLimitExceeded
+from meatie.internal.error import MeatieError, RateLimitExceeded, ParseResponseError
 from meatie.internal.limit import Rate, Limiter, Reservation, Tokens
 from meatie.internal.cache import CacheStore
 from .response import Response
 from .client import Client
 from .types import Context, Operator
-from .internal import ApiRef
+from .internal import ApiRef, EndpointDescriptor
 from .option import (
     Cache,
     Private,
@@ -40,11 +40,13 @@ __all__ = [
     "Response",
     "MeatieError",
     "RateLimitExceeded",
+    "ParseResponseError",
     "Rate",
     "Limiter",
     "Reservation",
     "Tokens",
     "ApiRef",
+    "EndpointDescriptor",
     "CacheStore",
     "Cache",
     "Private",

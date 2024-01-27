@@ -47,7 +47,9 @@ class EndpointDescriptor(Generic[PT, ResponseBodyT]):
 
         method_opt = _get_method_opt(name)
         if method_opt is None:
-            raise ValueError(f"Failed to infer HTTP method from function name '{name}'")
+            # Python interactions with class descriptors doesn't allow to return an error message to the user,
+            # we assume the GET method
+            method_opt = "GET"
 
         self.template.method = method_opt
 
@@ -109,7 +111,7 @@ class _Context(Generic[ResponseBodyT]):
         self.response: Optional[ClientResponse] = None
 
     async def proceed(self) -> ResponseBodyT:
-        if self.__next_step > len(self.__operators):
+        if self.__next_step >= len(self.__operators):
             raise RuntimeError("No more step to process request")
 
         current_step = self.__next_step

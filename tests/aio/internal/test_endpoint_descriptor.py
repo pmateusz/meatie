@@ -2,9 +2,13 @@
 #  Use of this source code is governed by a BSD-style license that can be found in the LICENSE file.
 
 from typing import Any, Optional
+from unittest.mock import Mock
 
 import pytest
-from meatie.aio import Client, endpoint
+from meatie.aio import Client, EndpointDescriptor, endpoint
+from meatie.aio.internal import RequestTemplate
+from meatie.aio.internal.endpoint_descriptor import _Context
+from meatie.internal.http import Request
 
 from tests.aio.conftest import MockTools
 
@@ -136,3 +140,31 @@ async def test_get_with_send_optional_parameter(mock_tools: MockTools) -> None:
 
     # THEN
     session.request.assert_awaited_once_with("GET", "/api/v1/products?category=household")
+
+
+def test_falls_back_to_get_if_method_name_cannot_be_inferred() -> None:
+    # GIVEN
+    template = Mock(spec=RequestTemplate, method=None)
+    descriptor = EndpointDescriptor[Any, Any](template)
+
+    # WHEN
+    descriptor.__set_name__(object, "list_products")
+
+    # THEN
+    assert "GET" == template.method
+
+
+@pytest.mark.asyncio()
+async def test_context_without_operators_fails_on_proceed() -> None:
+    # GIVEN
+    client = Mock(spec=Client)
+    request = Mock(spec=Request)
+    context = _Context[Client](client, [], request)
+
+    # WHEN
+    with pytest.raises(RuntimeError) as exc_info:
+        await context.proceed()
+
+    # THEN
+    exc = exc_info.value
+    assert exc.args == ("No more step to process request",)

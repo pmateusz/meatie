@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "meatie"
-version = "0.0.3"
+version = "0.0.4"
 description = "Meatie is a Python metaprogramming library that eliminates the need for boilerplate code when integrating with REST APIs. The library generates code for calling a REST API based on method signatures annotated with type hints. Ribeye abstracts away mechanics related to HTTP communication, such as building URLs, encoding query parameters, parsing, and dumping Pydantic models. With some modest additional configuration effort, generated HTTP clients offer rate limiting, retries, and caching."
 authors = ["pmateusz <pmateusz@users.noreply.github.com>"]
 readme = "README.md"
@@ -38,11 +38,21 @@ pydantic-settings = ">=2.0.0"
 
 [tool.pytest.ini_options]
 log_cli = true
-pythonpath = ["src"]
+pythonpath = ["src", "tests/tools"]
 addopts = ["--import-mode=importlib"]
 
 [tool.mypy]
-mypy_path = ["$MYPY_CONFIG_FILE_DIR/src"]
+mypy_path = ["$MYPY_CONFIG_FILE_DIR/src", "$MYPY_CONFIG_FILE_DIR/tests/tools"]
+
+[tool.coverage.run]
+branch = true
+omit = ["src/meatie/aio/internal/adapter/pydantic_v1.py", "tests/*"]
+
+[tool.coverage.report]
+exclude_also = [
+    "class .*\\bProtocol\\):",
+    "\\.\\.\\."
+]
 
 [build-system]
 requires = ["poetry-core"]
