@@ -5,10 +5,9 @@ from typing import Any, Optional
 from unittest.mock import Mock
 
 import pytest
-from meatie.aio import Client, EndpointDescriptor, endpoint
+from meatie.aio import Client, EndpointDescriptor, Request, endpoint
 from meatie.aio.internal import RequestTemplate
 from meatie.aio.internal.endpoint_descriptor import _Context
-from meatie.internal.http import Request
 
 from tests.aio.conftest import MockTools
 

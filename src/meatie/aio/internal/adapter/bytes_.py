@@ -2,14 +2,14 @@
 #  Use of this source code is governed by a BSD-style license that can be found in the LICENSE file.
 
 
-from meatie.aio import Response
+from meatie.aio import AsyncResponse
 
 from .types import TypeAdapter
 
 
 class _BytesAdapter:
     @staticmethod
-    async def from_response(response: Response) -> bytes:
+    async def from_response(response: AsyncResponse) -> bytes:
         return await response.read()
 
     @staticmethod

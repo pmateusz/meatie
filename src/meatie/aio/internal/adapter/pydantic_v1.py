@@ -9,7 +9,7 @@ import pydantic
 import pydantic.json
 from typing_extensions import is_typeddict
 
-from meatie.aio import ParseResponseError, Response
+from meatie.aio import AsyncResponse, ParseResponseError
 from meatie.internal.types import T
 
 from . import JsonAdapter, TypeAdapter
@@ -19,7 +19,7 @@ class PydanticV1TypeAdapter(Generic[T]):
     def __init__(self, model_type: type[T]) -> None:
         self.model_type = model_type
 
-    async def from_response(self, response: Response) -> T:
+    async def from_response(self, response: AsyncResponse) -> T:
         json_model = await JsonAdapter.from_response(response)
         try:
             return pydantic.parse_obj_as(self.model_type, json_model)

@@ -5,12 +5,12 @@ from typing import Any
 
 from aiohttp import ContentTypeError
 
-from meatie.aio import ParseResponseError, Response
+from meatie.aio import AsyncResponse, ParseResponseError
 
 
 class _JsonAdapter:
     @staticmethod
-    async def from_response(response: Response) -> Any:
+    async def from_response(response: AsyncResponse) -> Any:
         try:
             return await response.json()
         except ContentTypeError as exc:

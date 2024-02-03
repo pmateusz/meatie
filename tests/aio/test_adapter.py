@@ -8,7 +8,7 @@ from unittest.mock import AsyncMock, Mock
 import pytest
 from aiohttp import ClientResponse, RequestInfo
 from aiohttp.helpers import TimerNoop
-from meatie.aio import Response
+from meatie.aio import AsyncResponse
 from meatie.aio.internal import TypeAdapter, get_adapter
 from yarl import URL
 
@@ -17,7 +17,7 @@ from yarl import URL
 async def test_bytes_decoder() -> None:
     # GIVEN
     value = b"123"
-    response = Mock(spec=Response, read=AsyncMock(return_value=value))
+    response = Mock(spec=AsyncResponse, read=AsyncMock(return_value=value))
     adapter: TypeAdapter[bytes] = get_adapter(type(value))
 
     # WHEN
@@ -31,7 +31,7 @@ async def test_bytes_decoder() -> None:
 async def test_string_decoder() -> None:
     # GIVEN
     value = "123"
-    response = Mock(spec=Response, text=AsyncMock(return_value=value))
+    response = Mock(spec=AsyncResponse, text=AsyncMock(return_value=value))
     adapter = get_adapter(type(value))
 
     # WHEN
@@ -68,7 +68,7 @@ async def test_response_decoder() -> None:
 async def test_json_decoder() -> None:
     # GIVEN
     value = {"key": "123"}
-    response = Mock(spec=Response)
+    response = Mock(spec=AsyncResponse)
     response.json = AsyncMock(return_value=value)
     adapter = get_adapter(dict)
 

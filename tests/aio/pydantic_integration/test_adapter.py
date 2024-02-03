@@ -5,7 +5,7 @@ from typing import Any, Callable
 from unittest.mock import AsyncMock, Mock
 
 import pytest
-from meatie.aio import Response
+from meatie.aio import AsyncResponse
 from meatie.aio.internal import TypeAdapter, get_adapter
 
 pydantic = pytest.importorskip("pydantic")
@@ -19,7 +19,7 @@ async def test_pydantic_model(dump_model: Callable[[Any], Any]) -> None:
         name: str
 
     value = Product(name="glasses")
-    response = Mock(spec=Response, json=AsyncMock(return_value=dump_model(value)))
+    response = Mock(spec=AsyncResponse, json=AsyncMock(return_value=dump_model(value)))
     adapter: TypeAdapter[str] = get_adapter(type(value))
 
     # WHEN
@@ -36,7 +36,7 @@ async def test_pydantic_model_sequence(dump_model: Callable[[Any], Any]) -> None
         name: str
 
     value = ListElement(name="123")
-    response = Mock(spec=Response)
+    response = Mock(spec=AsyncResponse)
     response.json = AsyncMock(return_value=[dump_model(value)])
     adapter: TypeAdapter[list[ListElement]] = get_adapter(list[ListElement])
 
@@ -54,7 +54,7 @@ async def test_pydantic_model_dict(dump_model: Callable[[Any], Any]) -> None:
         name: str
 
     value = DictValue(name="123")
-    response = Mock(spec=Response)
+    response = Mock(spec=AsyncResponse)
     response.json = AsyncMock(return_value={"key": dump_model(value)})
     adapter: TypeAdapter[dict[str, DictValue]] = get_adapter(dict[str, DictValue])
 

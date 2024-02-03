@@ -18,8 +18,7 @@ from typing import (
 from typing_extensions import Awaitable, Self
 
 from meatie.aio.internal import JsonAdapter, TypeAdapter, get_adapter
-from meatie.internal.http import Method, Request
-from meatie.internal.types import PT
+from meatie.internal.types import PT, Method, Request
 
 
 class Kind(Enum):

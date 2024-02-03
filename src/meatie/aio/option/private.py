@@ -2,7 +2,7 @@
 #  Use of this source code is governed by a BSD-style license that can be found in the LICENSE file.
 
 
-from meatie.aio import Client, Context
+from meatie.aio import AsyncContext, Client
 from meatie.aio.internal import EndpointDescriptor
 from meatie.internal.types import PT, T
 
@@ -14,7 +14,7 @@ class PrivateOption:
         descriptor.register_operator(PrivateOption.__PRIORITY, PrivateOption.__operator)
 
     @staticmethod
-    async def __operator(ctx: Context[Client, T]) -> T:
+    async def __operator(ctx: AsyncContext[Client, T]) -> T:
         await ctx.client.authenticate(ctx.request)
         return await ctx.proceed()
 

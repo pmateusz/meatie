@@ -8,7 +8,7 @@ from pydantic import BaseModel, ValidationError
 from pydantic import TypeAdapter as pydantic_TypeAdapter
 from typing_extensions import is_typeddict
 
-from meatie.aio import Response
+from meatie.aio import AsyncResponse
 from meatie.internal.error import ParseResponseError
 from meatie.internal.types import T
 
@@ -19,7 +19,7 @@ class PydanticV2TypeAdapter(Generic[T]):
     def __init__(self, model_type: type[T]) -> None:
         self.adapter = pydantic_TypeAdapter(model_type)
 
-    async def from_response(self, response: Response) -> T:
+    async def from_response(self, response: AsyncResponse) -> T:
         json_model = await JsonAdapter.from_response(response)
         try:
             return self.adapter.validate_python(json_model)

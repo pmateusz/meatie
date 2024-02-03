@@ -20,9 +20,9 @@ from aiohttp import ClientResponse
 from typing_extensions import Self
 
 from meatie.aio import (
+    AsyncOperator,
     Client,
     Method,
-    Operator,
     Request,
 )
 from meatie.internal.types import PT
@@ -39,7 +39,7 @@ class EndpointDescriptor(Generic[PT, ResponseBodyT]):
 
     def __init__(self, template: RequestTemplate[Any, ResponseBodyT]) -> None:
         self.template = template
-        self.__operator_by_priority: dict[int, Operator[Client, ResponseBodyT]] = {}
+        self.__operator_by_priority: dict[int, AsyncOperator[Client, ResponseBodyT]] = {}
 
     def __set_name__(self, owner: type[object], name: str) -> None:
         if self.template.method is not None:
@@ -53,7 +53,9 @@ class EndpointDescriptor(Generic[PT, ResponseBodyT]):
 
         self.template.method = method_opt
 
-    def register_operator(self, priority: int, operator: Operator[Client, ResponseBodyT]) -> None:
+    def register_operator(
+        self, priority: int, operator: AsyncOperator[Client, ResponseBodyT]
+    ) -> None:
         self.__operator_by_priority[priority] = operator
 
     @overload
@@ -101,7 +103,10 @@ class EndpointOption(Protocol):
 
 class _Context(Generic[ResponseBodyT]):
     def __init__(
-        self, client: Client, operators: list[Operator[Client, ResponseBodyT]], request: Request
+        self,
+        client: Client,
+        operators: list[AsyncOperator[Client, ResponseBodyT]],
+        request: Request,
     ) -> None:
         self.client = client
         self.__operators = operators
@@ -128,7 +133,7 @@ class _BoundEndpointDescriptor(Generic[PT, ResponseBodyT]):
     def __init__(
         self,
         instance: Client,
-        operators: Iterable[Operator[Client, ResponseBodyT]],
+        operators: Iterable[AsyncOperator[Client, ResponseBodyT]],
         template: RequestTemplate[Any, ResponseBodyT],
     ) -> None:
         self.__instance = instance

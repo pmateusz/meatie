@@ -6,7 +6,7 @@ import asyncio
 import time as sys_time
 from typing import Awaitable, Callable
 
-from meatie.aio import Client, Context
+from meatie.aio import AsyncContext, Client
 from meatie.aio.internal import EndpointDescriptor
 from meatie.internal.limit import Tokens
 from meatie.internal.types import PT, T
@@ -25,7 +25,7 @@ class LimitOption:
         if self.tokens > 0.0:
             descriptor.register_operator(LimitOption.__PRIORITY, self.__operator)
 
-    async def __operator(self, ctx: Context[Client, T]) -> T:
+    async def __operator(self, ctx: AsyncContext[Client, T]) -> T:
         current_time = sys_time.monotonic()
         reservation = ctx.client.limiter.reserve_at(current_time, self.tokens)
         delay = reservation.ready_at - current_time

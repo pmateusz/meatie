@@ -14,8 +14,7 @@ from meatie.aio.internal import (
     PathTemplate,
     RequestTemplate,
 )
-from meatie.internal.http import Method
-from meatie.internal.types import PT, T
+from meatie.internal.types import PT, Method, T
 
 
 def endpoint(
