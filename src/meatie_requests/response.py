@@ -2,7 +2,8 @@
 #  Use of this source code is governed by a BSD-style license that can be found in the LICENSE file.
 from typing import Any
 
-from requests import Response
+from meatie.internal.error import ParseResponseError
+from requests import JSONDecodeError, Response
 
 
 class RequestsResponse:
@@ -20,4 +21,7 @@ class RequestsResponse:
         return self.response.text
 
     def json(self) -> dict[str, Any]:
-        return self.response.json()
+        try:
+            return self.response.json()
+        except JSONDecodeError as exc:
+            raise ParseResponseError(self, exc) from exc

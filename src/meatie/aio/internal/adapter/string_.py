@@ -12,7 +12,7 @@ class _StringAdapter:
         try:
             return await response.text()
         except ValueError as exc:
-            raise ParseResponseError(response.status, None) from exc
+            raise ParseResponseError(response, exc) from exc
 
     @staticmethod
     def to_json(value: str) -> str:  # pragma: no cover

@@ -14,11 +14,9 @@ class _JsonAdapter:
         try:
             return await response.json()
         except ContentTypeError as exc:
-            message = await response.text()
-            raise ParseResponseError(response.status, message) from exc
+            raise ParseResponseError(response, exc) from exc
         except JSONDecodeError as exc:
-            message = await response.text()
-            raise ParseResponseError(response.status, message) from exc
+            raise ParseResponseError(response, exc) from exc
 
     @staticmethod
     def to_json(value: Any) -> Any:

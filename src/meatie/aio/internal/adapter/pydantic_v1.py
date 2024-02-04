@@ -24,8 +24,7 @@ class PydanticV1TypeAdapter(Generic[T]):
         try:
             return pydantic.parse_obj_as(self.model_type, json_model)
         except pydantic.ValidationError as exc:
-            text = await response.text()
-            raise ParseResponseError(response.status, text) from exc
+            raise ParseResponseError(response, exc) from exc
 
     @staticmethod
     def to_json(value: T) -> Any:

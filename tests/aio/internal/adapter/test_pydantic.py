@@ -64,8 +64,7 @@ async def test_can_handle_corrupted_pydantic_model(test_server: HTTPTestServer) 
 
     # THEN
     exc = exc_info.value
-    assert HTTPStatus.OK == exc.status
-    assert '{"code": "ok"}' == exc.message
+    assert HTTPStatus.OK == exc.response.status
 
 
 class StatusCode(str, Enum):
@@ -99,5 +98,4 @@ async def test_can_handle_corrupted_pydantic_model_with_enum(test_server: HTTPTe
 
     # THEN
     exc = exc_info.value
-    assert HTTPStatus.OK == exc.status
-    assert '{"status": "ok"}' == exc.message
+    assert HTTPStatus.OK == exc.response.status

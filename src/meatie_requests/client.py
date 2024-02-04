@@ -1,8 +1,9 @@
 #  Copyright 2024 The Meatie Authors. All rights reserved.
 #  Use of this source code is governed by a BSD-style license that can be found in the LICENSE file.
-import urllib.parse
 from typing import Any, Optional
 
+import requests.exceptions
+from meatie.internal.error import TransportError
 from meatie.internal.types import Request
 from requests import Session
 from typing_extensions import Self
@@ -28,11 +29,12 @@ class RequestsClient:
             kwargs["headers"] = request.headers
 
         if request.query_params:
-            url = request.path + "?" + urllib.parse.urlencode(request.query_params)
-        else:
-            url = request.path
+            kwargs["params"] = request.query_params
 
-        response = self.session.request(request.method, url, **kwargs)
+        try:
+            response = self.session.request(request.method, request.path, **kwargs)
+        except requests.exceptions.ConnectionError as exc:
+            raise TransportError(exc) from exc
         return RequestsResponse(response)
 
     def __enter__(self) -> Self:

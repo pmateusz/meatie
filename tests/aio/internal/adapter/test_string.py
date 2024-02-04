@@ -54,5 +54,4 @@ async def test_can_handle_invalid_encoding(test_server: HTTPTestServer) -> None:
 
     # THEN
     exc = exc_info.value
-    assert HTTPStatus.OK == exc.status
-    assert exc.message is None
+    assert HTTPStatus.OK == exc.response.status

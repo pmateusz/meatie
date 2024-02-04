@@ -1,6 +1,5 @@
 #  Copyright 2023 The Meatie Authors. All rights reserved.
 #  Use of this source code is governed by a BSD-style license that can be found in the LICENSE file.
-import json
 from dataclasses import dataclass
 from typing import Any, Awaitable, Callable, Optional, Protocol, TypeVar, Union
 
@@ -21,7 +20,7 @@ class Request:
     path: str
     query_params: dict[str, Union[str, int]]
     headers: dict[str, Union[str, bytes]]
-    data: Optional[bytes] = None
+    data: Optional[Union[str, bytes]] = None
     json: Any = None
 
 
@@ -37,12 +36,10 @@ class Response(Protocol):
     def read(self) -> bytes:
         ...
 
-    def text(self, encoding: Optional[str] = None) -> str:
+    def text(self, *args: Any, **kwargs: Any) -> str:
         ...
 
-    def json(
-        self, *, encoding: Optional[str] = None, loads: Callable[[str], Any] = json.loads
-    ) -> dict[str, Any]:
+    def json(self, *args: Any, **kwargs: Any) -> dict[str, Any]:
         ...
 
 
@@ -96,9 +93,7 @@ class AsyncResponse(Protocol):
     async def text(self, encoding: Optional[str] = None) -> str:
         ...
 
-    async def json(
-        self, *, encoding: Optional[str] = None, loads: Callable[[str], Any] = json.loads
-    ) -> dict[str, Any]:
+    async def json(self, *args: Any, **kwargs: Any) -> dict[str, Any]:
         ...
 
 

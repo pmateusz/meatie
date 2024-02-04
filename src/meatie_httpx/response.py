@@ -1,8 +1,10 @@
 #  Copyright 2024 The Meatie Authors. All rights reserved.
 #  Use of this source code is governed by a BSD-style license that can be found in the LICENSE file.
+from json import JSONDecodeError
 from typing import Any
 
 from httpx import Response
+from meatie.internal.error import ParseResponseError
 
 
 class HttpxResponse:
@@ -20,4 +22,7 @@ class HttpxResponse:
         return self.response.text
 
     def json(self) -> dict[str, Any]:
-        return self.response.json()
+        try:
+            return self.response.json()
+        except JSONDecodeError as exc:
+            raise ParseResponseError(self, exc) from exc

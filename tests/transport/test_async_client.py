@@ -7,7 +7,7 @@ from typing import AsyncGenerator
 import aiohttp
 import pytest
 import pytest_asyncio
-from http_test import HTTPTestServer, status_handler
+from http_test import HTTPTestServer, StatusHandler
 from meatie.internal.types import Request
 from meatie_aiohttp import AiohttpClient
 
@@ -18,7 +18,7 @@ class AsyncClientTestSuite:
         self, test_server: HTTPTestServer, async_client: AiohttpClient
     ) -> None:
         # GIVEN
-        test_server.handler = status_handler(HTTPStatus.OK)
+        test_server.handler = StatusHandler(HTTPStatus.OK)
         request = Request("GET", test_server.base_url, query_params={}, headers={})
 
         # WHEN

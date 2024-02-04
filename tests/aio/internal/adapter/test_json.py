@@ -54,8 +54,7 @@ async def test_can_handle_invalid_content_type(test_server: HTTPTestServer) -> N
 
     # THEN
     exc = exc_info.value
-    assert HTTPStatus.OK == exc.status
-    assert '{"status": "ok"}' == exc.message
+    assert HTTPStatus.OK == exc.response.status
 
 
 @pytest.mark.asyncio()
@@ -81,5 +80,4 @@ async def test_can_handle_corrupted_json(test_server: HTTPTestServer) -> None:
 
     # THEN
     exc = exc_info.value
-    assert HTTPStatus.OK == exc.status
-    assert '{"status":' == exc.message
+    assert HTTPStatus.OK == exc.response.status
