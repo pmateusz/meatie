@@ -147,6 +147,6 @@ class _BoundEndpointDescriptor(Generic[PT, ResponseBodyT]):
         return await context.proceed()
 
     async def __make_request(self, context: _Context[ResponseBodyT]) -> ResponseBodyT:
-        response = await self.__instance.make_request(context.request)
+        response = await self.__instance.send(context.request)
         context.response = response
         return await self.__template.response_decoder.from_response(response)

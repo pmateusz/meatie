@@ -22,14 +22,14 @@ class Client:
         limiter: Optional[Limiter] = None,
     ):
         self.session = session
+        self.session_params = session_params if session_params else {}
         self.local_cache = local_cache if local_cache is not None else CacheStore()
         self.limiter = limiter if limiter is not None else Limiter(Rate.max, INF)
-        self.session_params = session_params if session_params else {}
 
     def __init_subclass__(cls, **kwargs: Any) -> None:
         cls.shared_cache = CacheStore()
 
-    async def make_request(self, request: Request) -> ClientResponse:
+    async def send(self, request: Request) -> ClientResponse:
         kwargs: dict[str, Any] = self.session_params.copy()
 
         if request.data is not None:

@@ -17,6 +17,14 @@ def _serve_forever(local_server: HTTPServer) -> None:
         local_server.serve_forever()
 
 
+def status_handler(status: HTTPStatus) -> RequestHandler:
+    def handler(request: SimpleHTTPRequestHandler) -> None:
+        request.send_response(status)
+        request.end_headers()
+
+    return handler
+
+
 class HTTPTestServer:
     def __init__(self) -> None:
         self.handler: Optional[RequestHandler] = None
@@ -29,6 +37,10 @@ class HTTPTestServer:
             raise RuntimeError("server is not started")
 
         return self.server.server_port
+
+    @property
+    def base_url(self) -> str:
+        return f"http://localhost:{self.port}"
 
     def run_in_background(self) -> None:
         server = HTTPServer(("localhost", 0), _create_handler_class(self), False)
@@ -66,7 +78,7 @@ class HTTPTestServer:
         self.stop()
 
     def create_session(self) -> ClientSession:
-        return ClientSession(base_url=f"http://localhost:{self.port}")
+        return ClientSession(base_url=self.base_url)
 
 
 def _create_handler_class(server: HTTPTestServer) -> type[BaseHTTPRequestHandler]:

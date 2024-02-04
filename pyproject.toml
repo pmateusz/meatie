@@ -10,8 +10,25 @@ homepage = "https://github.com/pmateusz/meatie"
 
 [tool.poetry.dependencies]
 python = ">=3.9"
-aiohttp = ">=3.7.0"
 typing-extensions = ">=4.7.0"
+
+[tool.poetry.group.requests]
+optional = true
+
+[tool.poetry.group.requests.dependencies]
+requests = ">=2.26.0"
+
+[tool.poetry.group.httpx]
+optional = true
+
+[tool.poetry.group.httpx.dependencies]
+httpx = ">=0.19.0"
+
+[tool.poetry.group.aiohttp]
+optional = true
+
+[tool.poetry.group.aiohttp.dependencies]
+aiohttp = ">=3.7.0"
 
 [tool.poetry.group.test]
 optional = true

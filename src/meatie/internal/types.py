@@ -34,20 +34,20 @@ class Response(Protocol):
     def status(self) -> int:
         ...
 
-    async def read(self) -> bytes:
+    def read(self) -> bytes:
         ...
 
-    async def text(self, encoding: Optional[str] = None) -> str:
+    def text(self, encoding: Optional[str] = None) -> str:
         ...
 
-    async def json(
+    def json(
         self, *, encoding: Optional[str] = None, loads: Callable[[str], Any] = json.loads
     ) -> dict[str, Any]:
         ...
 
 
 class Client(Protocol):
-    def make_request(self, request: Request) -> Response:
+    def send(self, request: Request) -> Response:
         ...
 
     def __enter__(self) -> Self:
@@ -103,7 +103,7 @@ class AsyncResponse(Protocol):
 
 
 class AsyncClient(Protocol):
-    async def make_request(self, request: Request) -> AsyncResponse:
+    async def send(self, request: Request) -> AsyncResponse:
         ...
 
     async def __aenter__(self) -> Self:
