@@ -3,7 +3,14 @@
 from typing import Any, Optional
 
 import requests.exceptions
-from meatie.internal.error import TransportError
+from meatie.internal.error import (
+    MeatieError,
+    ProxyError,
+    RequestError,
+    ServerError,
+    Timeout,
+    TransportError,
+)
 from meatie.internal.types import Request
 from requests import Session
 from typing_extensions import Self
@@ -33,8 +40,26 @@ class RequestsClient:
 
         try:
             response = self.session.request(request.method, request.path, **kwargs)
-        except requests.exceptions.ConnectionError as exc:
+        except (
+            requests.exceptions.URLRequired,
+            requests.exceptions.MissingSchema,
+            requests.exceptions.InvalidSchema,
+            requests.exceptions.InvalidURL,
+            requests.exceptions.InvalidHeader,
+            requests.exceptions.InvalidHeader,
+        ) as exc:
+            raise RequestError(exc) from exc
+        except (requests.exceptions.TooManyRedirects, requests.exceptions.HTTPError) as exc:
             raise TransportError(exc) from exc
+        except requests.exceptions.ProxyError as exc:
+            raise ProxyError(exc) from exc
+        except requests.exceptions.Timeout as exc:
+            raise Timeout(exc) from exc
+        except (requests.exceptions.ConnectionError, requests.exceptions.SSLError) as exc:
+            raise ServerError(exc) from exc
+        except requests.exceptions.RequestException as exc:
+            raise MeatieError(exc) from exc
+
         return RequestsResponse(response)
 
     def __enter__(self) -> Self:

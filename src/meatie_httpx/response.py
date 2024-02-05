@@ -4,7 +4,7 @@ from json import JSONDecodeError
 from typing import Any
 
 from httpx import Response
-from meatie.internal.error import ParseResponseError
+from meatie.internal.error import ParseResponseError, ResponseError
 
 
 class HttpxResponse:
@@ -19,10 +19,17 @@ class HttpxResponse:
         return self.response.content
 
     def text(self) -> str:
-        return self.response.text
+        try:
+            return self.response.text
+        except Exception as exc:
+            raise ResponseError(self, exc) from exc
 
     def json(self) -> dict[str, Any]:
         try:
             return self.response.json()
         except JSONDecodeError as exc:
-            raise ParseResponseError(self, exc) from exc
+            try:
+                text = self.response.text
+            except Exception as inner_exc:
+                raise ResponseError(self, inner_exc) from inner_exc
+            raise ParseResponseError(text, self, exc) from exc

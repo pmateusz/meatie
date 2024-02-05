@@ -5,7 +5,8 @@ from typing import Any
 
 from aiohttp import ContentTypeError
 
-from meatie.aio import AsyncResponse, ParseResponseError
+from meatie.aio import AsyncResponse
+from meatie.internal.error import ParseResponseError, ResponseError
 
 
 class _JsonAdapter:
@@ -14,9 +15,10 @@ class _JsonAdapter:
         try:
             return await response.json()
         except ContentTypeError as exc:
-            raise ParseResponseError(response, exc) from exc
+            raise ResponseError(response, exc) from exc
         except JSONDecodeError as exc:
-            raise ParseResponseError(response, exc) from exc
+            text = await response.text()
+            raise ParseResponseError(text, response, exc) from exc
 
     @staticmethod
     def to_json(value: Any) -> Any:

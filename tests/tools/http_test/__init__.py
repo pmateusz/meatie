@@ -3,6 +3,7 @@
 
 from .http_server import (
     Handler,
+    HTTPSTestServer,
     HTTPTestServer,
     RequestHandler,
     StatusHandler,
@@ -14,6 +15,7 @@ __all__ = [
     "Handler",
     "RequestHandler",
     "HTTPTestServer",
+    "HTTPSTestServer",
     "StatusHandler",
     "diagnostic_handler",
     "echo_handler",

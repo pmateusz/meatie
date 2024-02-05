@@ -1,7 +1,8 @@
 #  Copyright 2023 The Meatie Authors. All rights reserved.
 #  Use of this source code is governed by a BSD-style license that can be found in the LICENSE file.
 
-from meatie.aio import AsyncResponse, ParseResponseError
+from meatie.aio import AsyncResponse
+from meatie.internal.error import ResponseError
 
 from .types import TypeAdapter
 
@@ -12,7 +13,7 @@ class _StringAdapter:
         try:
             return await response.text()
         except ValueError as exc:
-            raise ParseResponseError(response, exc) from exc
+            raise ResponseError(response, exc) from exc
 
     @staticmethod
     def to_json(value: str) -> str:  # pragma: no cover

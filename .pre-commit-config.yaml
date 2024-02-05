@@ -46,6 +46,7 @@ repos:
           ]
         language: python
         additional_dependencies:
+          - cryptography
           - pydantic
           - pydantic-settings
           - aiohttp

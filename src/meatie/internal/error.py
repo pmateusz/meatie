@@ -14,6 +14,26 @@ class RateLimitExceeded(MeatieError):
     ...
 
 
+class TransportError(MeatieError):
+    ...
+
+
+class ProxyError(TransportError):
+    ...
+
+
+class ServerError(TransportError):
+    ...
+
+
+class Timeout(ServerError):
+    ...
+
+
+class RequestError(MeatieError):
+    ...
+
+
 class ResponseError(MeatieError):
     def __init__(
         self, response: Union[Response, AsyncResponse], cause: Optional[BaseException] = None
@@ -23,9 +43,17 @@ class ResponseError(MeatieError):
         self.response = response
 
 
-class TransportError(MeatieError):
+class StatusError(ResponseError):
     ...
 
 
 class ParseResponseError(ResponseError):
-    ...
+    def __init__(
+        self,
+        text: str,
+        response: Union[Response, AsyncResponse],
+        cause: Optional[BaseException] = None,
+    ) -> None:
+        super().__init__(response, cause)
+
+        self.text = text
