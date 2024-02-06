@@ -1,4 +1,4 @@
-#  Copyright 2023 The Meatie Authors. All rights reserved.
+#  Copyright 2024 The Meatie Authors. All rights reserved.
 #  Use of this source code is governed by a BSD-style license that can be found in the LICENSE file.
 
 import inspect
@@ -10,15 +10,16 @@ from typing import (
     Generic,
     Iterable,
     Optional,
-    TypeVar,
     get_args,
     get_type_hints,
 )
 
 from typing_extensions import Awaitable, Self
 
-from meatie.aio.internal import JsonAdapter, TypeAdapter, get_adapter
-from meatie.internal.types import PT, Method, Request
+from meatie import Method, Request
+from meatie.adapter import TypeAdapter
+from meatie.aio.adapter import AsyncJsonAdapter, AsyncTypeAdapter, get_async_adapter
+from meatie.internal import PT, RequestBodyType, ResponseBodyType
 
 
 class Kind(Enum):
@@ -108,11 +109,7 @@ class PathTemplate:
         return cls(template, parameters)
 
 
-RequestBodyT = TypeVar("RequestBodyT")
-ResponseBodyT = TypeVar("ResponseBodyT")
-
-
-class RequestTemplate(Generic[RequestBodyT, ResponseBodyT]):
+class RequestTemplate(Generic[RequestBodyType, ResponseBodyType]):
     __slots__ = (
         "method",
         "template",
@@ -126,8 +123,8 @@ class RequestTemplate(Generic[RequestBodyT, ResponseBodyT]):
         self,
         template: PathTemplate,
         params: list[Parameter],
-        request_encoder: TypeAdapter[RequestBodyT],
-        response_decoder: TypeAdapter[ResponseBodyT],
+        request_encoder: TypeAdapter[RequestBodyType],
+        response_decoder: TypeAdapter[ResponseBodyType],
         method: Optional[Method],
     ) -> None:
         self.method = method
@@ -199,7 +196,7 @@ class RequestTemplate(Generic[RequestBodyT, ResponseBodyT]):
     @classmethod
     def from_callable(
         cls,
-        func: Callable[PT, Awaitable[ResponseBodyT]],
+        func: Callable[PT, Awaitable[RequestBodyType]],
         template: PathTemplate,
         method: Optional[Method],
     ) -> Self:
@@ -207,12 +204,12 @@ class RequestTemplate(Generic[RequestBodyT, ResponseBodyT]):
         type_by_param_name = get_type_hints(func)
 
         parameters = []
-        request_encoder: TypeAdapter[Any] = JsonAdapter
-        response_decoder: TypeAdapter[ResponseBodyT] = JsonAdapter
+        request_encoder: AsyncTypeAdapter[Any] = AsyncJsonAdapter
+        response_decoder: AsyncTypeAdapter[ResponseBodyType] = AsyncJsonAdapter
         for param_name in type_by_param_name:
             param_type = type_by_param_name[param_name]
             if param_name == "return":
-                response_decoder = get_adapter(param_type)
+                response_decoder = get_async_adapter(param_type)
                 continue
 
             sig_param = signature.parameters[param_name]
@@ -220,7 +217,7 @@ class RequestTemplate(Generic[RequestBodyT, ResponseBodyT]):
             kind = Kind.QUERY
             if api_ref.name == "body":
                 kind = Kind.BODY
-                request_encoder = get_adapter(param_type)
+                request_encoder = get_async_adapter(param_type)
             elif api_ref.name in template:
                 kind = Kind.PATH
 
@@ -240,8 +237,8 @@ class RequestTemplate(Generic[RequestBodyT, ResponseBodyT]):
         template: PathTemplate,
         params: Iterable[Parameter],
         signature: inspect.Signature,
-        request_encoder: TypeAdapter[RequestBodyT],
-        response_decoder: TypeAdapter[ResponseBodyT],
+        request_encoder: TypeAdapter[RequestBodyType],
+        response_decoder: TypeAdapter[ResponseBodyType],
         method: Optional[Method],
     ) -> Self:
         template_str = str(template)

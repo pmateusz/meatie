@@ -4,7 +4,7 @@ from json.decoder import JSONDecodeError
 from typing import Any, Literal, Optional
 
 from aiohttp import ClientResponse
-from meatie.internal.error import ParseResponseError, ResponseError
+from meatie.error import ParseResponseError, ResponseError
 
 
 class AiohttpResponse:

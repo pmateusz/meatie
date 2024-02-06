@@ -11,15 +11,10 @@ from typing import Awaitable, Callable, Optional
 
 import aiohttp
 
-from meatie.aio import (
-    AsyncContext,
-    AsyncResponse,
-    Client,
-    Duration,
-    RateLimitExceeded,
-)
-from meatie.aio.internal import EndpointDescriptor
-from meatie.internal.types import PT, T
+from meatie.aio import AsyncContext, AsyncResponse
+from meatie.aio.endpoint_descriptor import EndpointDescriptor
+from meatie.error import RateLimitExceeded
+from meatie.internal.types import PT, Duration, T
 
 
 @dataclass()
@@ -138,7 +133,7 @@ class RetryOption:
     def __call__(self, descriptor: EndpointDescriptor[PT, T]) -> None:
         descriptor.register_operator(RetryOption.__PRIORITY, self.__operator)
 
-    async def __operator(self, operation_ctx: AsyncContext[Client, T]) -> T:
+    async def __operator(self, operation_ctx: AsyncContext[T]) -> T:
         retry_ctx = RetryContext(
             attempt_number=1, started_at=time.monotonic(), error=None, response=None
         )

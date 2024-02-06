@@ -21,13 +21,13 @@ from aiohttp import ClientResponse
 from meatie.internal.types import T
 
 from . import (
-    BytesAdapter,
-    ClientResponseAdapter,
-    JsonAdapter,
-    NoneAdapter,
-    StringAdapter,
-    TypeAdapter,
+    AsyncBytesAdapter,
+    AsyncClientResponseAdapter,
+    AsyncJsonAdapter,
+    AsyncNoneAdapter,
+    AsyncStringAdapter,
 )
+from .types import AsyncTypeAdapter
 
 
 def _is_model_type_no_pydantic(value: type[Any]) -> bool:  # pragma: no cover
@@ -35,7 +35,7 @@ def _is_model_type_no_pydantic(value: type[Any]) -> bool:  # pragma: no cover
 
 
 class PydanticTypeAdapterFactory(Protocol):
-    def __call__(self, model_cls: type[T]) -> TypeAdapter[T]:
+    def __call__(self, model_cls: type[T]) -> AsyncTypeAdapter[T]:
         ...
 
     @staticmethod
@@ -75,40 +75,40 @@ def _resolve_is_model_type() -> Callable[[type[Any]], bool]:
 _is_model_type = _resolve_is_model_type()
 
 
-def get_adapter(value_type: Union[type[T], GenericAlias, None]) -> TypeAdapter[T]:
+def get_async_adapter(value_type: Union[type[T], GenericAlias, None]) -> AsyncTypeAdapter[T]:
     if value_type is None:
-        return NoneAdapter  # type: ignore[return-value]
+        return AsyncNoneAdapter  # type: ignore[return-value]
 
     if value_type is bytes:
-        return BytesAdapter  # type: ignore[return-value]
+        return AsyncBytesAdapter  # type: ignore[return-value]
 
     if value_type is str:
-        return StringAdapter  # type: ignore[return-value]
+        return AsyncStringAdapter  # type: ignore[return-value]
 
     if isinstance(value_type, GenericAlias):
         if _PydanticTypeAdapterFactory is None:
-            return JsonAdapter
+            return AsyncJsonAdapter
 
         origin = get_origin(value_type)
         args = get_args(value_type)
         if issubclass(origin, Sequence):
             if _is_model_type(args[0]):
                 return _PydanticTypeAdapterFactory(value_type)  # type: ignore[arg-type]
-            return JsonAdapter
+            return AsyncJsonAdapter
 
         if issubclass(origin, Mapping):
             if _is_model_type(args[1]):
                 return _PydanticTypeAdapterFactory(value_type)  # type: ignore[arg-type]
-            return JsonAdapter
+            return AsyncJsonAdapter
 
-        return JsonAdapter
+        return AsyncJsonAdapter
 
     if _is_model_type(value_type):
         if _PydanticTypeAdapterFactory is None:
-            return JsonAdapter
+            return AsyncJsonAdapter
         return _PydanticTypeAdapterFactory(value_type)
 
     if isclass(value_type) and issubclass(value_type, ClientResponse):
-        return ClientResponseAdapter  # type: ignore[return-value]
+        return AsyncClientResponseAdapter  # type: ignore[return-value]
 
-    return JsonAdapter
+    return AsyncJsonAdapter

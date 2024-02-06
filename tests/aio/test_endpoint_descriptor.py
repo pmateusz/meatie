@@ -1,13 +1,19 @@
-#  Copyright 2023 The Meatie Authors. All rights reserved.
+#  Copyright 2024 The Meatie Authors. All rights reserved.
 #  Use of this source code is governed by a BSD-style license that can be found in the LICENSE file.
 
 from typing import Any, Optional
 from unittest.mock import Mock
 
 import pytest
-from meatie.aio import Client, EndpointDescriptor, Request, endpoint
-from meatie.aio.internal import RequestTemplate
-from meatie.aio.internal.endpoint_descriptor import _Context
+from meatie.aio import (
+    BaseAsyncClient,
+    EndpointDescriptor,
+    RequestTemplate,
+    endpoint,
+)
+from meatie.aio.endpoint_descriptor import AsyncContextImpl
+from meatie.types import Request
+from meatie_aiohttp import AiohttpClient
 
 from tests.aio.conftest import MockTools
 
@@ -19,7 +25,7 @@ async def test_get_without_parameters(mock_tools: MockTools) -> None:
     # GIVEN
     session = mock_tools.session_with_json_response(json=PRODUCTS)
 
-    class Store(Client):
+    class Store(AiohttpClient):
         def __init__(self) -> None:
             super().__init__(session)
 
@@ -41,7 +47,7 @@ async def test_post_with_body(mock_tools: MockTools) -> None:
     # GIVEN
     session = mock_tools.session_with_json_response(json=None)
 
-    class Store(Client):
+    class Store(AiohttpClient):
         def __init__(self) -> None:
             super().__init__(session)
 
@@ -62,7 +68,7 @@ async def test_get_with_default_parameter(mock_tools: MockTools) -> None:
     # GIVEN
     session = mock_tools.session_with_json_response(json=PRODUCTS)
 
-    class Store(Client):
+    class Store(AiohttpClient):
         def __init__(self) -> None:
             super().__init__(session)
 
@@ -75,7 +81,7 @@ async def test_get_with_default_parameter(mock_tools: MockTools) -> None:
         await api.get_products()
 
     # THEN
-    session.request.assert_awaited_once_with("GET", "/api/v1/products?limit=100")
+    session.request.assert_awaited_once_with("GET", "/api/v1/products", params={"limit": 100})
 
 
 @pytest.mark.asyncio()
@@ -83,7 +89,7 @@ async def test_get_with_skip_unset_optional_parameter(mock_tools: MockTools) -> 
     # GIVEN
     session = mock_tools.session_with_json_response(json=PRODUCTS)
 
-    class Store(Client):
+    class Store(AiohttpClient):
         def __init__(self) -> None:
             super().__init__(session)
 
@@ -104,7 +110,7 @@ async def test_get_with_skip_optional_parameter_set_to_none(mock_tools: MockTool
     # GIVEN
     session = mock_tools.session_with_json_response(json=PRODUCTS)
 
-    class Store(Client):
+    class Store(AiohttpClient):
         def __init__(self) -> None:
             super().__init__(session)
 
@@ -125,7 +131,7 @@ async def test_get_with_send_optional_parameter(mock_tools: MockTools) -> None:
     # GIVEN
     session = mock_tools.session_with_json_response(json=PRODUCTS)
 
-    class Store(Client):
+    class Store(AiohttpClient):
         def __init__(self) -> None:
             super().__init__(session)
 
@@ -138,7 +144,9 @@ async def test_get_with_send_optional_parameter(mock_tools: MockTools) -> None:
         await api.get_products(category="household")
 
     # THEN
-    session.request.assert_awaited_once_with("GET", "/api/v1/products?category=household")
+    session.request.assert_awaited_once_with(
+        "GET", "/api/v1/products", params={"category": "household"}
+    )
 
 
 def test_falls_back_to_get_if_method_name_cannot_be_inferred() -> None:
@@ -156,9 +164,9 @@ def test_falls_back_to_get_if_method_name_cannot_be_inferred() -> None:
 @pytest.mark.asyncio()
 async def test_context_without_operators_fails_on_proceed() -> None:
     # GIVEN
-    client = Mock(spec=Client)
+    client = Mock(spec=BaseAsyncClient)
     request = Mock(spec=Request)
-    context = _Context[Client](client, [], request)
+    context = AsyncContextImpl[list[Any]](client, [], request)
 
     # WHEN
     with pytest.raises(RuntimeError) as exc_info:

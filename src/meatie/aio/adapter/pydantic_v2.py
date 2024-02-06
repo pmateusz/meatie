@@ -10,21 +10,21 @@ from typing_extensions import is_typeddict
 
 from meatie.error import ParseResponseError
 from meatie.internal.types import T
-from meatie.types import Response
 
-from . import JsonAdapter, TypeAdapter
+from .. import AsyncResponse
+from . import AsyncJsonAdapter, AsyncTypeAdapter
 
 
 class PydanticV2TypeAdapter(Generic[T]):
     def __init__(self, model_type: type[T]) -> None:
         self.adapter = pydantic_TypeAdapter(model_type)
 
-    def from_response(self, response: Response) -> T:
-        json_model = JsonAdapter.from_response(response)
+    async def from_response(self, response: AsyncResponse) -> T:
+        json_model = AsyncJsonAdapter.from_response(response)
         try:
             return self.adapter.validate_python(json_model)
         except ValidationError as exc:
-            text = response.text()
+            text = await response.text()
             raise ParseResponseError(text, response, exc) from exc
 
     def to_json(self, value: T) -> Any:
@@ -33,7 +33,7 @@ class PydanticV2TypeAdapter(Generic[T]):
 
 class PydanticV2TypeAdapterFactory:
     @staticmethod
-    def __call__(model_cls: type[T]) -> TypeAdapter[T]:
+    def __call__(model_cls: type[T]) -> AsyncTypeAdapter[T]:
         return PydanticV2TypeAdapter(model_cls)
 
     @staticmethod

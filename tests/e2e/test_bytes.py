@@ -5,8 +5,9 @@ from http.server import BaseHTTPRequestHandler
 
 import pytest
 from http_test import HTTPTestServer
-from meatie.aio import Client, endpoint
-from meatie.aio.internal.adapter import BytesAdapter
+from meatie.adapter import BytesAdapter
+from meatie.aio import endpoint
+from meatie_aiohttp import AiohttpClient
 
 SAMPLE_BYTES = b"Hello, world!"
 
@@ -21,7 +22,7 @@ async def test_can_parse_bytes(test_server: HTTPTestServer) -> None:
 
     test_server.handler = handler
 
-    class TestClient(Client):
+    class TestClient(AiohttpClient):
         @endpoint("/")
         async def get_response(self) -> bytes:
             ...

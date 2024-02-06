@@ -7,7 +7,7 @@ from meatie.types import Response
 
 class _ClientResponseAdapter:
     @staticmethod
-    def from_response(response: Response) -> Response:
+    async def from_response(response: Response) -> Response:
         return response
 
     @staticmethod
@@ -15,4 +15,4 @@ class _ClientResponseAdapter:
         raise RuntimeError("JSON serialization is not supported")
 
 
-ClientResponseAdapter = _ClientResponseAdapter()
+AsyncClientResponseAdapter = _ClientResponseAdapter()

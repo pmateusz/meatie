@@ -10,21 +10,19 @@ from unittest.mock import AsyncMock, Mock, call, patch
 
 import pytest
 from aiohttp import ClientSession
+from meatie import MINUTE, Limiter, Rate
 from meatie.aio import (
-    MINUTE,
     ApiRef,
     Cache,
-    Client,
     Limit,
-    Limiter,
     Private,
-    Rate,
-    Request,
     Retry,
     RetryOnTooManyRequestsStatus,
     WaitExponential,
     endpoint,
 )
+from meatie.types import Request
+from meatie_aiohttp import AiohttpClient
 
 from tests.aio.conftest import MockTools
 
@@ -53,7 +51,7 @@ class BasketQuote(BaseModel):
     currency: str
 
 
-class OnlineStore(Client):
+class OnlineStore(AiohttpClient):
     def __init__(self, session: ClientSession) -> None:
         super().__init__(session)
 
@@ -73,7 +71,7 @@ class OnlineStore(Client):
 @pytest.mark.asyncio()
 async def test_plain_example(dump_model: Callable[[Any], Any]) -> None:
     # GIVEN
-    class OnlineStore(Client):
+    class OnlineStore(AiohttpClient):
         def __init__(self, session: ClientSession) -> None:
             super().__init__(session)
 
@@ -131,7 +129,7 @@ async def test_plain_example(dump_model: Callable[[Any], Any]) -> None:
 @pytest.mark.asyncio()
 async def test_private_endpoint_example(dump_model: Callable[[Any], Any]) -> None:
     # GIVEN
-    class OnlineStore(Client):
+    class OnlineStore(AiohttpClient):
         def __init__(self, session: ClientSession) -> None:
             super().__init__(session)
 
@@ -166,7 +164,7 @@ async def test_private_endpoint_example(dump_model: Callable[[Any], Any]) -> Non
 @pytest.mark.asyncio()
 async def test_cache_endpoint_example() -> None:
     # GIVEN
-    class OnlineStore(Client):
+    class OnlineStore(AiohttpClient):
         def __init__(self, session: ClientSession) -> None:
             super().__init__(session)
 
@@ -203,7 +201,7 @@ async def test_cache_endpoint_example() -> None:
 @pytest.mark.asyncio()
 async def test_retry_example(mock_tools: MockTools, dump_model: Callable[[Any], Any]) -> None:
     # GIVEN
-    class OnlineStore(Client):
+    class OnlineStore(AiohttpClient):
         def __init__(self, session: ClientSession) -> None:
             super().__init__(session)
 
@@ -243,7 +241,7 @@ async def test_rate_limit_example(mock_tools: MockTools, dump_model: Callable[[A
     current_time = 1000
     sleep_func = AsyncMock()
 
-    class OnlineStore(Client):
+    class OnlineStore(AiohttpClient):
         def __init__(self, session: ClientSession) -> None:
             super().__init__(
                 session,

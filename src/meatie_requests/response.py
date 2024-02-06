@@ -2,7 +2,7 @@
 #  Use of this source code is governed by a BSD-style license that can be found in the LICENSE file.
 from typing import Any
 
-from meatie.internal.error import ParseResponseError, ResponseError
+from meatie.error import ParseResponseError, ResponseError
 from requests import JSONDecodeError, Response
 
 

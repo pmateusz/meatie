@@ -4,7 +4,7 @@ from json import JSONDecodeError
 from typing import Any
 
 from httpx import Response
-from meatie.internal.error import ParseResponseError, ResponseError
+from meatie.error import ParseResponseError, ResponseError
 
 
 class HttpxResponse:

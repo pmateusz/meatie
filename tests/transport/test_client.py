@@ -2,10 +2,9 @@
 #  Use of this source code is governed by a BSD-style license that can be found in the LICENSE file.
 import asyncio
 import time
-from asyncio import AbstractEventLoop
 from http import HTTPStatus
 from json import JSONDecodeError
-from typing import Any, Generator, Optional
+from typing import Generator
 
 import aiohttp
 import httpx
@@ -19,56 +18,19 @@ from http_test import (
     diagnostic_handler,
     echo_handler,
 )
-from meatie.aio import ParseResponseError
-from meatie.internal.error import (
+from meatie.aio.types import ClientAdapter
+from meatie.error import (
+    ParseResponseError,
     ProxyError,
     RequestError,
     ServerError,
     Timeout,
     TransportError,
 )
-from meatie.internal.types import AsyncClient, AsyncResponse, Client, Request
+from meatie.types import Client, Request
 from meatie_aiohttp import AiohttpClient
 from meatie_httpx import HttpxClient
 from meatie_requests.client import RequestsClient
-from typing_extensions import Self
-
-
-class SyncResponseAdapter:
-    def __init__(self, loop: AbstractEventLoop, response: AsyncResponse) -> None:
-        self.loop = loop
-        self.response = response
-
-    @property
-    def status(self) -> int:
-        return self.response.status
-
-    def read(self) -> bytes:
-        return self.loop.run_until_complete(self.response.read())
-
-    def text(self) -> str:
-        return self.loop.run_until_complete(self.response.text())
-
-    def json(self) -> dict[str, Any]:
-        return self.loop.run_until_complete(self.response.json())
-
-
-class SyncClientAdapter:
-    def __init__(self, loop: AbstractEventLoop, client: AsyncClient) -> None:
-        self.loop = loop
-        self.client = client
-
-    def send(self, request: Request) -> SyncResponseAdapter:
-        async_response = self.loop.run_until_complete(self.client.send(request))
-        return SyncResponseAdapter(self.loop, async_response)
-
-    def __enter__(self) -> Self:
-        return self
-
-    def __exit__(
-        self, exc_type: type[BaseException], exc_val: Optional[BaseException], exc_tb: Any
-    ) -> None:
-        self.loop.run_until_complete(self.client.__aexit__(exc_type, exc_val, exc_tb))
 
 
 class DefaultSuite:
@@ -391,8 +353,8 @@ class TestHttpxProxyErrorSuite:
 
 class TestAiohttpDefaultSuite(DefaultSuite):
     @pytest.fixture(name="client")
-    def client_fixture(self) -> Generator[SyncClientAdapter, None, None]:
-        with SyncClientAdapter(
+    def client_fixture(self) -> Generator[ClientAdapter, None, None]:
+        with ClientAdapter(
             asyncio.get_event_loop(), AiohttpClient(aiohttp.ClientSession())
         ) as client:
             yield client
@@ -414,8 +376,8 @@ class TestAiohttpDefaultSuite(DefaultSuite):
 
 class TestAiohttpTimeoutSuite(TimeoutSuite):
     @pytest.fixture(name="client")
-    def client_fixture(self) -> Generator[SyncClientAdapter, None, None]:
-        with SyncClientAdapter(
+    def client_fixture(self) -> Generator[ClientAdapter, None, None]:
+        with ClientAdapter(
             asyncio.get_event_loop(),
             AiohttpClient(aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=0.005))),
         ) as client:
@@ -424,8 +386,8 @@ class TestAiohttpTimeoutSuite(TimeoutSuite):
 
 class TestAiohttpProxyErrorSuite(ProxyErrorSuite):
     @pytest.fixture(name="client")
-    def client_fixture(self) -> Generator[SyncClientAdapter, None, None]:
-        with SyncClientAdapter(
+    def client_fixture(self) -> Generator[ClientAdapter, None, None]:
+        with ClientAdapter(
             asyncio.get_event_loop(),
             AiohttpClient(
                 aiohttp.ClientSession(), session_params={"proxy": "http://localhost:3128"}

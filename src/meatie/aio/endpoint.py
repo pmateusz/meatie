@@ -8,13 +8,9 @@ from typing import (
     Optional,
 )
 
-from meatie.aio.internal import (
-    EndpointDescriptor,
-    EndpointOption,
-    PathTemplate,
-    RequestTemplate,
-)
-from meatie.internal.types import PT, Method, T
+from meatie import Method
+from meatie.aio import EndpointDescriptor, PathTemplate, RequestTemplate
+from meatie.internal import PT, T
 
 
 def endpoint(
@@ -32,8 +28,7 @@ def endpoint(
         descriptor = EndpointDescriptor[PT, T](request_template)
 
         for option in args:
-            if isinstance(option, EndpointOption):
-                option(descriptor)
+            option(descriptor)
 
         return descriptor  # type: ignore[return-value]
 

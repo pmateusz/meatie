@@ -6,7 +6,8 @@ from unittest.mock import patch
 
 import pytest
 from aiohttp import ClientSession
-from meatie.aio import Client, Private, endpoint
+from meatie.aio import Private, endpoint
+from meatie_aiohttp import AiohttpClient
 
 from tests.aio.conftest import MockTools
 
@@ -17,7 +18,7 @@ async def test_calls_authenticate_on_private_endpoint(mock_tools: MockTools) -> 
     products = [{"name": "pencil"}, {"name": "headphones"}]
     session = mock_tools.session_with_json_response(json=products)
 
-    class Store(Client):
+    class Store(AiohttpClient):
         def __init__(self) -> None:
             super().__init__(cast(ClientSession, session))
 

@@ -6,7 +6,7 @@ from meatie.types import Response
 
 class _NoneAdapter:
     @staticmethod
-    def from_response(_: Response) -> None:  # pragma: no cover
+    async def from_response(_: Response) -> None:  # pragma: no cover
         return None
 
     @staticmethod
@@ -14,4 +14,4 @@ class _NoneAdapter:
         return None
 
 
-NoneAdapter = _NoneAdapter()
+AsyncNoneAdapter = _NoneAdapter()

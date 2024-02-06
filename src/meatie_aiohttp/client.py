@@ -1,27 +1,34 @@
 #  Copyright 2024 The Meatie Authors. All rights reserved.
 #  Use of this source code is governed by a BSD-style license that can be found in the LICENSE file.
 import asyncio
-import urllib.parse
 from typing import Any, Optional
 
 import aiohttp
-from meatie.internal.error import (
+from meatie import CacheStore
+from meatie.aio import BaseAsyncClient
+from meatie.aio.types import AsyncResponse
+from meatie.error import (
     MeatieError,
     ProxyError,
     ServerError,
     Timeout,
     TransportError,
 )
-from meatie.internal.types import AsyncResponse, Request
-from typing_extensions import Self
+from meatie.types import Request
 
 from . import AiohttpResponse
 
 
-class AiohttpClient:
+class AiohttpClient(BaseAsyncClient):
     def __init__(
-        self, session: aiohttp.ClientSession, session_params: Optional[dict[str, Any]] = None
+        self,
+        session: aiohttp.ClientSession,
+        session_params: Optional[dict[str, Any]] = None,
+        local_cache: Optional[CacheStore] = None,
+        limiter: Optional[Any] = None,
     ) -> None:
+        super().__init__(local_cache, limiter)
+
         self.session = session
         self.session_params = session_params if session_params else {}
 
@@ -38,7 +45,7 @@ class AiohttpClient:
             kwargs["headers"] = request.headers
 
         if request.query_params:
-            kwargs["params"] = urllib.parse.urlencode(request.query_params)
+            kwargs["params"] = request.query_params
 
         try:
             response = await self.session.request(request.method, request.path, **kwargs)
@@ -60,9 +67,6 @@ class AiohttpClient:
         except Exception as exc:
             raise MeatieError(exc) from exc
         return AiohttpResponse(response)
-
-    async def __aenter__(self) -> Self:
-        return self
 
     async def __aexit__(
         self,

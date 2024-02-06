@@ -4,7 +4,7 @@ from unittest.mock import Mock
 
 import pytest
 from aiohttp import ClientResponse
-from meatie.aio.internal.adapter import ClientResponseAdapter
+from meatie.adapter import ClientResponseAdapter
 
 
 def test_to_json() -> None:

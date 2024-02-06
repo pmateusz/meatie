@@ -3,7 +3,7 @@
 from typing import Any, Optional
 
 import requests.exceptions
-from meatie.internal.error import (
+from meatie.error import (
     MeatieError,
     ProxyError,
     RequestError,
@@ -11,7 +11,7 @@ from meatie.internal.error import (
     Timeout,
     TransportError,
 )
-from meatie.internal.types import Request
+from meatie.types import Request
 from requests import Session
 from typing_extensions import Self
 

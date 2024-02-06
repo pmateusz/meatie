@@ -12,17 +12,15 @@ from typing import Any, Optional, Union
 
 import pytest
 from aiohttp import ClientSession
+from meatie import HOUR, Limiter, Rate
 from meatie.aio import (
-    HOUR,
     Cache,
-    Client,
     Limit,
-    Limiter,
     Private,
-    Rate,
-    Request,
     endpoint,
 )
+from meatie.types import Request
+from meatie_aiohttp import AiohttpClient
 
 pydantic = pytest.importorskip("pydantic", minversion="2.0.0")
 BaseModel: type = pydantic.BaseModel
@@ -83,7 +81,7 @@ def settings_fixture() -> Settings:
         pytest.skip("Failed to load settings")
 
 
-class Binance(Client):
+class Binance(AiohttpClient):
     def __init__(
         self,
         proxy: Optional[Union[AnyHttpUrl, str]] = None,

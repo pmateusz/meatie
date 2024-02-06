@@ -5,7 +5,9 @@ from typing import Any, cast
 
 import pytest
 from aiohttp import ClientSession
-from meatie.aio import INF, Cache, Client, endpoint
+from meatie import INF
+from meatie.aio import Cache, endpoint
+from meatie_aiohttp import AiohttpClient
 
 from tests.aio.conftest import MockTools
 
@@ -17,7 +19,7 @@ async def test_local_cache_is_isolated(mock_tools: MockTools) -> None:
     # GIVEN
     session = mock_tools.session_with_json_response(json=PRODUCTS)
 
-    class Store(Client):
+    class Store(AiohttpClient):
         def __init__(self) -> None:
             super().__init__(cast(ClientSession, session))
 
@@ -48,7 +50,7 @@ async def test_global_cache_is_shared(mock_tools: MockTools) -> None:
     # GIVEN
     session = mock_tools.session_with_json_response(json=PRODUCTS)
 
-    class Store(Client):
+    class Store(AiohttpClient):
         def __init__(self) -> None:
             super().__init__(session)
 

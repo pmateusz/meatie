@@ -1,8 +1,6 @@
-#  Copyright 2023 The Meatie Authors. All rights reserved.
+#  Copyright 2024 The Meatie Authors. All rights reserved.
 #  Use of this source code is governed by a BSD-style license that can be found in the LICENSE file.
-from typing import Optional, Union
-
-from meatie.internal.types import AsyncResponse, Response
+from typing import Any, Optional
 
 
 class MeatieError(Exception):
@@ -35,15 +33,13 @@ class RequestError(MeatieError):
 
 
 class ResponseError(MeatieError):
-    def __init__(
-        self, response: Union[Response, AsyncResponse], cause: Optional[BaseException] = None
-    ) -> None:
+    def __init__(self, response: Any, cause: Optional[BaseException] = None) -> None:
         super().__init__(cause)
 
         self.response = response
 
 
-class StatusError(ResponseError):
+class HttpStatusError(ResponseError):
     ...
 
 
@@ -51,7 +47,7 @@ class ParseResponseError(ResponseError):
     def __init__(
         self,
         text: str,
-        response: Union[Response, AsyncResponse],
+        response: Any,
         cause: Optional[BaseException] = None,
     ) -> None:
         super().__init__(response, cause)

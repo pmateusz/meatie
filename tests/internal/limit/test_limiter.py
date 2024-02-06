@@ -3,7 +3,7 @@
 
 import pytest
 from meatie.internal.limit import Limiter, Rate
-from meatie.internal.number import INF
+from meatie.internal.types import INF
 
 
 def test_inf_rate_limit_is_not_blocking() -> None:
