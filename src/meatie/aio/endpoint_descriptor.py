@@ -92,7 +92,7 @@ class AsyncContextImpl(Generic[ResponseBodyType]):
     def __init__(
         self,
         client: BaseAsyncClient,
-        operators: list[AsyncOperator[BaseAsyncClient, ResponseBodyType]],
+        operators: list[AsyncOperator[ResponseBodyType]],
         request: Request,
     ) -> None:
         self.client = client
