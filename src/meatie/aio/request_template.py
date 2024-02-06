@@ -14,7 +14,7 @@ from typing import (
     get_type_hints,
 )
 
-from typing_extensions import Awaitable, Self
+from typing_extensions import Awaitable, Self, Union
 
 from meatie import Method, Request
 from meatie.adapter import TypeAdapter
@@ -123,8 +123,8 @@ class RequestTemplate(Generic[RequestBodyType, ResponseBodyType]):
         self,
         template: PathTemplate,
         params: list[Parameter],
-        request_encoder: TypeAdapter[RequestBodyType],
-        response_decoder: TypeAdapter[ResponseBodyType],
+        request_encoder: Union[TypeAdapter[RequestBodyType], AsyncTypeAdapter[RequestBodyType]],
+        response_decoder: Union[TypeAdapter[ResponseBodyType], AsyncTypeAdapter[ResponseBodyType]],
         method: Optional[Method],
     ) -> None:
         self.method = method
@@ -237,8 +237,8 @@ class RequestTemplate(Generic[RequestBodyType, ResponseBodyType]):
         template: PathTemplate,
         params: Iterable[Parameter],
         signature: inspect.Signature,
-        request_encoder: TypeAdapter[RequestBodyType],
-        response_decoder: TypeAdapter[ResponseBodyType],
+        request_encoder: Union[TypeAdapter[RequestBodyType], AsyncTypeAdapter[RequestBodyType]],
+        response_decoder: Union[TypeAdapter[ResponseBodyType], AsyncTypeAdapter[ResponseBodyType]],
         method: Optional[Method],
     ) -> Self:
         template_str = str(template)
