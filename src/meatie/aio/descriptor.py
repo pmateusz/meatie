@@ -14,11 +14,41 @@ from typing import (
 from aiohttp import ClientResponse
 from typing_extensions import Self
 
-from meatie import AsyncOperator, Request, RequestTemplate
+from meatie import Request, RequestTemplate
 from meatie.aio import BaseAsyncClient
 from meatie.aio.adapter import AsyncTypeAdapter
 from meatie.internal.types import PT, ResponseBodyType
 from meatie.request_template import get_method
+
+AsyncOperator = Callable[["AsyncContext"[ResponseBodyType]], Awaitable[ResponseBodyType]]
+
+
+class AsyncContext(Generic[ResponseBodyType]):
+    def __init__(
+        self,
+        client: BaseAsyncClient,
+        operators: list[AsyncOperator[ResponseBodyType]],
+        request: Request,
+    ) -> None:
+        self.client = client
+        self.__operators = operators
+        self.__next_step = 0
+
+        self.request = request
+        self.response: Optional[ClientResponse] = None
+
+    async def proceed(self) -> ResponseBodyType:
+        if self.__next_step >= len(self.__operators):
+            raise RuntimeError("No more step to process request")
+
+        current_step = self.__next_step
+        self.__next_step += 1
+        current_operator = self.__operators[current_step]
+        try:
+            result = await current_operator(self)
+            return result
+        finally:
+            self.__next_step = current_step
 
 
 class AsyncEndpointDescriptor(Generic[PT, ResponseBodyType]):
@@ -63,34 +93,6 @@ class AsyncEndpointDescriptor(Generic[PT, ResponseBodyType]):
         )
 
 
-class AsyncContext(Generic[ResponseBodyType]):
-    def __init__(
-        self,
-        client: BaseAsyncClient,
-        operators: list[AsyncOperator[ResponseBodyType]],
-        request: Request,
-    ) -> None:
-        self.client = client
-        self.__operators = operators
-        self.__next_step = 0
-
-        self.request = request
-        self.response: Optional[ClientResponse] = None
-
-    async def proceed(self) -> ResponseBodyType:
-        if self.__next_step >= len(self.__operators):
-            raise RuntimeError("No more step to process request")
-
-        current_step = self.__next_step
-        self.__next_step += 1
-        current_operator = self.__operators[current_step]
-        try:
-            result = await current_operator(self)
-            return result
-        finally:
-            self.__next_step = current_step
-
-
 class BoundAsyncEndpointDescriptor(Generic[PT, ResponseBodyType]):
     def __init__(
         self,
@@ -101,7 +103,7 @@ class BoundAsyncEndpointDescriptor(Generic[PT, ResponseBodyType]):
     ) -> None:
         self.__instance = instance
         self.__operators = list(operators)
-        self.__operators.append(self.__send_request)  # type: ignore[arg-type]
+        self.__operators.append(self.__send_request)
         self.__template = template
         self.__response_decoder = response_decoder
 

@@ -6,8 +6,7 @@ import asyncio
 import time as sys_time
 from typing import Awaitable, Callable
 
-from meatie import AsyncContext
-from meatie.aio import AsyncEndpointDescriptor
+from meatie.aio import AsyncContext, AsyncEndpointDescriptor
 from meatie.internal.limit import Tokens
 from meatie.internal.types import PT, T
 

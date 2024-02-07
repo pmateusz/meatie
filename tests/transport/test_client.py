@@ -1,12 +1,11 @@
 #  Copyright 2024 The Meatie Authors. All rights reserved.
 #  Use of this source code is governed by a BSD-style license that can be found in the LICENSE file.
 import asyncio
-import contextlib
 import time
 from asyncio import AbstractEventLoop
 from http import HTTPStatus
 from json import JSONDecodeError
-from typing import Generator, Any, Callable
+from typing import Any, Callable, Generator
 
 import aiohttp
 import httpx
@@ -359,7 +358,9 @@ async def _create_client_session(*args: Any, **kwargs: Any) -> aiohttp.ClientSes
 
 
 @pytest.fixture(name="create_client_session")
-def create_client_session_fixture(event_loop: AbstractEventLoop) -> Callable[..., aiohttp.ClientSession]:
+def create_client_session_fixture(
+    event_loop: AbstractEventLoop,
+) -> Callable[..., aiohttp.ClientSession]:
     def create_client_session(*args: Any, **kwargs: Any) -> aiohttp.ClientSession:
         return event_loop.run_until_complete(_create_client_session(*args, **kwargs))
 
@@ -368,8 +369,11 @@ def create_client_session_fixture(event_loop: AbstractEventLoop) -> Callable[...
 
 class TestAiohttpDefaultSuite(DefaultSuite):
     @pytest.fixture(name="client")
-    def client_fixture(self, event_loop: asyncio.AbstractEventLoop, create_client_session) -> Generator[
-        ClientAdapter, None, None]:
+    def client_fixture(
+        self,
+        event_loop: asyncio.AbstractEventLoop,
+        create_client_session: Callable[..., aiohttp.ClientSession],
+    ) -> Generator[ClientAdapter, None, None]:
         with ClientAdapter(event_loop, AiohttpClient(create_client_session())) as client:
             yield client
 
@@ -390,8 +394,11 @@ class TestAiohttpDefaultSuite(DefaultSuite):
 
 class TestAiohttpTimeoutSuite(TimeoutSuite):
     @pytest.fixture(name="client")
-    def client_fixture(self, event_loop: asyncio.AbstractEventLoop, create_client_session) -> Generator[
-        ClientAdapter, None, None]:
+    def client_fixture(
+        self,
+        event_loop: asyncio.AbstractEventLoop,
+        create_client_session: Callable[..., aiohttp.ClientSession],
+    ) -> Generator[ClientAdapter, None, None]:
         with ClientAdapter(
             event_loop,
             AiohttpClient(create_client_session(timeout=aiohttp.ClientTimeout(total=0.005))),
@@ -400,10 +407,12 @@ class TestAiohttpTimeoutSuite(TimeoutSuite):
 
 
 class TestAiohttpProxyErrorSuite(ProxyErrorSuite):
-
     @pytest.fixture(name="client")
-    def client_fixture(self, event_loop: asyncio.AbstractEventLoop, create_client_session) -> Generator[
-        ClientAdapter, None, None]:
+    def client_fixture(
+        self,
+        event_loop: asyncio.AbstractEventLoop,
+        create_client_session: Callable[..., aiohttp.ClientSession],
+    ) -> Generator[ClientAdapter, None, None]:
         with ClientAdapter(
             event_loop,
             AiohttpClient(
@@ -426,6 +435,7 @@ class RaiseForStatusSuite:
 
         # THEN
         assert exc_info.value.cause is not None
+
 
 # TODO:
 # - can handle raise for status, figure our useful exceptions for retries

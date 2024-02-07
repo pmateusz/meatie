@@ -1,7 +1,7 @@
 #  Copyright 2024 The Meatie Authors. All rights reserved.
 #  Use of this source code is governed by a BSD-style license that can be found in the LICENSE file.
 from dataclasses import dataclass
-from typing import Any, Awaitable, Callable, Optional, Protocol, TypeVar, Union
+from typing import Any, Optional, Protocol, TypeVar, Union
 
 from typing_extensions import Literal, Self
 
@@ -71,9 +71,6 @@ class Context(Protocol[ClientType, ResponseBodyType]):
         ...
 
 
-Operator = Callable[[Context[ClientType, ResponseBodyType]], Awaitable[ResponseBodyType]]
-
-
 class AsyncResponse(Protocol):
     @property
     def status(self) -> int:
@@ -105,9 +102,12 @@ class AsyncClient(Protocol):
         ...
 
 
-class AsyncContext(Protocol[ResponseBodyType]):
+AsyncClientType = TypeVar("AsyncClientType", bound=AsyncClient, covariant=True)
+
+
+class AsyncContext(Protocol[AsyncClientType, ResponseBodyType]):
     @property
-    def client(self) -> AsyncClient:
+    def client(self) -> AsyncClientType:
         ...
 
     @property
@@ -120,6 +120,3 @@ class AsyncContext(Protocol[ResponseBodyType]):
 
     async def proceed(self) -> ResponseBodyType:
         ...
-
-
-AsyncOperator = Callable[[AsyncContext[ResponseBodyType]], Awaitable[ResponseBodyType]]

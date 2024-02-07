@@ -11,8 +11,8 @@ from typing import Awaitable, Callable, Optional
 
 import aiohttp
 
-from meatie import AsyncContext, AsyncResponse, RateLimitExceeded
-from meatie.aio import AsyncEndpointDescriptor
+from meatie import AsyncResponse, RateLimitExceeded
+from meatie.aio import AsyncContext, AsyncEndpointDescriptor
 from meatie.internal.types import PT, Duration, T
 
 

@@ -11,23 +11,24 @@ from typing import (
     overload,
 )
 
-from aiohttp import ClientResponse
 from typing_extensions import Self
 
-from meatie import AsyncOperator, Request, RequestTemplate
-from meatie.aio import BaseAsyncClient
-from meatie.aio.adapter import AsyncTypeAdapter
+import meatie.types
+from meatie import BaseClient, Request, RequestTemplate, Response
+from meatie.adapter import TypeAdapter
 from meatie.internal.types import PT, ResponseBodyType
 from meatie.request_template import get_method
 
+Operator = Callable[["Context"[ResponseBodyType]], ResponseBodyType]
 
-class AsyncEndpointDescriptor(Generic[PT, ResponseBodyType]):
+
+class EndpointDescriptor(Generic[PT, ResponseBodyType]):
     def __init__(
-        self, template: RequestTemplate[Any], response_decoder: AsyncTypeAdapter[ResponseBodyType]
+        self, template: RequestTemplate[Any], response_decoder: TypeAdapter[ResponseBodyType]
     ) -> None:
         self.template = template
         self.response_decoder = response_decoder
-        self.__operator_by_priority: dict[int, AsyncOperator[ResponseBodyType]] = {}
+        self.__operator_by_priority: dict[int, Operator[ResponseBodyType]] = {}
 
     def __set_name__(self, owner: type[object], name: str) -> None:
         if self.template.method is not None:
@@ -35,7 +36,7 @@ class AsyncEndpointDescriptor(Generic[PT, ResponseBodyType]):
 
         self.template.method = get_method(name)
 
-    def register_operator(self, priority: int, operator: AsyncOperator[ResponseBodyType]) -> None:
+    def register_operator(self, priority: int, operator: Operator[ResponseBodyType]) -> None:
         self.__operator_by_priority[priority] = operator
 
     @overload
@@ -44,12 +45,12 @@ class AsyncEndpointDescriptor(Generic[PT, ResponseBodyType]):
 
     @overload
     def __get__(
-        self, instance: BaseAsyncClient, owner: type[object]
+        self, instance: BaseClient, owner: type[object]
     ) -> Callable[PT, Awaitable[ResponseBodyType]]:
         ...
 
     def __get__(
-        self, instance: Optional[BaseAsyncClient], owner: Optional[type[object]] = None
+        self, instance: Optional[BaseClient], owner: Optional[type[object]] = None
     ) -> Union[Self, Callable[PT, Awaitable[ResponseBodyType]]]:
         if instance is None or owner is None:
             return self
@@ -58,26 +59,38 @@ class AsyncEndpointDescriptor(Generic[PT, ResponseBodyType]):
         priority_operator_pair.sort()
         operators = [operator for _, operator in priority_operator_pair]
 
-        return BoundAsyncEndpointDescriptor(  # type: ignore[return-value]
+        return BoundEndpointDescriptor(  # type: ignore[return-value]
             instance, operators, self.template, self.response_decoder
         )
 
 
-class AsyncContext(Generic[ResponseBodyType]):
+class Context(meatie.types.Context[BaseClient, ResponseBodyType]):
     def __init__(
         self,
-        client: BaseAsyncClient,
-        operators: list[AsyncOperator[ResponseBodyType]],
+        client: BaseClient,
+        operators: list[Operator[ResponseBodyType]],
         request: Request,
     ) -> None:
-        self.client = client
+        self.__client = client
         self.__operators = operators
         self.__next_step = 0
 
-        self.request = request
-        self.response: Optional[ClientResponse] = None
+        self.__request = request
+        self.__response: Optional[Response] = None
 
-    async def proceed(self) -> ResponseBodyType:
+    @property
+    def client(self) -> BaseClient:
+        return self.__client
+
+    @property
+    def request(self) -> Request:
+        return self.__request
+
+    @property
+    def response(self) -> Optional[Response]:
+        return self.__response
+
+    def proceed(self) -> ResponseBodyType:
         if self.__next_step >= len(self.__operators):
             raise RuntimeError("No more step to process request")
 
@@ -85,32 +98,32 @@ class AsyncContext(Generic[ResponseBodyType]):
         self.__next_step += 1
         current_operator = self.__operators[current_step]
         try:
-            result = await current_operator(self)
+            result = current_operator(self)
             return result
         finally:
             self.__next_step = current_step
 
 
-class BoundAsyncEndpointDescriptor(Generic[PT, ResponseBodyType]):
+class BoundEndpointDescriptor(Generic[PT, ResponseBodyType]):
     def __init__(
         self,
-        instance: BaseAsyncClient,
-        operators: Iterable[AsyncOperator[ResponseBodyType]],
+        instance: BaseClient,
+        operators: Iterable[Operator[ResponseBodyType]],
         template: RequestTemplate[Any],
-        response_decoder: AsyncTypeAdapter[ResponseBodyType],
+        response_decoder: TypeAdapter[ResponseBodyType],
     ) -> None:
         self.__instance = instance
         self.__operators = list(operators)
-        self.__operators.append(self.__send_request)  # type: ignore[arg-type]
+        self.__operators.append(self.__send_request)
         self.__template = template
         self.__response_decoder = response_decoder
 
-    async def __call__(self, *args: PT.args, **kwargs: PT.kwargs) -> ResponseBodyType:
+    def __call__(self, *args: PT.args, **kwargs: PT.kwargs) -> ResponseBodyType:
         request = self.__template.build_request(*args, **kwargs)
-        context = AsyncContext[ResponseBodyType](self.__instance, self.__operators, request)
-        return await context.proceed()
+        context = Context[ResponseBodyType](self.__instance, self.__operators, request)
+        return context.proceed()
 
-    async def __send_request(self, context: AsyncContext[ResponseBodyType]) -> ResponseBodyType:
-        response = await self.__instance.send(context.request)
-        context.response = response
-        return await self.__response_decoder.from_response(response)
+    def __send_request(self, context: Context[ResponseBodyType]) -> ResponseBodyType:
+        response = self.__instance.send(context.request)
+        context.__response = response
+        return self.__response_decoder.from_response(response)

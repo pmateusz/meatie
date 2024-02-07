@@ -5,8 +5,7 @@ import abc
 import urllib.parse
 from typing import Generic
 
-from meatie import AsyncContext, AsyncOperator
-from meatie.aio import AsyncEndpointDescriptor
+from meatie.aio import AsyncContext, AsyncEndpointDescriptor
 from meatie.internal import (
     CacheStore,
     Duration,
@@ -22,7 +21,7 @@ class CacheOption:
         self.shared = shared
 
     def __call__(self, descriptor: AsyncEndpointDescriptor[PT, T]) -> None:
-        operator: AsyncOperator[T]
+        operator: _Operator[T]
         if self.shared:
             operator = _SharedOperator[T](self.ttl)
         else:

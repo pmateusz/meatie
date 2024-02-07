@@ -10,12 +10,10 @@ from .types import (
     Response,
     Client,
     Context,
-    Operator,
     Method,
     AsyncClient,
     AsyncResponse,
     AsyncContext,
-    AsyncOperator,
 )
 from .error import (
     MeatieError,
@@ -29,6 +27,7 @@ from .error import (
     ResponseError,
     ParseResponseError,
 )
+from .client import BaseClient
 from .request_template import RequestTemplate, PathTemplate, ApiRef
 from .endpoint import endpoint
 
@@ -43,11 +42,9 @@ __all__ = [
     "Response",
     "Client",
     "Context",
-    "Operator",
     "AsyncClient",
     "AsyncResponse",
     "AsyncContext",
-    "AsyncOperator",
     "MeatieError",
     "RequestError",
     "RateLimitExceeded",
@@ -65,6 +62,7 @@ __all__ = [
     "RequestTemplate",
     "PathTemplate",
     "ApiRef",
+    "BaseClient",
     "endpoint",
 ]
 

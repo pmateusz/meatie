@@ -4,7 +4,7 @@
 # isort:skip_file
 
 from .client import BaseAsyncClient
-from .descriptor import AsyncEndpointDescriptor
+from .descriptor import AsyncEndpointDescriptor, AsyncContext
 from .option import (
     Cache,
     Limit,
@@ -23,6 +23,7 @@ from .option import (
 __all__ = [
     "BaseAsyncClient",
     "AsyncEndpointDescriptor",
+    "AsyncContext",
     "Cache",
     "Limit",
     "Retry",
