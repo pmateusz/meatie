@@ -10,8 +10,8 @@ from typing import (
 
 from meatie import Method, PathTemplate, RequestTemplate
 from meatie.aio import EndpointDescriptor
-from meatie.aio.adapter import get_async_adapter
-from meatie.internal import PT, T
+from meatie.adapter.aio import get_async_adapter
+from meatie.internal.types import PT, T
 
 
 def endpoint(

@@ -72,3 +72,57 @@ class Context(Protocol[ClientType, ResponseBodyType]):
 
 
 Operator = Callable[[Context[ClientType, ResponseBodyType]], Awaitable[ResponseBodyType]]
+
+
+class AsyncClient(Protocol):
+    async def send(self, request: Request) -> Response:
+        ...
+
+    async def __aenter__(self) -> Self:
+        ...
+
+    async def __aexit__(
+        self,
+        exc_type: Optional[type[BaseException]],
+        exc_val: Optional[BaseException],
+        exc_tb: Any,
+    ) -> None:
+        ...
+
+
+AsyncClientType = TypeVar("AsyncClientType", bound=AsyncClient, covariant=True)
+
+
+class AsyncResponse(Protocol):
+    @property
+    def status(self) -> int:
+        ...
+
+    async def read(self) -> bytes:
+        ...
+
+    async def text(self, encoding: Optional[str] = None) -> str:
+        ...
+
+    async def json(self, *args: Any, **kwargs: Any) -> dict[str, Any]:
+        ...
+
+
+class AsyncContext(Protocol[ResponseBodyType]):
+    @property
+    def client(self) -> AsyncClientType:
+        ...
+
+    @property
+    def request(self) -> Request:
+        ...
+
+    @property
+    def response(self) -> Optional[AsyncResponse]:
+        ...
+
+    async def proceed(self) -> ResponseBodyType:
+        ...
+
+
+AsyncOperator = Callable[[AsyncContext[ResponseBodyType]], Awaitable[ResponseBodyType]]

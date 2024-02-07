@@ -2,10 +2,9 @@
 #  Use of this source code is governed by a BSD-style license that can be found in the LICENSE file.
 from abc import abstractmethod
 from contextlib import AbstractAsyncContextManager
-from typing import Any, Optional, TypeVar
+from typing import Any, Optional
 
-from meatie import Request
-from meatie.internal import INF, CacheStore, Limiter, Rate
+from meatie import Request, INF, CacheStore, Limiter, Rate
 
 
 class BaseAsyncClient(AbstractAsyncContextManager):  # type: ignore[type-arg]
@@ -28,6 +27,3 @@ class BaseAsyncClient(AbstractAsyncContextManager):  # type: ignore[type-arg]
     @abstractmethod
     async def send(self, request: Request) -> Any:
         ...
-
-
-AsyncClientType = TypeVar("AsyncClientType", bound=BaseAsyncClient)

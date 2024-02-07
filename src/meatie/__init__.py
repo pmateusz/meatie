@@ -5,7 +5,8 @@
 import importlib.metadata
 from .internal.types import Duration, Time, INF, MINUTE, HOUR, DAY
 from .internal import CacheStore, Limiter, Rate
-from .types import Request, Response, Client, Context, Operator, Method
+from .types import Request, Response, Client, Context, Operator, Method, AsyncClient, AsyncResponse, AsyncContext, \
+    AsyncOperator
 from .error import (
     MeatieError,
     RequestError,
@@ -32,6 +33,10 @@ __all__ = [
     "Client",
     "Context",
     "Operator",
+    "AsyncClient",
+    "AsyncResponse",
+    "AsyncContext",
+    "AsyncOperator",
     "MeatieError",
     "RequestError",
     "RateLimitExceeded",

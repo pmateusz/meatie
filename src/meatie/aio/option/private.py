@@ -2,8 +2,8 @@
 #  Use of this source code is governed by a BSD-style license that can be found in the LICENSE file.
 
 
-from meatie.aio.endpoint_descriptor import EndpointDescriptor
-from meatie.aio.types import AsyncContext
+from meatie import AsyncContext
+from meatie.aio import EndpointDescriptor
 from meatie.internal.types import PT, T
 
 

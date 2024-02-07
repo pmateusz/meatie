@@ -2,7 +2,7 @@
 #  Use of this source code is governed by a BSD-style license that can be found in the LICENSE file.
 from typing import NoReturn
 
-from meatie.types import Response
+from meatie import Response
 
 
 class _ClientResponseAdapter:

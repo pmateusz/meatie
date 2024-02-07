@@ -1,7 +1,6 @@
 #  Copyright 2024 The Meatie Authors. All rights reserved.
 #  Use of this source code is governed by a BSD-style license that can be found in the LICENSE file.
-from meatie.aio import AsyncResponse
-from meatie.error import ResponseError
+from meatie import ResponseError, AsyncResponse
 
 
 class _StringAdapter:

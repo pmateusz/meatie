@@ -16,12 +16,9 @@ from typing import (
 from aiohttp import ClientResponse
 from typing_extensions import Self
 
-from meatie import Method, Request, RequestTemplate
-from meatie.aio import (
-    AsyncOperator,
-    BaseAsyncClient,
-)
-from meatie.aio.adapter import AsyncTypeAdapter
+from meatie import Method, Request, RequestTemplate, AsyncOperator
+from meatie.adapter.aio import AsyncTypeAdapter
+from meatie.aio import BaseAsyncClient
 from meatie.internal.types import PT, ResponseBodyType
 
 
@@ -84,7 +81,7 @@ def _get_method_opt(name: str) -> Optional[Method]:
     return None
 
 
-class AsyncContextImpl(Generic[ResponseBodyType]):
+class AsyncContext(Generic[ResponseBodyType]):
     def __init__(
         self,
         client: BaseAsyncClient,
@@ -128,10 +125,10 @@ class BoundEndpointDescriptor(Generic[PT, ResponseBodyType]):
 
     async def __call__(self, *args: PT.args, **kwargs: PT.kwargs) -> ResponseBodyType:
         request = self.__template.build_request(*args, **kwargs)
-        context = AsyncContextImpl[ResponseBodyType](self.__instance, self.__operators, request)
+        context = AsyncContext[ResponseBodyType](self.__instance, self.__operators, request)
         return await context.proceed()
 
-    async def __make_request(self, context: AsyncContextImpl[ResponseBodyType]) -> ResponseBodyType:
+    async def __make_request(self, context: AsyncContext[ResponseBodyType]) -> ResponseBodyType:
         response = await self.__instance.send(context.request)
         context.response = response
         return await self.__response_decoder.from_response(response)

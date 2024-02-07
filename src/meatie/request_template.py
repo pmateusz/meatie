@@ -17,7 +17,7 @@ from typing_extensions import Self, Union
 
 from meatie import Method, Request
 from meatie.adapter import TypeAdapter, get_adapter
-from meatie.aio.adapter import AsyncJsonAdapter, AsyncTypeAdapter
+from meatie.adapter.aio import AsyncJsonAdapter, AsyncTypeAdapter
 from meatie.internal import RequestBodyType
 
 
@@ -201,6 +201,9 @@ class RequestTemplate(Generic[RequestBodyType]):
         parameters = []
         request_encoder: TypeAdapter[Any] = AsyncJsonAdapter
         for param_name in type_hints:
+            if param_name == "return":
+                continue
+
             param_type = type_hints[param_name]
             sig_param = signature.parameters[param_name]
             api_ref = ApiRef.from_signature(sig_param)

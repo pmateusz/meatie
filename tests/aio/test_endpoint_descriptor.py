@@ -2,17 +2,16 @@
 #  Use of this source code is governed by a BSD-style license that can be found in the LICENSE file.
 
 from typing import Any, Optional
-from unittest.mock import Mock
+from unittest.mock import Mock, ANY
 
 import pytest
+from meatie import Request, RequestTemplate
 from meatie.aio import (
     BaseAsyncClient,
     EndpointDescriptor,
-    RequestTemplate,
     endpoint,
 )
-from meatie.aio.endpoint_descriptor import AsyncContextImpl
-from meatie.types import Request
+from meatie.aio.endpoint_descriptor import AsyncContext
 from meatie_aiohttp import AiohttpClient
 
 from tests.aio.conftest import MockTools
@@ -152,7 +151,7 @@ async def test_get_with_send_optional_parameter(mock_tools: MockTools) -> None:
 def test_falls_back_to_get_if_method_name_cannot_be_inferred() -> None:
     # GIVEN
     template = Mock(spec=RequestTemplate, method=None)
-    descriptor = EndpointDescriptor[Any, Any](template)
+    descriptor = EndpointDescriptor[Any, Any](template, ANY)
 
     # WHEN
     descriptor.__set_name__(object, "list_products")
@@ -166,7 +165,7 @@ async def test_context_without_operators_fails_on_proceed() -> None:
     # GIVEN
     client = Mock(spec=BaseAsyncClient)
     request = Mock(spec=Request)
-    context = AsyncContextImpl[list[Any]](client, [], request)
+    context = AsyncContext[list[Any]](client, [], request)
 
     # WHEN
     with pytest.raises(RuntimeError) as exc_info:

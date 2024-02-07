@@ -4,8 +4,8 @@
 import abc
 import urllib.parse
 from typing import Generic
-
-from meatie.aio import AsyncContext, AsyncOperator, EndpointDescriptor
+from meatie import AsyncContext, AsyncOperator
+from meatie.aio import EndpointDescriptor
 from meatie.internal import (
     CacheStore,
     Duration,
