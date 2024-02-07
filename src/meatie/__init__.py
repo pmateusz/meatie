@@ -18,6 +18,7 @@ from .error import (
     ResponseError,
     ParseResponseError,
 )
+from .request_template import RequestTemplate, PathTemplate, ApiRef
 
 __all__ = [
     "Duration",
@@ -45,6 +46,9 @@ __all__ = [
     "CacheStore",
     "Limiter",
     "Rate",
+    "RequestTemplate",
+    "PathTemplate",
+    "ApiRef",
 ]
 
 __version__ = importlib.metadata.version("meatie")

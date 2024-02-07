@@ -4,22 +4,21 @@
 import inspect
 import re
 from enum import Enum
+from types import GenericAlias
 from typing import (
     Any,
-    Callable,
     Generic,
     Iterable,
     Optional,
     get_args,
-    get_type_hints,
 )
 
-from typing_extensions import Awaitable, Self, Union
+from typing_extensions import Self, Union
 
 from meatie import Method, Request
-from meatie.adapter import TypeAdapter
-from meatie.aio.adapter import AsyncJsonAdapter, AsyncTypeAdapter, get_async_adapter
-from meatie.internal import PT, RequestBodyType, ResponseBodyType
+from meatie.adapter import TypeAdapter, get_adapter
+from meatie.aio.adapter import AsyncJsonAdapter, AsyncTypeAdapter
+from meatie.internal import RequestBodyType
 
 
 class Kind(Enum):
@@ -109,13 +108,12 @@ class PathTemplate:
         return cls(template, parameters)
 
 
-class RequestTemplate(Generic[RequestBodyType, ResponseBodyType]):
+class RequestTemplate(Generic[RequestBodyType]):
     __slots__ = (
         "method",
         "template",
         "params",
         "request_encoder",
-        "response_decoder",
         "__param_by_name",
     )
 
@@ -123,15 +121,13 @@ class RequestTemplate(Generic[RequestBodyType, ResponseBodyType]):
         self,
         template: PathTemplate,
         params: list[Parameter],
-        request_encoder: Union[TypeAdapter[RequestBodyType], AsyncTypeAdapter[RequestBodyType]],
-        response_decoder: Union[TypeAdapter[ResponseBodyType], AsyncTypeAdapter[ResponseBodyType]],
+        request_encoder: TypeAdapter[RequestBodyType],
         method: Optional[Method],
     ) -> None:
         self.method = method
         self.template = template
         self.params = params
         self.request_encoder = request_encoder
-        self.response_decoder = response_decoder
 
         self.__param_by_name: dict[str, Parameter] = {}
         for param in self.params:
@@ -183,41 +179,35 @@ class RequestTemplate(Generic[RequestBodyType, ResponseBodyType]):
 
             raise NotImplementedError(f"Kind {param.kind} is not supported")  # pragma: no cover
 
+        path = self.template.format(**path_kwargs)
+
         if body_value is not None:
             body_json = self.request_encoder.to_json(body_value)
         else:
             body_json = None
 
-        path = self.template.format(**path_kwargs)
         return Request(
             method=self.method, path=path, query_params=query_kwargs, headers={}, json=body_json
         )
 
     @classmethod
-    def from_callable(
+    def from_signature(
         cls,
-        func: Callable[PT, Awaitable[RequestBodyType]],
+        signature: inspect.Signature,
+        type_hints: dict[str, Union[type, GenericAlias, None]],
         template: PathTemplate,
         method: Optional[Method],
     ) -> Self:
-        signature = inspect.signature(func)
-        type_by_param_name = get_type_hints(func)
-
         parameters = []
-        request_encoder: AsyncTypeAdapter[Any] = AsyncJsonAdapter
-        response_decoder: AsyncTypeAdapter[ResponseBodyType] = AsyncJsonAdapter
-        for param_name in type_by_param_name:
-            param_type = type_by_param_name[param_name]
-            if param_name == "return":
-                response_decoder = get_async_adapter(param_type)
-                continue
-
+        request_encoder: TypeAdapter[Any] = AsyncJsonAdapter
+        for param_name in type_hints:
+            param_type = type_hints[param_name]
             sig_param = signature.parameters[param_name]
             api_ref = ApiRef.from_signature(sig_param)
             kind = Kind.QUERY
             if api_ref.name == "body":
                 kind = Kind.BODY
-                request_encoder = get_async_adapter(param_type)
+                request_encoder = get_adapter(param_type)
             elif api_ref.name in template:
                 kind = Kind.PATH
 
@@ -228,7 +218,7 @@ class RequestTemplate(Generic[RequestBodyType, ResponseBodyType]):
             parameters.append(parameter)
 
         return cls.validate_object(
-            template, parameters, signature, request_encoder, response_decoder, method
+            template, parameters, signature, request_encoder, method
         )
 
     @classmethod
@@ -238,7 +228,6 @@ class RequestTemplate(Generic[RequestBodyType, ResponseBodyType]):
         params: Iterable[Parameter],
         signature: inspect.Signature,
         request_encoder: Union[TypeAdapter[RequestBodyType], AsyncTypeAdapter[RequestBodyType]],
-        response_decoder: Union[TypeAdapter[ResponseBodyType], AsyncTypeAdapter[ResponseBodyType]],
         method: Optional[Method],
     ) -> Self:
         template_str = str(template)
@@ -269,4 +258,4 @@ class RequestTemplate(Generic[RequestBodyType, ResponseBodyType]):
                 f"Parameter '{api_ref}' is not present in the method signature '{signature}'"
             )
 
-        return cls(template, list(params), request_encoder, response_decoder, method)
+        return cls(template, list(params), request_encoder, method)

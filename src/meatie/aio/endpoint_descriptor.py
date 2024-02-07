@@ -16,24 +16,20 @@ from typing import (
 from aiohttp import ClientResponse
 from typing_extensions import Self
 
-from meatie import Method, Request
+from meatie import Method, Request, RequestTemplate
 from meatie.aio import (
     AsyncOperator,
     BaseAsyncClient,
-    RequestTemplate,
 )
+from meatie.aio.adapter import AsyncTypeAdapter
 from meatie.internal.types import PT, ResponseBodyType
 
 
 class EndpointDescriptor(Generic[PT, ResponseBodyType]):
-    __slots__ = (
-        "template",
-        "__content_decoder",
-        "__operator_by_priority",
-    )
 
-    def __init__(self, template: RequestTemplate[Any, ResponseBodyType]) -> None:
+    def __init__(self, template: RequestTemplate[Any], response_decoder: AsyncTypeAdapter[ResponseBodyType]) -> None:
         self.template = template
+        self.response_decoder = response_decoder
         self.__operator_by_priority: dict[int, AsyncOperator[ResponseBodyType]] = {}
 
     def __set_name__(self, owner: type[object], name: str) -> None:
@@ -72,7 +68,7 @@ class EndpointDescriptor(Generic[PT, ResponseBodyType]):
         operators = [operator for _, operator in priority_operator_pair]
 
         return BoundEndpointDescriptor(  # type: ignore[return-value]
-            instance, operators, self.template
+            instance, operators, self.template, self.response_decoder
         )
 
 
@@ -121,12 +117,14 @@ class BoundEndpointDescriptor(Generic[PT, ResponseBodyType]):
         self,
         instance: BaseAsyncClient,
         operators: Iterable[AsyncOperator[ResponseBodyType]],
-        template: RequestTemplate[Any, ResponseBodyType],
+        template: RequestTemplate[Any],
+        response_decoder: AsyncTypeAdapter[ResponseBodyType],
     ) -> None:
         self.__instance = instance
         self.__operators = list(operators)
         self.__operators.append(self.__make_request)  # type: ignore[arg-type]
         self.__template = template
+        self.__response_decoder = response_decoder
 
     async def __call__(self, *args: PT.args, **kwargs: PT.kwargs) -> ResponseBodyType:
         request = self.__template.build_request(*args, **kwargs)
@@ -136,4 +134,4 @@ class BoundEndpointDescriptor(Generic[PT, ResponseBodyType]):
     async def __make_request(self, context: AsyncContextImpl[ResponseBodyType]) -> ResponseBodyType:
         response = await self.__instance.send(context.request)
         context.response = response
-        return await self.__template.response_decoder.from_response(response)
+        return await self.__response_decoder.from_response(response)

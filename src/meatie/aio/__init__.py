@@ -5,7 +5,6 @@
 
 from .client import BaseAsyncClient, AsyncClientType
 from .types import AsyncContext, AsyncOperator, AsyncResponse, ResponseAdapter, ClientAdapter
-from .request_template import RequestTemplate, ApiRef, PathTemplate
 from .endpoint_descriptor import EndpointDescriptor
 from .endpoint import endpoint
 from .option import (
@@ -31,9 +30,6 @@ __all__ = [
     "AsyncResponse",
     "ResponseAdapter",
     "ClientAdapter",
-    "ApiRef",
-    "RequestTemplate",
-    "PathTemplate",
     "EndpointDescriptor",
     "Cache",
     "Limit",
