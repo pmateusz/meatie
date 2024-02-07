@@ -7,7 +7,7 @@ import time as sys_time
 from typing import Awaitable, Callable
 
 from meatie import AsyncContext
-from meatie.aio import EndpointDescriptor
+from meatie.aio import AsyncEndpointDescriptor
 from meatie.internal.limit import Tokens
 from meatie.internal.types import PT, T
 
@@ -21,7 +21,7 @@ class LimitOption:
         self.tokens = tokens
         self.sleep_func = sleep_func
 
-    def __call__(self, descriptor: EndpointDescriptor[PT, T]) -> None:
+    def __call__(self, descriptor: AsyncEndpointDescriptor[PT, T]) -> None:
         if self.tokens > 0.0:
             descriptor.register_operator(LimitOption.__PRIORITY, self.__operator)
 

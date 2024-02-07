@@ -9,7 +9,7 @@ import pydantic
 import pydantic.json
 from typing_extensions import is_typeddict
 
-from meatie import ParseResponseError, AsyncResponse
+from meatie import AsyncResponse, ParseResponseError
 from meatie.internal.types import T
 
 from . import AsyncJsonAdapter, AsyncTypeAdapter

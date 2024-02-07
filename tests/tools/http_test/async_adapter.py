@@ -1,36 +1,10 @@
-#  Copyright 2023 The Meatie Authors. All rights reserved.
+#  Copyright 2024 The Meatie Authors. All rights reserved.
 #  Use of this source code is governed by a BSD-style license that can be found in the LICENSE file.
-from abc import abstractmethod
 from asyncio import AbstractEventLoop
-from contextlib import AbstractAsyncContextManager
 from typing import Any, Optional
 
+from meatie import AsyncClient, AsyncResponse, Request
 from typing_extensions import Self
-
-from meatie import Request, INF, CacheStore, Limiter, Rate, AsyncResponse
-from meatie.types import AsyncClientType
-
-
-class BaseAsyncClient(AbstractAsyncContextManager):  # type: ignore[type-arg]
-    shared_cache: CacheStore
-
-    def __init__(
-        self,
-        local_cache: Optional[CacheStore] = None,
-        limiter: Optional[Limiter] = None,
-    ):
-        self.local_cache = local_cache if local_cache is not None else CacheStore()
-        self.limiter = limiter if limiter is not None else Limiter(Rate.max, INF)
-
-    def __init_subclass__(cls, **kwargs: Any) -> None:
-        cls.shared_cache = CacheStore()
-
-    async def authenticate(self, request: Request) -> None:
-        pass
-
-    @abstractmethod
-    async def send(self, request: Request) -> Any:
-        ...
 
 
 class ResponseAdapter:
@@ -53,7 +27,7 @@ class ResponseAdapter:
 
 
 class ClientAdapter:
-    def __init__(self, loop: AbstractEventLoop, client: AsyncClientType) -> None:
+    def __init__(self, loop: AbstractEventLoop, client: AsyncClient) -> None:
         self.loop = loop
         self.client = client
 

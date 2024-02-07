@@ -3,7 +3,7 @@
 from json.decoder import JSONDecodeError
 from typing import Any, Literal, Optional
 
-from aiohttp import ClientResponse
+from aiohttp import ClientResponse, ContentTypeError
 from meatie.error import ParseResponseError, ResponseError
 
 
@@ -36,8 +36,14 @@ class AiohttpResponse:
         try:
             return await self.response.json()
         except JSONDecodeError as exc:
-            try:
-                text = await self.response.text()
-            except Exception as inner_exc:
-                raise ResponseError(self, inner_exc) from inner_exc
+            text = await self._text()
             raise ParseResponseError(text, self, exc) from exc
+        except ContentTypeError as exc:
+            text = await self._text()
+            raise ParseResponseError(text, exc) from exc
+
+    async def _text(self) -> str:
+        try:
+            return await self.response.text()
+        except Exception as inner_exc:
+            raise ResponseError(self, inner_exc) from inner_exc

@@ -4,9 +4,8 @@ import asyncio
 from typing import Any, Optional
 
 import aiohttp
-from meatie import CacheStore
+from meatie import AsyncResponse, CacheStore
 from meatie.aio import BaseAsyncClient
-from meatie.aio.types import AsyncResponse
 from meatie.error import (
     MeatieError,
     ProxyError,

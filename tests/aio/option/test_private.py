@@ -6,7 +6,8 @@ from unittest.mock import patch
 
 import pytest
 from aiohttp import ClientSession
-from meatie.aio import Private, endpoint
+from meatie import endpoint
+from meatie.aio import Private
 from meatie_aiohttp import AiohttpClient
 
 from tests.aio.conftest import MockTools

@@ -5,8 +5,8 @@ from http.server import BaseHTTPRequestHandler
 
 import pytest
 from http_test import HTTPTestServer
+from meatie import endpoint
 from meatie.adapter import BytesAdapter
-from meatie.aio import endpoint
 from meatie_aiohttp import AiohttpClient
 
 SAMPLE_BYTES = b"Hello, world!"

@@ -1,16 +1,17 @@
-#  Copyright 2023 The Meatie Authors. All rights reserved.
+#  Copyright 2024 The Meatie Authors. All rights reserved.
 #  Use of this source code is governed by a BSD-style license that can be found in the LICENSE file.
 import inspect
 from collections.abc import Callable
 from typing import (
     Any,
     Awaitable,
-    Optional, get_type_hints,
+    Optional,
+    get_type_hints,
 )
 
 from meatie import Method, PathTemplate, RequestTemplate
-from meatie.aio import EndpointDescriptor
-from meatie.adapter.aio import get_async_adapter
+from meatie.aio import AsyncEndpointDescriptor
+from meatie.aio.adapter import AsyncTypeAdapter, get_async_adapter
 from meatie.internal.types import PT, T
 
 
@@ -27,13 +28,13 @@ def endpoint(
         # TODO: decide if method should be async or not
         signature = inspect.signature(func)
         type_hints = get_type_hints(func)
-        request_template: RequestTemplate[Any, T] = RequestTemplate.from_signature(
+        request_template: RequestTemplate[T] = RequestTemplate.from_signature(
             signature, type_hints, path_template, method
         )
 
         return_type = type_hints["return"]
-        response_decoder = get_async_adapter(return_type)
-        descriptor = EndpointDescriptor[PT, T](request_template, response_decoder)
+        response_decoder: AsyncTypeAdapter[T] = get_async_adapter(return_type)
+        descriptor = AsyncEndpointDescriptor[PT, T](request_template, response_decoder)
 
         for option in args:
             option(descriptor)

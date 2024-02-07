@@ -10,16 +10,14 @@ from unittest.mock import AsyncMock, Mock, call, patch
 
 import pytest
 from aiohttp import ClientSession
-from meatie import MINUTE, Limiter, Rate
+from meatie import MINUTE, ApiRef, Limiter, Rate, endpoint
 from meatie.aio import (
-    ApiRef,
     Cache,
     Limit,
     Private,
     Retry,
     RetryOnTooManyRequestsStatus,
     WaitExponential,
-    endpoint,
 )
 from meatie.types import Request
 from meatie_aiohttp import AiohttpClient

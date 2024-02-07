@@ -140,7 +140,7 @@ class HTTPTestServer:
         self.server = server
 
         thread = Thread(target=_serve_forever, args=(self.server,))
-        thread.setDaemon(True)
+        thread.daemon = True
         self.tread = thread
         self.tread.start()
 

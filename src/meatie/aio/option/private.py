@@ -3,14 +3,14 @@
 
 
 from meatie import AsyncContext
-from meatie.aio import EndpointDescriptor
+from meatie.aio import AsyncEndpointDescriptor
 from meatie.internal.types import PT, T
 
 
 class PrivateOption:
     __PRIORITY = 50
 
-    def __call__(self, descriptor: EndpointDescriptor[PT, T]) -> None:
+    def __call__(self, descriptor: AsyncEndpointDescriptor[PT, T]) -> None:
         descriptor.register_operator(PrivateOption.__PRIORITY, PrivateOption.__operator)
 
     @staticmethod

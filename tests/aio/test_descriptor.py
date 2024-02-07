@@ -2,16 +2,12 @@
 #  Use of this source code is governed by a BSD-style license that can be found in the LICENSE file.
 
 from typing import Any, Optional
-from unittest.mock import Mock, ANY
+from unittest.mock import ANY, Mock
 
 import pytest
-from meatie import Request, RequestTemplate
-from meatie.aio import (
-    BaseAsyncClient,
-    EndpointDescriptor,
-    endpoint,
-)
-from meatie.aio.endpoint_descriptor import AsyncContext
+from meatie import AsyncClient, Request, RequestTemplate, endpoint
+from meatie.aio import AsyncEndpointDescriptor
+from meatie.aio.descriptor import AsyncContext
 from meatie_aiohttp import AiohttpClient
 
 from tests.aio.conftest import MockTools
@@ -151,7 +147,7 @@ async def test_get_with_send_optional_parameter(mock_tools: MockTools) -> None:
 def test_falls_back_to_get_if_method_name_cannot_be_inferred() -> None:
     # GIVEN
     template = Mock(spec=RequestTemplate, method=None)
-    descriptor = EndpointDescriptor[Any, Any](template, ANY)
+    descriptor = AsyncEndpointDescriptor[Any, Any](template, ANY)
 
     # WHEN
     descriptor.__set_name__(object, "list_products")
@@ -163,7 +159,7 @@ def test_falls_back_to_get_if_method_name_cannot_be_inferred() -> None:
 @pytest.mark.asyncio()
 async def test_context_without_operators_fails_on_proceed() -> None:
     # GIVEN
-    client = Mock(spec=BaseAsyncClient)
+    client = Mock(spec=AsyncClient)
     request = Mock(spec=Request)
     context = AsyncContext[list[Any]](client, [], request)
 

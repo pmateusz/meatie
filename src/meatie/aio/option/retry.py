@@ -12,7 +12,7 @@ from typing import Awaitable, Callable, Optional
 import aiohttp
 
 from meatie import AsyncContext, AsyncResponse, RateLimitExceeded
-from meatie.aio import EndpointDescriptor
+from meatie.aio import AsyncEndpointDescriptor
 from meatie.internal.types import PT, Duration, T
 
 
@@ -129,7 +129,7 @@ class RetryOption:
         self.__stop = stop
         self.__sleep_func = sleep_func
 
-    def __call__(self, descriptor: EndpointDescriptor[PT, T]) -> None:
+    def __call__(self, descriptor: AsyncEndpointDescriptor[PT, T]) -> None:
         descriptor.register_operator(RetryOption.__PRIORITY, self.__operator)
 
     async def __operator(self, operation_ctx: AsyncContext[T]) -> T:

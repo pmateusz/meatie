@@ -5,8 +5,18 @@
 import importlib.metadata
 from .internal.types import Duration, Time, INF, MINUTE, HOUR, DAY
 from .internal import CacheStore, Limiter, Rate
-from .types import Request, Response, Client, Context, Operator, Method, AsyncClient, AsyncResponse, AsyncContext, \
-    AsyncOperator
+from .types import (
+    Request,
+    Response,
+    Client,
+    Context,
+    Operator,
+    Method,
+    AsyncClient,
+    AsyncResponse,
+    AsyncContext,
+    AsyncOperator,
+)
 from .error import (
     MeatieError,
     RequestError,
@@ -20,6 +30,7 @@ from .error import (
     ParseResponseError,
 )
 from .request_template import RequestTemplate, PathTemplate, ApiRef
+from .endpoint import endpoint
 
 __all__ = [
     "Duration",
@@ -54,6 +65,7 @@ __all__ = [
     "RequestTemplate",
     "PathTemplate",
     "ApiRef",
+    "endpoint",
 ]
 
 __version__ = importlib.metadata.version("meatie")

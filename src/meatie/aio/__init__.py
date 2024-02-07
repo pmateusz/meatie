@@ -3,10 +3,8 @@
 
 # isort:skip_file
 
-from .types import ResponseAdapter, ClientAdapter
 from .client import BaseAsyncClient
-from .endpoint_descriptor import EndpointDescriptor
-from .endpoint import endpoint
+from .descriptor import AsyncEndpointDescriptor
 from .option import (
     Cache,
     Limit,
@@ -24,9 +22,7 @@ from .option import (
 
 __all__ = [
     "BaseAsyncClient",
-    "ResponseAdapter",
-    "ClientAdapter",
-    "EndpointDescriptor",
+    "AsyncEndpointDescriptor",
     "Cache",
     "Limit",
     "Retry",
@@ -39,5 +35,4 @@ __all__ = [
     "RetryOnExceptionType",
     "StopAfter",
     "Private",
-    "endpoint",
 ]

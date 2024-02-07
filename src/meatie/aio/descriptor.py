@@ -1,6 +1,5 @@
 #  Copyright 2024 The Meatie Authors. All rights reserved.
 #  Use of this source code is governed by a BSD-style license that can be found in the LICENSE file.
-import re
 from typing import (
     Any,
     Awaitable,
@@ -9,22 +8,23 @@ from typing import (
     Iterable,
     Optional,
     Union,
-    get_args,
     overload,
 )
 
 from aiohttp import ClientResponse
 from typing_extensions import Self
 
-from meatie import Method, Request, RequestTemplate, AsyncOperator
-from meatie.adapter.aio import AsyncTypeAdapter
+from meatie import AsyncOperator, Request, RequestTemplate
 from meatie.aio import BaseAsyncClient
+from meatie.aio.adapter import AsyncTypeAdapter
 from meatie.internal.types import PT, ResponseBodyType
+from meatie.request_template import get_method
 
 
-class EndpointDescriptor(Generic[PT, ResponseBodyType]):
-
-    def __init__(self, template: RequestTemplate[Any], response_decoder: AsyncTypeAdapter[ResponseBodyType]) -> None:
+class AsyncEndpointDescriptor(Generic[PT, ResponseBodyType]):
+    def __init__(
+        self, template: RequestTemplate[Any], response_decoder: AsyncTypeAdapter[ResponseBodyType]
+    ) -> None:
         self.template = template
         self.response_decoder = response_decoder
         self.__operator_by_priority: dict[int, AsyncOperator[ResponseBodyType]] = {}
@@ -33,13 +33,7 @@ class EndpointDescriptor(Generic[PT, ResponseBodyType]):
         if self.template.method is not None:
             return
 
-        method_opt = _get_method_opt(name)
-        if method_opt is None:
-            # Python interactions with class descriptors doesn't allow to return an error message to the user,
-            # we assume the GET method
-            method_opt = "GET"
-
-        self.template.method = method_opt
+        self.template.method = get_method(name)
 
     def register_operator(self, priority: int, operator: AsyncOperator[ResponseBodyType]) -> None:
         self.__operator_by_priority[priority] = operator
@@ -64,21 +58,9 @@ class EndpointDescriptor(Generic[PT, ResponseBodyType]):
         priority_operator_pair.sort()
         operators = [operator for _, operator in priority_operator_pair]
 
-        return BoundEndpointDescriptor(  # type: ignore[return-value]
+        return BoundAsyncEndpointDescriptor(  # type: ignore[return-value]
             instance, operators, self.template, self.response_decoder
         )
-
-
-_method_pattern_pairs = [
-    (method, re.compile("^" + method, re.IGNORECASE)) for method in get_args(Method)
-]
-
-
-def _get_method_opt(name: str) -> Optional[Method]:
-    for method, pattern in _method_pattern_pairs:
-        if re.match(pattern, name):
-            return method
-    return None
 
 
 class AsyncContext(Generic[ResponseBodyType]):
@@ -109,7 +91,7 @@ class AsyncContext(Generic[ResponseBodyType]):
             self.__next_step = current_step
 
 
-class BoundEndpointDescriptor(Generic[PT, ResponseBodyType]):
+class BoundAsyncEndpointDescriptor(Generic[PT, ResponseBodyType]):
     def __init__(
         self,
         instance: BaseAsyncClient,
@@ -119,7 +101,7 @@ class BoundEndpointDescriptor(Generic[PT, ResponseBodyType]):
     ) -> None:
         self.__instance = instance
         self.__operators = list(operators)
-        self.__operators.append(self.__make_request)  # type: ignore[arg-type]
+        self.__operators.append(self.__send_request)  # type: ignore[arg-type]
         self.__template = template
         self.__response_decoder = response_decoder
 
@@ -128,7 +110,7 @@ class BoundEndpointDescriptor(Generic[PT, ResponseBodyType]):
         context = AsyncContext[ResponseBodyType](self.__instance, self.__operators, request)
         return await context.proceed()
 
-    async def __make_request(self, context: AsyncContext[ResponseBodyType]) -> ResponseBodyType:
+    async def __send_request(self, context: AsyncContext[ResponseBodyType]) -> ResponseBodyType:
         response = await self.__instance.send(context.request)
         context.response = response
         return await self.__response_decoder.from_response(response)

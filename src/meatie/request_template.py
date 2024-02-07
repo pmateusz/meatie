@@ -13,12 +13,11 @@ from typing import (
     get_args,
 )
 
-from typing_extensions import Self, Union
+from typing_extensions import Callable, Self, Union, get_type_hints
 
 from meatie import Method, Request
-from meatie.adapter import TypeAdapter, get_adapter
-from meatie.adapter.aio import AsyncJsonAdapter, AsyncTypeAdapter
-from meatie.internal import RequestBodyType
+from meatie.adapter import JsonAdapter, TypeAdapter, get_adapter
+from meatie.internal import PT, RequestBodyType, T
 
 
 class Kind(Enum):
@@ -26,6 +25,18 @@ class Kind(Enum):
     PATH = 1
     QUERY = 2
     BODY = 3
+
+
+_method_pattern_pairs = [
+    (method, re.compile("^" + method, re.IGNORECASE)) for method in get_args(Method)
+]
+
+
+def get_method(name: str, default: Method = "GET") -> Method:
+    for method, pattern in _method_pattern_pairs:
+        if re.match(pattern, name):
+            return method
+    return default
 
 
 class ApiRef:
@@ -191,6 +202,14 @@ class RequestTemplate(Generic[RequestBodyType]):
         )
 
     @classmethod
+    def from_callable(
+        cls, func: Callable[PT, T], template: PathTemplate, method: Optional[Method]
+    ) -> Self:
+        signature = inspect.signature(func)
+        type_hints = get_type_hints(func)
+        return cls.from_signature(signature, type_hints, template, method)
+
+    @classmethod
     def from_signature(
         cls,
         signature: inspect.Signature,
@@ -199,7 +218,7 @@ class RequestTemplate(Generic[RequestBodyType]):
         method: Optional[Method],
     ) -> Self:
         parameters = []
-        request_encoder: TypeAdapter[Any] = AsyncJsonAdapter
+        request_encoder: TypeAdapter[Any] = JsonAdapter
         for param_name in type_hints:
             if param_name == "return":
                 continue
@@ -220,9 +239,7 @@ class RequestTemplate(Generic[RequestBodyType]):
             parameter = Parameter(kind, param_name, api_ref.name, default_value)
             parameters.append(parameter)
 
-        return cls.validate_object(
-            template, parameters, signature, request_encoder, method
-        )
+        return cls.validate_object(template, parameters, signature, request_encoder, method)
 
     @classmethod
     def validate_object(
@@ -230,7 +247,7 @@ class RequestTemplate(Generic[RequestBodyType]):
         template: PathTemplate,
         params: Iterable[Parameter],
         signature: inspect.Signature,
-        request_encoder: Union[TypeAdapter[RequestBodyType], AsyncTypeAdapter[RequestBodyType]],
+        request_encoder: TypeAdapter[RequestBodyType],
         method: Optional[Method],
     ) -> Self:
         template_str = str(template)

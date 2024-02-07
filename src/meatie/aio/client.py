@@ -1,13 +1,14 @@
 #  Copyright 2023 The Meatie Authors. All rights reserved.
 #  Use of this source code is governed by a BSD-style license that can be found in the LICENSE file.
 from abc import abstractmethod
-from contextlib import AbstractAsyncContextManager
-from typing import Any, Optional
+from typing import Any, Optional, TypeVar
 
-from meatie import Request, INF, CacheStore, Limiter, Rate
+from typing_extensions import Self
+
+from meatie import INF, CacheStore, Limiter, Rate, Request
 
 
-class BaseAsyncClient(AbstractAsyncContextManager):  # type: ignore[type-arg]
+class BaseAsyncClient:
     shared_cache: CacheStore
 
     def __init__(
@@ -21,9 +22,20 @@ class BaseAsyncClient(AbstractAsyncContextManager):  # type: ignore[type-arg]
     def __init_subclass__(cls, **kwargs: Any) -> None:
         cls.shared_cache = CacheStore()
 
+    async def __aenter__(self) -> Self:
+        return self
+
+    async def __aexit__(
+        self, exc_type: Optional[type[BaseException]], exc_val: Optional[BaseException], exc_tb: Any
+    ) -> None:
+        return None
+
     async def authenticate(self, request: Request) -> None:
         pass
 
     @abstractmethod
     async def send(self, request: Request) -> Any:
         ...
+
+
+AsyncClientType = TypeVar("AsyncClientType", bound=BaseAsyncClient)

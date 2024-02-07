@@ -5,8 +5,7 @@ from http.server import BaseHTTPRequestHandler
 
 import pytest
 from http_test import HTTPTestServer
-from meatie.aio import endpoint
-from meatie.error import ParseResponseError
+from meatie import endpoint
 from meatie_aiohttp import AiohttpClient
 
 
@@ -50,10 +49,8 @@ async def test_can_handle_invalid_encoding(test_server: HTTPTestServer) -> None:
             ...
 
     # WHEN
-    with pytest.raises(ParseResponseError) as exc_info:
-        async with TestClient(test_server.create_session()) as client:
-            await client.get_response()
+    async with TestClient(test_server.create_session()) as client:
+        response = await client.get_response()
 
     # THEN
-    exc = exc_info.value
-    assert HTTPStatus.OK == exc.response.status
+    assert "����" == response

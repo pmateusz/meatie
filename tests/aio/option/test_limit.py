@@ -6,8 +6,8 @@ from unittest.mock import AsyncMock, patch
 
 import pytest
 from aiohttp import ClientSession
-from meatie import Limiter, Rate
-from meatie.aio import Limit, endpoint
+from meatie import Limiter, Rate, endpoint
+from meatie.aio import Limit
 from meatie_aiohttp import AiohttpClient
 
 from tests.aio.conftest import MockTools

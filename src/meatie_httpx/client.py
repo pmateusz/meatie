@@ -28,7 +28,7 @@ class HttpxClient:
         kwargs: dict[str, Any] = self.session_params.copy()
 
         if request.data is not None:
-            kwargs["data"] = request.data
+            kwargs["content"] = request.data
 
         if request.json is not None:
             kwargs["json"] = request.json

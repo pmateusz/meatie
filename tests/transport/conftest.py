@@ -76,7 +76,7 @@ def untrusted_context_fixture(
     with open(cert_file, "wb") as fs:
         fs.write(cert_bytes)
 
-    context = ssl.SSLContext(ssl.PROTOCOL_TLS)
+    context = ssl.SSLContext(protocol=ssl.PROTOCOL_TLS_SERVER)
     context.load_cert_chain(keyfile=key_file, certfile=cert_file)
     return context
 

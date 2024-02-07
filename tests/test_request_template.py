@@ -7,7 +7,7 @@ from unittest.mock import Mock
 
 import pytest
 from meatie.adapter import JsonAdapter, NoneAdapter
-from meatie.aio.request_template import (
+from meatie.request_template import (
     ApiRef,
     Kind,
     Parameter,
@@ -30,7 +30,6 @@ def test_validate_object() -> None:
         path_params,
         Mock(spec=inspect.Signature),
         JsonAdapter,
-        JsonAdapter,
         "GET",
     )
 
@@ -46,7 +45,6 @@ def test_path_cannot_be_empty() -> None:
             [],
             Mock(spec=inspect.Signature),
             JsonAdapter,
-            JsonAdapter,
             "GET",
         )
 
@@ -61,7 +59,6 @@ def test_path_must_start_with_slash() -> None:
             PathTemplate.from_string("abc"),
             [],
             Mock(spec=inspect.Signature),
-            JsonAdapter,
             JsonAdapter,
             "GET",
         )
@@ -81,7 +78,6 @@ def test_all_parameters_must_be_present_in_signature() -> None:
             path_template,
             path_params,
             Mock(spec=inspect.Signature, __str__=Mock(return_value="...")),
-            JsonAdapter,
             JsonAdapter,
             "GET",
         )
@@ -104,7 +100,6 @@ def test_all_parameters_must_be_present_in_path() -> None:
             path_params,
             Mock(spec=inspect.Signature, __str__=Mock(return_value="...")),
             JsonAdapter,
-            JsonAdapter,
             "GET",
         )
 
@@ -122,7 +117,6 @@ def test_build_template() -> None:
             Parameter(Kind.PATH, "order_id", "order_ref"),
             Parameter(Kind.QUERY, "sort_by", "orderBy"),
         ],
-        JsonAdapter,
         JsonAdapter,
         "GET",
     )
@@ -143,7 +137,6 @@ def test_build_template_with_default_value() -> None:
             Parameter(Kind.QUERY, "limit", "limit", 100),
         ],
         NoneAdapter,
-        JsonAdapter,
         "GET",
     )
 
@@ -165,7 +158,7 @@ def test_create_template_from_signature() -> None:
         return []
 
     # WHEN
-    request: RequestTemplate[None, list[Any]] = RequestTemplate.from_callable(
+    request: RequestTemplate[None] = RequestTemplate.from_callable(
         get_positions_by_order_id, path_template, "GET"
     )
 
@@ -186,9 +179,7 @@ def test_create_template_from_signature_with_parameter_with_default_value() -> N
         return []
 
     # WHEN
-    request: RequestTemplate[None, list[Any]] = RequestTemplate.from_callable(
-        get_orders, path_template, "GET"
-    )
+    request: RequestTemplate[None] = RequestTemplate.from_callable(get_orders, path_template, "GET")
 
     # THEN
     assert "GET" == request.method
@@ -204,9 +195,7 @@ def test_create_template_from_signature_with_optional_parameter() -> None:
         return []
 
     # WHEN
-    request: RequestTemplate[None, list[Any]] = RequestTemplate.from_callable(
-        get_orders, path_template, "GET"
-    )
+    request: RequestTemplate[None] = RequestTemplate.from_callable(get_orders, path_template, "GET")
 
     # THEN
     assert "GET" == request.method
