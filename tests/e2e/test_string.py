@@ -10,14 +10,14 @@ from meatie_aiohttp import AiohttpClient
 
 
 @pytest.mark.asyncio()
-async def test_can_parse_string(test_server: HTTPTestServer) -> None:
+async def test_can_parse_string(http_server: HTTPTestServer) -> None:
     # GIVEN
     def handler(request: BaseHTTPRequestHandler) -> None:
         request.send_response(HTTPStatus.OK)
         request.end_headers()
         request.wfile.write(bytes([0xF0, 0x9F, 0x9A, 0x80]))
 
-    test_server.handler = handler
+    http_server.handler = handler
 
     class TestClient(AiohttpClient):
         @endpoint("/")
@@ -25,7 +25,7 @@ async def test_can_parse_string(test_server: HTTPTestServer) -> None:
             ...
 
     # WHEN
-    async with TestClient(test_server.create_session()) as client:
+    async with TestClient(http_server.create_session()) as client:
         response = await client.get_response()
 
     # THEN
@@ -33,7 +33,7 @@ async def test_can_parse_string(test_server: HTTPTestServer) -> None:
 
 
 @pytest.mark.asyncio()
-async def test_can_handle_invalid_encoding(test_server: HTTPTestServer) -> None:
+async def test_can_handle_invalid_encoding(http_server: HTTPTestServer) -> None:
     # GIVEN
     def handler(request: BaseHTTPRequestHandler) -> None:
         request.send_response(HTTPStatus.OK)
@@ -41,7 +41,7 @@ async def test_can_handle_invalid_encoding(test_server: HTTPTestServer) -> None:
         request.end_headers()
         request.wfile.write(bytes([0xF0, 0x9F, 0x9A, 0x80]))
 
-    test_server.handler = handler
+    http_server.handler = handler
 
     class TestClient(AiohttpClient):
         @endpoint("/")
@@ -49,7 +49,7 @@ async def test_can_handle_invalid_encoding(test_server: HTTPTestServer) -> None:
             ...
 
     # WHEN
-    async with TestClient(test_server.create_session()) as client:
+    async with TestClient(http_server.create_session()) as client:
         response = await client.get_response()
 
     # THEN

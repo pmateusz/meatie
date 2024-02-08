@@ -3,6 +3,8 @@
 from typing import Any, Optional
 
 import httpx
+
+from meatie import BaseClient, CacheStore
 from meatie.error import (
     MeatieError,
     ProxyError,
@@ -17,15 +19,21 @@ from typing_extensions import Self
 from . import HttpxResponse
 
 
-class HttpxClient:
+class HttpxClient(BaseClient):
     def __init__(
-        self, session: httpx.Client, session_params: Optional[dict[str, Any]] = None
+        self,
+        client: httpx.Client,
+        client_params: Optional[dict[str, Any]] = None,
+        local_cache: Optional[CacheStore] = None,
+        limiter: Optional[Any] = None,
     ) -> None:
-        self.session = session
-        self.session_params = session_params if session_params else {}
+        super().__init__(local_cache, limiter)
+
+        self.client = client
+        self.client_params = client_params if client_params else {}
 
     def send(self, request: Request) -> HttpxResponse:
-        kwargs: dict[str, Any] = self.session_params.copy()
+        kwargs: dict[str, Any] = self.client_params.copy()
 
         if request.data is not None:
             kwargs["content"] = request.data
@@ -40,7 +48,7 @@ class HttpxClient:
             kwargs["params"] = request.query_params
 
         try:
-            response = self.session.request(request.method, request.path, **kwargs)
+            response = self.client.request(request.method, request.path, **kwargs)
         except (httpx.InvalidURL, httpx.UnsupportedProtocol) as exc:
             raise RequestError(exc) from exc
         except httpx.ProxyError as exc:
@@ -64,4 +72,4 @@ class HttpxClient:
         exc_val: Optional[BaseException],
         exc_tb: Any,
     ) -> None:
-        self.session.close()
+        self.client.close()

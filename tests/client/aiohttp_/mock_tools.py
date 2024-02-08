@@ -1,11 +1,10 @@
-#  Copyright 2023 The Meatie Authors. All rights reserved.
+#  Copyright 2024 The Meatie Authors. All rights reserved.
 #  Use of this source code is governed by a BSD-style license that can be found in the LICENSE file.
 
 from http import HTTPStatus
 from typing import Any
 from unittest.mock import AsyncMock, Mock
 
-import pytest
 from aiohttp import ClientResponse, ClientResponseError, ClientSession, RequestInfo
 
 
@@ -32,8 +31,3 @@ class MockTools:
     @staticmethod
     def session_wrap_response(response: Mock) -> Mock:
         return Mock(spec=ClientSession, request=AsyncMock(return_value=response))
-
-
-@pytest.fixture(name="mock_tools", scope="session")
-def mock_tools_fixture() -> MockTools:
-    return MockTools()

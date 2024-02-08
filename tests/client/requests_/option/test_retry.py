@@ -1,4 +1,4 @@
-#  Copyright 2023 The Meatie Authors. All rights reserved.
+#  Copyright 2024 The Meatie Authors. All rights reserved.
 #  Use of this source code is governed by a BSD-style license that can be found in the LICENSE file.
 
 from http import HTTPStatus
@@ -6,6 +6,8 @@ from typing import Any
 from unittest.mock import Mock, call, patch
 
 import pytest
+
+from conftest import MockTools
 from meatie import (
     MeatieError,
     ResponseError,
@@ -16,8 +18,6 @@ from meatie import (
 )
 from meatie_requests import RequestsClient
 from requests import Session
-
-from tests.conftest import MockTools
 
 PRODUCTS = [{"name": "headphones"}]
 

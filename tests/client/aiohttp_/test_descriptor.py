@@ -11,7 +11,7 @@ from meatie.aio.descriptor import AsyncContext
 from meatie.types import AsyncClient
 from meatie_aiohttp import AiohttpClient
 
-from tests.aio.conftest import MockTools
+from tests.client.aiohttp_.mock_tools import MockTools
 
 PRODUCTS = [{"name": "Pencil"}, {"name": "Headphones"}]
 

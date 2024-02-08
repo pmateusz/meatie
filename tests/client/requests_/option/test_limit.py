@@ -1,19 +1,18 @@
-#  Copyright 2023 The Meatie Authors. All rights reserved.
+#  Copyright 2024 The Meatie Authors. All rights reserved.
 #  Use of this source code is governed by a BSD-style license that can be found in the LICENSE file.
 
 from typing import Any, cast
 from unittest.mock import patch
 
 import pytest
+
+from client.requests_.mock_tools import MockTools
 from meatie import Limit, Limiter, Rate, endpoint
 from meatie_requests import RequestsClient
 from requests import Session
 
-from tests.aio.conftest import MockTools
 
-
-@pytest.mark.asyncio()
-async def test_waits_until_tokens_are_available(mock_tools: MockTools) -> None:
+def test_waits_until_tokens_are_available(mock_tools: MockTools) -> None:
     # GIVEN
     products = [{"name": "bicycle"}]
     response = mock_tools.json_response(json=products)

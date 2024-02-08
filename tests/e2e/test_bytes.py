@@ -13,14 +13,14 @@ SAMPLE_BYTES = b"Hello, world!"
 
 
 @pytest.mark.asyncio()
-async def test_can_parse_bytes(test_server: HTTPTestServer) -> None:
+async def test_can_parse_bytes(http_server: HTTPTestServer) -> None:
     # GIVEN
     def handler(request: BaseHTTPRequestHandler) -> None:
         request.send_response(HTTPStatus.OK)
         request.end_headers()
         request.wfile.write(SAMPLE_BYTES)
 
-    test_server.handler = handler
+    http_server.handler = handler
 
     class TestClient(AiohttpClient):
         @endpoint("/")
@@ -28,7 +28,7 @@ async def test_can_parse_bytes(test_server: HTTPTestServer) -> None:
             ...
 
     # WHEN
-    async with TestClient(test_server.create_session()) as client:
+    async with TestClient(http_server.create_session()) as client:
         response = await client.get_response()
 
     # THEN

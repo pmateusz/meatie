@@ -76,7 +76,7 @@ class ResponseV2(BaseModel):
 
 
 @pytest.mark.asyncio()
-async def test_can_handle_corrupted_pydantic_model_with_enum(test_server: HTTPTestServer) -> None:
+async def test_can_handle_corrupted_pydantic_model_with_enum(http_server: HTTPTestServer) -> None:
     # GIVEN
     def handler(request: BaseHTTPRequestHandler) -> None:
         request.send_response(HTTPStatus.OK)
@@ -84,7 +84,7 @@ async def test_can_handle_corrupted_pydantic_model_with_enum(test_server: HTTPTe
         request.end_headers()
         request.wfile.write('{"status": "ok"}'.encode("utf-8"))
 
-    test_server.handler = handler
+    http_server.handler = handler
 
     class TestClient(AiohttpClient):
         @endpoint("/")
@@ -93,7 +93,7 @@ async def test_can_handle_corrupted_pydantic_model_with_enum(test_server: HTTPTe
 
     # WHEN
     with pytest.raises(ParseResponseError) as exc_info:
-        async with TestClient(test_server.create_session()) as client:
+        async with TestClient(http_server.create_session()) as client:
             await client.get_response()
 
     # THEN

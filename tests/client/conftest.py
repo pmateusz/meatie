@@ -13,8 +13,8 @@ from cryptography.x509.oid import NameOID
 from http_test import HTTPSTestServer, HTTPTestServer
 
 
-@pytest.fixture(name="test_server", scope="module")
-def test_server_fixture() -> Generator[HTTPTestServer, None, None]:
+@pytest.fixture(name="http_server", scope="module")
+def http_server_fixture() -> Generator[HTTPTestServer, None, None]:
     with HTTPTestServer() as server:
         yield server
 
@@ -81,8 +81,8 @@ def untrusted_context_fixture(
     return context
 
 
-@pytest.fixture(name="test_tls_server", scope="module")
-def test_tls_server_fixture(
+@pytest.fixture(name="untrusted_https_server", scope="module")
+def untrusted_https_server_fixture(
     untrusted_context: ssl.SSLContext,
 ) -> Generator[HTTPSTestServer, None, None]:
     with HTTPSTestServer(untrusted_context) as server:

@@ -10,7 +10,7 @@ from meatie_aiohttp import AiohttpClient
 
 
 @pytest.mark.asyncio()
-async def test_can_parse_json(test_server: HTTPTestServer) -> None:
+async def test_can_parse_json(http_server: HTTPTestServer) -> None:
     # GIVEN
     def handler(request: BaseHTTPRequestHandler) -> None:
         request.send_response(HTTPStatus.OK)
@@ -18,7 +18,7 @@ async def test_can_parse_json(test_server: HTTPTestServer) -> None:
         request.end_headers()
         request.wfile.write('{"status": "ok"}'.encode("utf-8"))
 
-    test_server.handler = handler
+    http_server.handler = handler
 
     class TestClient(AiohttpClient):
         @endpoint("/")
@@ -26,7 +26,7 @@ async def test_can_parse_json(test_server: HTTPTestServer) -> None:
             ...
 
     # WHEN
-    async with TestClient(test_server.create_session()) as client:
+    async with TestClient(http_server.create_session()) as client:
         response = await client.get_response()
 
     # THEN
@@ -34,7 +34,7 @@ async def test_can_parse_json(test_server: HTTPTestServer) -> None:
 
 
 @pytest.mark.asyncio()
-async def test_can_handle_invalid_content_type(test_server: HTTPTestServer) -> None:
+async def test_can_handle_invalid_content_type(http_server: HTTPTestServer) -> None:
     # GIVEN
     content = "{'status': 'ok'}"
 
@@ -43,7 +43,7 @@ async def test_can_handle_invalid_content_type(test_server: HTTPTestServer) -> N
         request.end_headers()
         request.wfile.write(content.encode("utf-8"))
 
-    test_server.handler = handler
+    http_server.handler = handler
 
     class TestClient(AiohttpClient):
         @endpoint("/")
@@ -52,7 +52,7 @@ async def test_can_handle_invalid_content_type(test_server: HTTPTestServer) -> N
 
     # WHEN
     with pytest.raises(ParseResponseError) as exc_info:
-        async with TestClient(test_server.create_session()) as client:
+        async with TestClient(http_server.create_session()) as client:
             await client.get_response()
 
     # THEN
@@ -62,7 +62,7 @@ async def test_can_handle_invalid_content_type(test_server: HTTPTestServer) -> N
 
 
 @pytest.mark.asyncio()
-async def test_can_handle_corrupted_json(test_server: HTTPTestServer) -> None:
+async def test_can_handle_corrupted_json(http_server: HTTPTestServer) -> None:
     # GIVEN
     def handler(request: BaseHTTPRequestHandler) -> None:
         request.send_response(HTTPStatus.OK)
@@ -70,7 +70,7 @@ async def test_can_handle_corrupted_json(test_server: HTTPTestServer) -> None:
         request.end_headers()
         request.wfile.write("{'status':".encode("utf-8"))
 
-    test_server.handler = handler
+    http_server.handler = handler
 
     class TestClient(AiohttpClient):
         @endpoint("/")
@@ -79,7 +79,7 @@ async def test_can_handle_corrupted_json(test_server: HTTPTestServer) -> None:
 
     # WHEN
     with pytest.raises(ParseResponseError) as exc_info:
-        async with TestClient(test_server.create_session()) as client:
+        async with TestClient(http_server.create_session()) as client:
             await client.get_response()
 
     # THEN

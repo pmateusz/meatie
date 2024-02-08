@@ -7,7 +7,7 @@ import pytest
 from http_test import HTTPTestServer
 
 
-@pytest.fixture(name="test_server", scope="module")
-def test_server_fixture() -> Generator[HTTPTestServer, None, None]:
+@pytest.fixture(name="http_server", scope="module")
+def http_server_fixture() -> Generator[HTTPTestServer, None, None]:
     with HTTPTestServer() as server:
         yield server

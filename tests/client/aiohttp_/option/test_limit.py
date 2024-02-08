@@ -1,4 +1,4 @@
-#  Copyright 2023 The Meatie Authors. All rights reserved.
+#  Copyright 2024 The Meatie Authors. All rights reserved.
 #  Use of this source code is governed by a BSD-style license that can be found in the LICENSE file.
 
 from typing import Any, cast
@@ -10,7 +10,7 @@ from meatie import Limiter, Rate, endpoint
 from meatie.aio import Limit
 from meatie_aiohttp import AiohttpClient
 
-from tests.aio.conftest import MockTools
+from tests.client.aiohttp_.mock_tools import MockTools
 
 
 @pytest.mark.asyncio()

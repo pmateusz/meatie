@@ -1,24 +1,22 @@
-#  Copyright 2023 The Meatie Authors. All rights reserved.
+#  Copyright 2024 The Meatie Authors. All rights reserved.
 #  Use of this source code is governed by a BSD-style license that can be found in the LICENSE file.
 
 from typing import Any, cast
 from unittest.mock import patch
 
+from tests.client.httpx_.mock_tools import MockTools
 from meatie import Private, endpoint
-from meatie_requests import RequestsClient
-from requests import Session
-
-from tests.conftest import MockTools
+from meatie_httpx import HttpxClient
 
 
 def test_calls_authenticate_on_private_endpoint(mock_tools: MockTools) -> None:
     # GIVEN
     products = [{"name": "pencil"}, {"name": "headphones"}]
-    session = mock_tools.session_with_json_response(json=products)
+    client = mock_tools.client_with_json_response(json=products)
 
-    class Store(RequestsClient):
+    class Store(HttpxClient):
         def __init__(self) -> None:
-            super().__init__(cast(Session, session))
+            super().__init__(client)
 
         @endpoint("/api/v1/products", Private)
         def get_products(self) -> list[Any]:
@@ -32,4 +30,4 @@ def test_calls_authenticate_on_private_endpoint(mock_tools: MockTools) -> None:
     # THEN
     assert products == results
     method_mock.assert_called_once()
-    session.request.assert_called_once()
+    client.request.assert_called_once()
