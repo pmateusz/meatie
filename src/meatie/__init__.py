@@ -18,7 +18,7 @@ from .error import (
     ParseResponseError,
 )
 from .client import BaseClient
-from .request_template import RequestTemplate, PathTemplate, ApiRef
+from .api_ref import ApiRef
 from .descriptor import EndpointDescriptor, Context
 from .option import (
     Cache,
@@ -58,8 +58,6 @@ __all__ = [
     "CacheStore",
     "Limiter",
     "Rate",
-    "RequestTemplate",
-    "PathTemplate",
     "ApiRef",
     "BaseClient",
     "Context",

@@ -2,121 +2,21 @@
 #  Use of this source code is governed by a BSD-style license that can be found in the LICENSE file.
 
 import inspect
-import re
-from enum import Enum
 from types import GenericAlias
 from typing import (
     Any,
     Generic,
     Iterable,
     Optional,
-    get_args,
 )
 
 from typing_extensions import Callable, Self, Union, get_type_hints
 
-from meatie import Method, Request
+from meatie import ApiRef, Method, Request
 from meatie.internal import PT, RequestBodyType, T
 from meatie.internal.adapter import JsonAdapter, TypeAdapter, get_adapter
 
-
-class Kind(Enum):
-    UNKNOWN = 0
-    PATH = 1
-    QUERY = 2
-    BODY = 3
-
-
-_method_pattern_pairs = [
-    (method, re.compile("^" + method, re.IGNORECASE)) for method in get_args(Method)
-]
-
-
-def get_method(name: str, default: Method = "GET") -> Method:
-    for method, pattern in _method_pattern_pairs:
-        if re.match(pattern, name):
-            return method
-    return default
-
-
-class ApiRef:
-    __slots__ = ("name",)
-
-    def __init__(self, name: str) -> None:
-        self.name = name
-
-    def __hash__(self) -> int:
-        return hash(self.name)
-
-    def __eq__(self, other: Any) -> bool:
-        if isinstance(other, ApiRef):
-            return self.name == other.name
-        return False
-
-    @classmethod
-    def from_signature(cls, parameter: inspect.Parameter) -> Self:
-        for arg in get_args(parameter.annotation):
-            if isinstance(arg, cls):
-                return arg
-        return cls(name=parameter.name)
-
-
-class Parameter:
-    __slots__ = ("kind", "name", "api_ref", "default_value")
-
-    def __init__(self, kind: Kind, name: str, api_ref: str, default_value: Any = None) -> None:
-        self.kind = kind
-        self.name = name
-        self.api_ref = api_ref
-        self.default_value = default_value
-
-    def __hash__(self) -> int:
-        return hash(self.name)
-
-    def __eq__(self, other: Any) -> bool:
-        if isinstance(other, Parameter):
-            return (
-                self.name == other.name
-                and self.kind == other.kind
-                and self.api_ref == other.api_ref
-                and self.default_value == other.default_value
-            )
-        return False
-
-
-_param_pattern = re.compile(r"{(?P<name>[a-zA-Z_]\w*?)}")
-
-
-class PathTemplate:
-    __slots__ = ("template", "parameters")
-
-    def __init__(self, template: str, parameters: list[str]) -> None:
-        self.template = template
-        self.parameters = parameters
-
-    def __eq__(self, other: Any) -> bool:
-        if isinstance(other, PathTemplate):
-            return self.template == other.template and self.parameters == other.parameters
-        if isinstance(other, str):
-            return self.template == other
-        return False
-
-    def __hash__(self) -> int:
-        return hash(self.template)
-
-    def __contains__(self, item: str) -> bool:
-        return item in self.parameters
-
-    def __str__(self) -> str:
-        return self.template
-
-    def format(self, **kwargs: dict[str, Any]) -> str:
-        return self.template.format(**kwargs)
-
-    @classmethod
-    def from_string(cls, template: str) -> Self:
-        parameters = [match.group("name") for match in _param_pattern.finditer(template)]
-        return cls(template, parameters)
+from . import Kind, Parameter, PathTemplate
 
 
 class RequestTemplate(Generic[RequestBodyType]):
