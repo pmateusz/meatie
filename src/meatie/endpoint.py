@@ -5,7 +5,6 @@ from collections.abc import Callable
 from inspect import isawaitable
 from typing import (
     Any,
-    Awaitable,
     Optional,
     Union,
     get_type_hints,
@@ -16,17 +15,15 @@ from meatie.adapter import TypeAdapter, get_adapter
 from meatie.aio import AsyncEndpointDescriptor
 from meatie.aio.adapter import AsyncTypeAdapter, get_async_adapter
 from meatie.descriptor import EndpointDescriptor
-from meatie.internal.types import PT, T
+from meatie.internal.types import T
 
 
 def endpoint(
     path: str,
     *args: Any,
     method: Optional[Method] = None,
-) -> Callable[[Callable[PT, T]], Callable[PT, T]]:
-    def class_descriptor(
-        func: Callable[PT, Awaitable[T]],
-    ) -> Callable[PT, Awaitable[T]]:
+) -> Callable[[Callable[..., T]], Callable[..., T]]:
+    def class_descriptor(func: Callable[..., T]) -> Callable[..., T]:
         path_template = PathTemplate.from_string(path)
 
         signature = inspect.signature(func)
@@ -36,14 +33,13 @@ def endpoint(
         )
 
         return_type = type_hints["return"]
-
-        descriptor: Union[EndpointDescriptor[PT, T], AsyncEndpointDescriptor[PT, T]]
+        descriptor: Union[EndpointDescriptor[..., T], AsyncEndpointDescriptor[..., T]]
         if isawaitable(func):
             async_response_decoder: AsyncTypeAdapter[T] = get_async_adapter(return_type)
-            descriptor = AsyncEndpointDescriptor[PT, T](request_template, async_response_decoder)
+            descriptor = AsyncEndpointDescriptor[..., T](request_template, async_response_decoder)
         else:
             response_decoder: TypeAdapter[T] = get_adapter(return_type)
-            descriptor = EndpointDescriptor[PT, T](request_template, response_decoder)
+            descriptor = EndpointDescriptor[..., T](request_template, response_decoder)
 
         for option in args:
             option(descriptor)

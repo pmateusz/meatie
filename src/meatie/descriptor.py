@@ -19,7 +19,7 @@ from meatie.adapter import TypeAdapter
 from meatie.internal.types import PT, ResponseBodyType
 from meatie.request_template import get_method
 
-Operator = Callable[["Context"[ResponseBodyType]], ResponseBodyType]
+Operator = Callable[["Context[ResponseBodyType]"], ResponseBodyType]
 
 
 class EndpointDescriptor(Generic[PT, ResponseBodyType]):

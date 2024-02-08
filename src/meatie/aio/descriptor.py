@@ -20,7 +20,7 @@ from meatie.aio.adapter import AsyncTypeAdapter
 from meatie.internal.types import PT, ResponseBodyType
 from meatie.request_template import get_method
 
-AsyncOperator = Callable[["AsyncContext"[ResponseBodyType]], Awaitable[ResponseBodyType]]
+AsyncOperator = Callable[["AsyncContext[ResponseBodyType]"], Awaitable[ResponseBodyType]]
 
 
 class AsyncContext(Generic[ResponseBodyType]):
