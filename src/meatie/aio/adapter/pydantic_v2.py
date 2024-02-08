@@ -8,8 +8,9 @@ from pydantic import BaseModel, ValidationError
 from pydantic import TypeAdapter as pydantic_TypeAdapter
 from typing_extensions import is_typeddict
 
-from meatie import AsyncResponse, ParseResponseError
+from meatie import ParseResponseError
 from meatie.internal.types import T
+from meatie.types import AsyncResponse
 
 from . import AsyncJsonAdapter, AsyncTypeAdapter
 

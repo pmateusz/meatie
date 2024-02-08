@@ -34,7 +34,9 @@ def endpoint(
 
         return_type = type_hints["return"]
         descriptor: Union[EndpointDescriptor[..., T], AsyncEndpointDescriptor[..., T]]
-        if isawaitable(func):
+
+        is_coroutine = inspect.iscoroutinefunction(func)
+        if is_coroutine:
             async_response_decoder: AsyncTypeAdapter[T] = get_async_adapter(return_type)
             descriptor = AsyncEndpointDescriptor[..., T](request_template, async_response_decoder)
         else:

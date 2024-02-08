@@ -7,6 +7,7 @@ from unittest.mock import Mock
 
 import pytest
 from requests import Response, Session
+from requests.exceptions import JSONDecodeError
 
 
 class MockTools:
@@ -14,21 +15,20 @@ class MockTools:
     def json_response(json: Any, status: int = HTTPStatus.OK) -> Mock:
         return Mock(spec=Response, status_code=status, json=Mock(return_value=json))
 
-    # @staticmethod
-    # def json_client_response_error(status: int) -> Mock:
-    #     json = AsyncMock(side_effect=ClientResponseError(Mock(spec=RequestInfo), (), status=status))
-    #     return Mock(spec=ClientResponse, status=status, json=json)
-    #
+    @staticmethod
+    def json_client_response_error(status: int) -> Mock:
+        json = Mock(side_effect=JSONDecodeError("mock error", "mock json document", 0))
+        return Mock(spec=Response, status_code=status, json=json)
+
     @staticmethod
     def session_with_json_response(json: Any, status: int = HTTPStatus.OK) -> Mock:
         response = MockTools.json_response(json, status)
         return MockTools.session_wrap_response(response)
 
-    #
-    # @staticmethod
-    # def session_with_json_client_response_error(status: int) -> Mock:
-    #     response = MockTools.json_client_response_error(status)
-    #     return MockTools.session_wrap_response(response)
+    @staticmethod
+    def session_with_json_client_response_error(status: int) -> Mock:
+        response = MockTools.json_client_response_error(status)
+        return MockTools.session_wrap_response(response)
 
     @staticmethod
     def session_wrap_response(response: Mock) -> Mock:

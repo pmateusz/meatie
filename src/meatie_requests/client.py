@@ -3,6 +3,7 @@
 from typing import Any, Optional
 
 import requests.exceptions
+from meatie import BaseClient, CacheStore, Request
 from meatie.error import (
     MeatieError,
     ProxyError,
@@ -11,15 +12,22 @@ from meatie.error import (
     Timeout,
     TransportError,
 )
-from meatie.types import Request
 from requests import Session
 from typing_extensions import Self
 
 from . import RequestsResponse
 
 
-class RequestsClient:
-    def __init__(self, session: Session, session_params: Optional[dict[str, Any]] = None) -> None:
+class RequestsClient(BaseClient):
+    def __init__(
+        self,
+        session: Session,
+        session_params: Optional[dict[str, Any]] = None,
+        local_cache: Optional[CacheStore] = None,
+        limiter: Optional[Any] = None,
+    ) -> None:
+        super().__init__(local_cache, limiter)
+
         self.session = session
         self.session_params = session_params if session_params else {}
 

@@ -13,7 +13,6 @@ from typing import (
 
 from typing_extensions import Self
 
-import meatie.types
 from meatie import BaseClient, Request, RequestTemplate, Response
 from meatie.adapter import TypeAdapter
 from meatie.internal.types import PT, ResponseBodyType
@@ -64,7 +63,7 @@ class EndpointDescriptor(Generic[PT, ResponseBodyType]):
         )
 
 
-class Context(meatie.types.Context[BaseClient, ResponseBodyType]):
+class Context(Generic[ResponseBodyType]):
     def __init__(
         self,
         client: BaseClient,
@@ -76,7 +75,7 @@ class Context(meatie.types.Context[BaseClient, ResponseBodyType]):
         self.__next_step = 0
 
         self.__request = request
-        self.__response: Optional[Response] = None
+        self.response: Optional[Response] = None
 
     @property
     def client(self) -> BaseClient:
@@ -85,10 +84,6 @@ class Context(meatie.types.Context[BaseClient, ResponseBodyType]):
     @property
     def request(self) -> Request:
         return self.__request
-
-    @property
-    def response(self) -> Optional[Response]:
-        return self.__response
 
     def proceed(self) -> ResponseBodyType:
         if self.__next_step >= len(self.__operators):
@@ -125,5 +120,5 @@ class BoundEndpointDescriptor(Generic[PT, ResponseBodyType]):
 
     def __send_request(self, context: Context[ResponseBodyType]) -> ResponseBodyType:
         response = self.__instance.send(context.request)
-        context.__response = response
+        context.response = response
         return self.__response_decoder.from_response(response)

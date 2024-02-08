@@ -3,18 +3,15 @@
 
 
 import abc
-import asyncio
 import time
 from dataclasses import dataclass
 from http import HTTPStatus
-from typing import Awaitable, Callable, Optional
+from typing import Callable, Optional
 
 import aiohttp
 
-from meatie import RateLimitExceeded
-from meatie.aio import AsyncContext, AsyncEndpointDescriptor
-from meatie.internal.types import PT, Duration, T
-from meatie.types import AsyncResponse
+from meatie import Context, EndpointDescriptor, RateLimitExceeded, Response
+from meatie.internal.types import PT, T
 
 
 @dataclass()
@@ -22,7 +19,7 @@ class RetryContext:
     attempt_number: int
     started_at: float
     error: Optional[Exception]
-    response: Optional[AsyncResponse]
+    response: Optional[Response]
 
 
 class _BaseCondition:
@@ -123,17 +120,15 @@ class RetryOption:
         retry: RetryCondition = (RetryOnTooManyRequestsStatus | RetryOnServerConnectionError),
         wait: WaitFunc = NoWait,
         stop: StopCondition = NeverStop,
-        sleep_func: Callable[[Duration], Awaitable[None]] = asyncio.sleep,
     ) -> None:
         self.__retry = retry
         self.__wait = wait
         self.__stop = stop
-        self.__sleep_func = sleep_func
 
-    def __call__(self, descriptor: AsyncEndpointDescriptor[PT, T]) -> None:
+    def __call__(self, descriptor: EndpointDescriptor[PT, T]) -> None:
         descriptor.register_operator(RetryOption.__PRIORITY, self.__operator)
 
-    async def __operator(self, operation_ctx: AsyncContext[T]) -> T:
+    def __operator(self, operation_ctx: Context[T]) -> T:
         retry_ctx = RetryContext(
             attempt_number=1, started_at=time.monotonic(), error=None, response=None
         )
@@ -143,10 +138,10 @@ class RetryOption:
             if retry_ctx.attempt_number > 1:
                 wait_time = self.__wait(retry_ctx)
                 if wait_time > 0.0:
-                    await self.__sleep_func(wait_time)
+                    time.sleep(wait_time)
 
             try:
-                last_result = await operation_ctx.proceed()
+                last_result = operation_ctx.proceed()
                 retry_ctx.response = operation_ctx.response
             except Exception as exc:
                 retry_ctx.error = exc

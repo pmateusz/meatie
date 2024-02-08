@@ -3,7 +3,8 @@
 from asyncio import AbstractEventLoop
 from typing import Any, Optional
 
-from meatie import AsyncClient, AsyncResponse, Request
+from meatie import Request
+from meatie.types import AsyncClient, AsyncResponse
 from typing_extensions import Self
 
 

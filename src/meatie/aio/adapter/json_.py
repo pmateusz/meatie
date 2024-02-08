@@ -5,7 +5,8 @@ from typing import Any
 
 from aiohttp import ContentTypeError
 
-from meatie import AsyncResponse, ParseResponseError, ResponseError
+from meatie import ParseResponseError, ResponseError
+from meatie.types import AsyncResponse
 
 
 class _JsonAdapter:

@@ -21,7 +21,6 @@ from http_test import (
     echo_handler,
 )
 from meatie import (
-    Client,
     ParseResponseError,
     ProxyError,
     Request,
@@ -30,6 +29,7 @@ from meatie import (
     Timeout,
     TransportError,
 )
+from meatie.types import Client
 from meatie_aiohttp import AiohttpClient
 from meatie_httpx import HttpxClient
 from meatie_requests.client import RequestsClient

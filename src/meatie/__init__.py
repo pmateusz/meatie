@@ -8,12 +8,7 @@ from .internal import CacheStore, Limiter, Rate
 from .types import (
     Request,
     Response,
-    Client,
-    Context,
     Method,
-    AsyncClient,
-    AsyncResponse,
-    AsyncContext,
 )
 from .error import (
     MeatieError,
@@ -29,6 +24,21 @@ from .error import (
 )
 from .client import BaseClient
 from .request_template import RequestTemplate, PathTemplate, ApiRef
+from .descriptor import EndpointDescriptor, Context
+from .option import (
+    Cache,
+    Limit,
+    Retry,
+    WaitExponential,
+    NoWait,
+    NeverStop,
+    RetryOnStatusCode,
+    RetryOnTooManyRequestsStatus,
+    RetryOnServerConnectionError,
+    RetryOnExceptionType,
+    StopAfter,
+    Private,
+)
 from .endpoint import endpoint
 
 __all__ = [
@@ -40,11 +50,6 @@ __all__ = [
     "DAY",
     "Request",
     "Response",
-    "Client",
-    "Context",
-    "AsyncClient",
-    "AsyncResponse",
-    "AsyncContext",
     "MeatieError",
     "RequestError",
     "RateLimitExceeded",
@@ -63,6 +68,20 @@ __all__ = [
     "PathTemplate",
     "ApiRef",
     "BaseClient",
+    "Context",
+    "EndpointDescriptor",
+    "Cache",
+    "Limit",
+    "Retry",
+    "WaitExponential",
+    "NoWait",
+    "NeverStop",
+    "RetryOnStatusCode",
+    "RetryOnTooManyRequestsStatus",
+    "RetryOnServerConnectionError",
+    "RetryOnExceptionType",
+    "StopAfter",
+    "Private",
     "endpoint",
 ]
 

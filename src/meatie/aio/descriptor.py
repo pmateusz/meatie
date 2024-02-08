@@ -11,7 +11,6 @@ from typing import (
     overload,
 )
 
-from aiohttp import ClientResponse
 from typing_extensions import Self
 
 from meatie import Request, RequestTemplate
@@ -19,6 +18,7 @@ from meatie.aio import BaseAsyncClient
 from meatie.aio.adapter import AsyncTypeAdapter
 from meatie.internal.types import PT, ResponseBodyType
 from meatie.request_template import get_method
+from meatie.types import AsyncResponse
 
 AsyncOperator = Callable[["AsyncContext[ResponseBodyType]"], Awaitable[ResponseBodyType]]
 
@@ -35,7 +35,7 @@ class AsyncContext(Generic[ResponseBodyType]):
         self.__next_step = 0
 
         self.request = request
-        self.response: Optional[ClientResponse] = None
+        self.response: Optional[AsyncResponse] = None
 
     async def proceed(self) -> ResponseBodyType:
         if self.__next_step >= len(self.__operators):

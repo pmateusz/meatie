@@ -4,7 +4,7 @@ import asyncio
 from typing import Any, Optional
 
 import aiohttp
-from meatie import AsyncResponse, CacheStore
+from meatie import CacheStore, Request
 from meatie.aio import BaseAsyncClient
 from meatie.error import (
     MeatieError,
@@ -13,7 +13,7 @@ from meatie.error import (
     Timeout,
     TransportError,
 )
-from meatie.types import Request
+from meatie.types import AsyncResponse
 
 from . import AiohttpResponse
 
