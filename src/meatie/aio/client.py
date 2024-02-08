@@ -5,11 +5,10 @@ from typing import Any, Optional, TypeVar
 
 from typing_extensions import Self
 
-import meatie.types
 from meatie import INF, CacheStore, Limiter, Rate, Request
 
 
-class BaseAsyncClient(meatie.types.AsyncClient):
+class BaseAsyncClient:
     shared_cache: CacheStore
 
     def __init__(

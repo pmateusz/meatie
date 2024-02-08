@@ -6,7 +6,7 @@ from http.server import BaseHTTPRequestHandler
 import pytest
 from http_test import HTTPTestServer
 from meatie import endpoint
-from meatie.adapter import BytesAdapter
+from meatie.internal.adapter import BytesAdapter
 from meatie_aiohttp import AiohttpClient
 
 SAMPLE_BYTES = b"Hello, world!"
@@ -37,7 +37,7 @@ async def test_can_parse_bytes(http_server: HTTPTestServer) -> None:
 
 def test_to_json() -> None:
     # WHEN
-    result = BytesAdapter.to_json(SAMPLE_BYTES)
+    result = BytesAdapter.to_content(SAMPLE_BYTES)
 
     # THEN
     assert SAMPLE_BYTES == result

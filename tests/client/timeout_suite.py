@@ -12,7 +12,7 @@ from meatie import (
     Request,
     Timeout,
 )
-from meatie.types import Client
+from meatie.internal.types import Client
 
 
 class TimeoutSuite:

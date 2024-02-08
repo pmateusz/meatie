@@ -5,12 +5,6 @@
 # isort: skip_file
 
 from .types import (
-    Duration,
-    Time,
-    INF,
-    MINUTE,
-    HOUR,
-    DAY,
     VT,
     T,
     T_In,
@@ -23,12 +17,6 @@ from .cache import CacheStore
 from .limit import Rate, Limiter, Reservation, Tokens
 
 __all__ = [
-    "Duration",
-    "Time",
-    "INF",
-    "MINUTE",
-    "HOUR",
-    "DAY",
     "VT",
     "T",
     "T_In",

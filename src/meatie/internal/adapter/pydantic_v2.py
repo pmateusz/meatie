@@ -8,32 +8,39 @@ from pydantic import BaseModel, ValidationError
 from pydantic import TypeAdapter as pydantic_TypeAdapter
 from typing_extensions import is_typeddict
 
-from meatie import ParseResponseError
-from meatie.internal.types import T
-from meatie.types import AsyncResponse
+from meatie.error import ParseResponseError
+from meatie.internal.types import AsyncResponse, Response, T
 
-from . import AsyncJsonAdapter, AsyncTypeAdapter
+from . import JsonAdapter, TypeAdapter
 
 
 class PydanticV2TypeAdapter(Generic[T]):
     def __init__(self, model_type: type[T]) -> None:
         self.adapter = pydantic_TypeAdapter(model_type)
 
-    async def from_response(self, response: AsyncResponse) -> T:
-        json_model = AsyncJsonAdapter.from_response(response)
+    def from_response(self, response: Response) -> T:
+        json_model = JsonAdapter.from_response(response)
+        try:
+            return self.adapter.validate_python(json_model)
+        except ValidationError as exc:
+            text = response.text()
+            raise ParseResponseError(text, response, exc) from exc
+
+    async def from_async_response(self, response: AsyncResponse) -> T:
+        json_model = await JsonAdapter.from_async_response(response)
         try:
             return self.adapter.validate_python(json_model)
         except ValidationError as exc:
             text = await response.text()
             raise ParseResponseError(text, response, exc) from exc
 
-    def to_json(self, value: T) -> Any:
+    def to_content(self, value: T) -> Any:
         return self.adapter.dump_python(value, mode="json", by_alias=True)
 
 
 class PydanticV2TypeAdapterFactory:
     @staticmethod
-    def __call__(model_cls: type[T]) -> AsyncTypeAdapter[T]:
+    def __call__(model_cls: type[T]) -> TypeAdapter[T]:
         return PydanticV2TypeAdapter(model_cls)
 
     @staticmethod

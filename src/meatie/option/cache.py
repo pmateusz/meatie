@@ -5,11 +5,9 @@ import abc
 import urllib.parse
 from typing import Generic
 
+from meatie import Duration
 from meatie.descriptor import Context, EndpointDescriptor
-from meatie.internal import (
-    CacheStore,
-    Duration,
-)
+from meatie.internal import CacheStore
 from meatie.internal.types import PT, T
 
 

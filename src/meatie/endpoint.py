@@ -10,10 +10,9 @@ from typing import (
 )
 
 from meatie import Method, PathTemplate, RequestTemplate
-from meatie.adapter import TypeAdapter, get_adapter
 from meatie.aio import AsyncEndpointDescriptor
-from meatie.aio.adapter import AsyncTypeAdapter, get_async_adapter
 from meatie.descriptor import EndpointDescriptor
+from meatie.internal.adapter import TypeAdapter, get_adapter
 from meatie.internal.types import T
 
 
@@ -32,14 +31,13 @@ def endpoint(
         )
 
         return_type = type_hints["return"]
-        descriptor: Union[EndpointDescriptor[..., T], AsyncEndpointDescriptor[..., T]]
+        response_decoder: TypeAdapter[T] = get_adapter(return_type)
 
+        descriptor: Union[EndpointDescriptor[..., T], AsyncEndpointDescriptor[..., T]]
         is_coroutine = inspect.iscoroutinefunction(func)
         if is_coroutine:
-            async_response_decoder: AsyncTypeAdapter[T] = get_async_adapter(return_type)
-            descriptor = AsyncEndpointDescriptor[..., T](request_template, async_response_decoder)
+            descriptor = AsyncEndpointDescriptor[..., T](request_template, response_decoder)
         else:
-            response_decoder: TypeAdapter[T] = get_adapter(return_type)
             descriptor = EndpointDescriptor[..., T](request_template, response_decoder)
 
         for option in args:

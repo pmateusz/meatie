@@ -2,8 +2,8 @@
 #  Use of this source code is governed by a BSD-style license that can be found in the LICENSE file.
 
 import pytest
+from meatie import INF
 from meatie.internal.limit import Limiter, Rate
-from meatie.internal.types import INF
 
 
 def test_inf_rate_limit_is_not_blocking() -> None:

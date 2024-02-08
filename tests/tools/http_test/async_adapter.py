@@ -4,7 +4,7 @@ from asyncio import AbstractEventLoop
 from typing import Any, Optional
 
 from meatie import Request
-from meatie.types import AsyncClient, AsyncResponse, Response
+from meatie.internal.types import AsyncClient, AsyncResponse, Response
 from typing_extensions import Self
 
 

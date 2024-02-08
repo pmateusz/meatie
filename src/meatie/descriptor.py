@@ -13,9 +13,9 @@ from typing import (
 
 from typing_extensions import Self
 
-from meatie import BaseClient, Request, RequestTemplate, Response
-from meatie.adapter import TypeAdapter
-from meatie.internal.types import PT, ResponseBodyType
+from meatie import BaseClient, Request, RequestTemplate
+from meatie.internal.adapter import TypeAdapter
+from meatie.internal.types import PT, Response, ResponseBodyType
 from meatie.request_template import get_method
 
 Operator = Callable[["Context[ResponseBodyType]"], ResponseBodyType]

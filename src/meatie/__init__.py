@@ -3,13 +3,8 @@
 
 # isort:skip_file
 import importlib.metadata
-from .internal.types import Duration, Time, INF, MINUTE, HOUR, DAY
 from .internal import CacheStore, Limiter, Rate
-from .types import (
-    Request,
-    Response,
-    Method,
-)
+from .types import Request, Method, Duration, Time, INF, MINUTE, HOUR, DAY
 from .error import (
     MeatieError,
     RequestError,
@@ -49,7 +44,6 @@ __all__ = [
     "HOUR",
     "DAY",
     "Request",
-    "Response",
     "MeatieError",
     "RequestError",
     "RateLimitExceeded",

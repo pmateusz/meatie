@@ -8,7 +8,7 @@ import pytest
 from meatie import Request, RequestTemplate, endpoint
 from meatie.aio import AsyncEndpointDescriptor
 from meatie.aio.descriptor import AsyncContext
-from meatie.types import AsyncClient
+from meatie.internal.types import AsyncClient
 from meatie_aiohttp import AiohttpClient
 
 from tests.client.aiohttp_.mock_tools import MockTools

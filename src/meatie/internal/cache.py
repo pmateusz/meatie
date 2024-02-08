@@ -5,7 +5,7 @@ import time as sys_time
 from dataclasses import dataclass
 from typing import Any
 
-from meatie.internal import Duration, Time
+from meatie import Duration, Time
 
 
 # TODO: implement limit on storage size to avoid memory leaks using OrderedDict

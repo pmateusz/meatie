@@ -16,8 +16,8 @@ from typing import (
 from typing_extensions import Callable, Self, Union, get_type_hints
 
 from meatie import Method, Request
-from meatie.adapter import JsonAdapter, TypeAdapter, get_adapter
 from meatie.internal import PT, RequestBodyType, T
+from meatie.internal.adapter import JsonAdapter, TypeAdapter, get_adapter
 
 
 class Kind(Enum):
@@ -193,7 +193,7 @@ class RequestTemplate(Generic[RequestBodyType]):
         path = self.template.format(**path_kwargs)
 
         if body_value is not None:
-            body_json = self.request_encoder.to_json(body_value)
+            body_json = self.request_encoder.to_content(body_value)
         else:
             body_json = None
 

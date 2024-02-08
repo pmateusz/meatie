@@ -18,7 +18,7 @@ from meatie import (
     RequestError,
     ServerError,
 )
-from meatie.types import Client
+from meatie.internal.types import Client
 
 
 class DefaultSuite:

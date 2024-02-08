@@ -4,7 +4,7 @@ from unittest.mock import Mock
 
 import pytest
 from aiohttp import ClientResponse
-from meatie.adapter import ClientResponseAdapter
+from meatie.internal.adapter import ClientResponseAdapter
 
 
 def test_to_json() -> None:
@@ -13,7 +13,7 @@ def test_to_json() -> None:
 
     # WHEN
     with pytest.raises(RuntimeError) as exc_info:
-        ClientResponseAdapter.to_json(response)
+        ClientResponseAdapter.to_content(response)
 
     # THEN
     exc = exc_info.value

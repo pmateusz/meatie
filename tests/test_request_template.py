@@ -6,7 +6,7 @@ from typing import Annotated, Any, Optional
 from unittest.mock import Mock
 
 import pytest
-from meatie.adapter import JsonAdapter, NoneAdapter
+from meatie.internal.adapter import JsonAdapter, NoneAdapter
 from meatie.request_template import (
     ApiRef,
     Kind,

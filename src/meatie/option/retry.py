@@ -10,8 +10,8 @@ from typing import Callable, Optional
 
 import aiohttp
 
-from meatie import Context, EndpointDescriptor, RateLimitExceeded, Response
-from meatie.internal.types import PT, T
+from meatie import Context, EndpointDescriptor, RateLimitExceeded
+from meatie.internal.types import PT, Response, T
 
 
 @dataclass()

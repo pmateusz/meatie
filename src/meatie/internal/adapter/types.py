@@ -6,13 +6,15 @@ from typing import (
     Protocol,
 )
 
-from meatie import Response
-from meatie.internal.types import T
+from meatie.internal.types import AsyncResponse, Response, T
 
 
 class TypeAdapter(Protocol[T]):
     def from_response(self, response: Response) -> T:
         ...
 
-    def to_json(self, value: T) -> Any:
+    async def from_async_response(self, response: AsyncResponse) -> T:
+        ...
+
+    def to_content(self, value: T) -> Any:
         ...

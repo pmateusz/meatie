@@ -2,17 +2,21 @@
 #  Use of this source code is governed by a BSD-style license that can be found in the LICENSE file.
 from typing import NoReturn
 
-from meatie import Response
+from meatie.internal.types import AsyncResponse, Response
 
 
 class _ClientResponseAdapter:
     @staticmethod
-    async def from_response(response: Response) -> Response:
+    def from_response(response: Response) -> Response:
         return response
 
     @staticmethod
-    def to_json(value: Response) -> NoReturn:
+    def from_async_response(response: AsyncResponse) -> AsyncResponse:
+        return response
+
+    @staticmethod
+    def to_content(value: Response) -> NoReturn:
         raise RuntimeError("JSON serialization is not supported")
 
 
-AsyncClientResponseAdapter = _ClientResponseAdapter()
+ClientResponseAdapter = _ClientResponseAdapter()

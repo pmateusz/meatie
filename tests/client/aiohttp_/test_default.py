@@ -8,7 +8,7 @@ import aiohttp
 import pytest
 from http_test import ClientAdapter, HTTPTestServer, StatusHandler
 from meatie import Request
-from meatie.types import Client
+from meatie.internal.types import Client
 from meatie_aiohttp import AiohttpClient
 
 from tests.client.default_suite import DefaultSuite

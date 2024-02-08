@@ -7,7 +7,7 @@ from unittest.mock import ANY, Mock
 import pytest
 from meatie import Request, RequestTemplate, endpoint
 from meatie.descriptor import Context, EndpointDescriptor
-from meatie.types import Client
+from meatie.internal.types import Client
 from meatie_requests import RequestsClient
 
 from tests.conftest import MockTools

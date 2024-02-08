@@ -15,10 +15,9 @@ from typing_extensions import Self
 
 from meatie import Request, RequestTemplate
 from meatie.aio import BaseAsyncClient
-from meatie.aio.adapter import AsyncTypeAdapter
-from meatie.internal.types import PT, ResponseBodyType
+from meatie.internal.adapter import TypeAdapter
+from meatie.internal.types import PT, AsyncResponse, ResponseBodyType
 from meatie.request_template import get_method
-from meatie.types import AsyncResponse
 
 AsyncOperator = Callable[["AsyncContext[ResponseBodyType]"], Awaitable[ResponseBodyType]]
 
@@ -53,7 +52,7 @@ class AsyncContext(Generic[ResponseBodyType]):
 
 class AsyncEndpointDescriptor(Generic[PT, ResponseBodyType]):
     def __init__(
-        self, template: RequestTemplate[Any], response_decoder: AsyncTypeAdapter[ResponseBodyType]
+        self, template: RequestTemplate[Any], response_decoder: TypeAdapter[ResponseBodyType]
     ) -> None:
         self.template = template
         self.response_decoder = response_decoder
@@ -99,7 +98,7 @@ class BoundAsyncEndpointDescriptor(Generic[PT, ResponseBodyType]):
         instance: BaseAsyncClient,
         operators: Iterable[AsyncOperator[ResponseBodyType]],
         template: RequestTemplate[Any],
-        response_decoder: AsyncTypeAdapter[ResponseBodyType],
+        response_decoder: TypeAdapter[ResponseBodyType],
     ) -> None:
         self.__instance = instance
         self.__operators = list(operators)
@@ -115,4 +114,4 @@ class BoundAsyncEndpointDescriptor(Generic[PT, ResponseBodyType]):
     async def __send_request(self, context: AsyncContext[ResponseBodyType]) -> ResponseBodyType:
         response = await self.__instance.send(context.request)
         context.response = response
-        return await self.__response_decoder.from_response(response)
+        return await self.__response_decoder.from_async_response(response)

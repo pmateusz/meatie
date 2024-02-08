@@ -13,7 +13,7 @@ from meatie.error import (
     Timeout,
     TransportError,
 )
-from meatie.types import AsyncResponse
+from meatie.internal.types import AsyncResponse
 
 from . import AiohttpResponse
 
