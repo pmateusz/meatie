@@ -1,12 +1,13 @@
 #  Copyright 2024 The Meatie Authors. All rights reserved.
 #  Use of this source code is governed by a BSD-style license that can be found in the LICENSE file.
 
-from typing import Any, cast
+from typing import Any
 from unittest.mock import patch
 
-from tests.client.httpx_.mock_tools import MockTools
 from meatie import Private, endpoint
 from meatie_httpx import HttpxClient
+
+from tests.client.httpx_.mock_tools import MockTools
 
 
 def test_calls_authenticate_on_private_endpoint(mock_tools: MockTools) -> None:

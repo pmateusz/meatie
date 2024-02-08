@@ -5,10 +5,10 @@ from typing import Callable, Generator
 
 import aiohttp
 import pytest
-
-from tests.client.proxy_suite import ProxyErrorSuite
 from http_test import ClientAdapter
 from meatie_aiohttp import AiohttpClient
+
+from tests.client.proxy_suite import ProxyErrorSuite
 
 
 class TestAiohttpProxyErrorSuite(ProxyErrorSuite):

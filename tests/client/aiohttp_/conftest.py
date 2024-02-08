@@ -1,12 +1,12 @@
 #  Copyright 2024 The Meatie Authors. All rights reserved.
 #  Use of this source code is governed by a BSD-style license that can be found in the LICENSE file.
 from asyncio import AbstractEventLoop
-from typing import Callable, Any
+from typing import Any, Callable
 
 import aiohttp
 import pytest
 
-from client.aiohttp_.mock_tools import MockTools
+from tests.client.aiohttp_.mock_tools import MockTools
 
 
 @pytest.fixture(name="mock_tools", scope="session")

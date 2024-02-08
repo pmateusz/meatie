@@ -2,15 +2,16 @@
 #  Use of this source code is governed by a BSD-style license that can be found in the LICENSE file.
 import asyncio
 from http import HTTPStatus
-from typing import Generator, Callable
+from typing import Callable, Generator
 
 import aiohttp
-
-from http_test import StatusHandler, HTTPTestServer, ClientAdapter
-from meatie import Request
-from meatie_aiohttp import AiohttpClient
-from tests.client.default_suite import DefaultSuite
 import pytest
+from http_test import ClientAdapter, HTTPTestServer, StatusHandler
+from meatie import Request
+from meatie.types import Client
+from meatie_aiohttp import AiohttpClient
+
+from tests.client.default_suite import DefaultSuite
 
 
 class TestAiohttpDefaultSuite(DefaultSuite):
@@ -19,12 +20,12 @@ class TestAiohttpDefaultSuite(DefaultSuite):
         self,
         event_loop: asyncio.AbstractEventLoop,
         create_client_session: Callable[..., aiohttp.ClientSession],
-    ) -> Generator[ClientAdapter, None, None]:
+    ) -> Generator[Client, None, None]:
         with ClientAdapter(event_loop, AiohttpClient(create_client_session())) as client:
             yield client
 
     @staticmethod
-    def test_can_handle_schema_error(client: ClientAdapter, http_server: HTTPTestServer) -> None:
+    def test_can_handle_schema_error(http_server: HTTPTestServer, client: Client) -> None:
         # GIVEN
         http_server.handler = StatusHandler(HTTPStatus.OK)
         request = Request(

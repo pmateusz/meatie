@@ -6,8 +6,6 @@ from typing import Any
 from unittest.mock import Mock, call, patch
 
 import pytest
-
-from conftest import MockTools
 from meatie import (
     MeatieError,
     ResponseError,
@@ -18,6 +16,8 @@ from meatie import (
 )
 from meatie_requests import RequestsClient
 from requests import Session
+
+from tests.client.requests_.mock_tools import MockTools
 
 PRODUCTS = [{"name": "headphones"}]
 

@@ -4,8 +4,8 @@ from typing import Generator
 
 import httpx
 import pytest
-
 from meatie_httpx import HttpxClient
+
 from tests.client.timeout_suite import TimeoutSuite
 
 

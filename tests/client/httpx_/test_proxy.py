@@ -6,7 +6,6 @@ from typing import Generator
 
 import httpx
 import pytest
-
 from http_test import HTTPTestServer
 from meatie import Request, ServerError
 from meatie.types import Client

@@ -6,9 +6,9 @@ from typing import Generator
 
 import pytest
 import requests
+from meatie_requests.client import RequestsClient
 
 from tests.client.proxy_suite import ProxyErrorSuite
-from meatie_requests.client import RequestsClient
 
 
 class TestRequestsProxyErrorSuite(ProxyErrorSuite):

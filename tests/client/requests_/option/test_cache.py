@@ -3,11 +3,11 @@
 
 from typing import Any, cast
 
-from client.requests_.mock_tools import MockTools
 from meatie import INF, Cache, endpoint
 from meatie_requests import RequestsClient
 from requests import Session
 
+from tests.client.requests_.mock_tools import MockTools
 
 PRODUCTS = [{"name": "pencil"}, {"name": "headphones"}]
 

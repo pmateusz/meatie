@@ -3,7 +3,6 @@
 from typing import Any, Optional
 
 import httpx
-
 from meatie import BaseClient, CacheStore
 from meatie.error import (
     MeatieError,

@@ -4,12 +4,13 @@ import time
 from http import HTTPStatus
 
 import pytest
-
 from http_test import (
-    HTTPTestServer, Handler,
+    Handler,
+    HTTPTestServer,
 )
 from meatie import (
-    Request, Timeout,
+    Request,
+    Timeout,
 )
 from meatie.types import Client
 

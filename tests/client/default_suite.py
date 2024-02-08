@@ -12,7 +12,6 @@ from http_test import (
     diagnostic_handler,
     echo_handler,
 )
-
 from meatie import (
     ParseResponseError,
     Request,
@@ -191,7 +190,9 @@ class DefaultSuite:
         assert exc_info.value.cause is not None
 
     @staticmethod
-    def test_rejects_untrusted_cert(untrusted_https_server: HTTPSTestServer, client: Client) -> None:
+    def test_rejects_untrusted_cert(
+        untrusted_https_server: HTTPSTestServer, client: Client
+    ) -> None:
         # GIVEN
         untrusted_https_server.handler = StatusHandler(HTTPStatus.OK)
         request = Request("GET", untrusted_https_server.base_url, query_params={}, headers={})

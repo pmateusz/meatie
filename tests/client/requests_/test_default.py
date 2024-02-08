@@ -4,9 +4,9 @@ from typing import Generator
 
 import pytest
 import requests
+from meatie_requests.client import RequestsClient
 
 from tests.client.default_suite import DefaultSuite
-from meatie_requests.client import RequestsClient
 
 
 class TestRequestsDefaultSuite(DefaultSuite):

@@ -5,6 +5,7 @@ from typing import Any
 
 from meatie import INF, Cache, endpoint
 from meatie_httpx import HttpxClient
+
 from tests.client.httpx_.mock_tools import MockTools
 
 PRODUCTS = [{"name": "pencil"}, {"name": "headphones"}]

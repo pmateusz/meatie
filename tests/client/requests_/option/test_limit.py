@@ -4,12 +4,11 @@
 from typing import Any, cast
 from unittest.mock import patch
 
-import pytest
-
-from client.requests_.mock_tools import MockTools
 from meatie import Limit, Limiter, Rate, endpoint
 from meatie_requests import RequestsClient
 from requests import Session
+
+from tests.client.requests_.mock_tools import MockTools
 
 
 def test_waits_until_tokens_are_available(mock_tools: MockTools) -> None:

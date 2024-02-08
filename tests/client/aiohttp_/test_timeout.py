@@ -5,10 +5,10 @@ from typing import Callable, Generator
 
 import aiohttp
 import pytest
-
-from tests.client.timeout_suite import TimeoutSuite
 from http_test import ClientAdapter
 from meatie_aiohttp import AiohttpClient
+
+from tests.client.timeout_suite import TimeoutSuite
 
 
 class TestAiohttpTimeoutSuite(TimeoutSuite):

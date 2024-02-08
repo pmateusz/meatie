@@ -6,6 +6,7 @@ from unittest.mock import patch
 
 from meatie import Limit, Limiter, Rate, endpoint
 from meatie_httpx import HttpxClient
+
 from tests.client.httpx_.mock_tools import MockTools
 
 

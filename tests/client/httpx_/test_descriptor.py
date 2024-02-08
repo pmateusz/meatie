@@ -5,13 +5,12 @@ from typing import Any, Optional
 from unittest.mock import ANY, Mock
 
 import pytest
-
-from tests.client.httpx_.mock_tools import MockTools
 from meatie import Request, RequestTemplate, endpoint
 from meatie.descriptor import Context, EndpointDescriptor
 from meatie.types import Client
 from meatie_httpx import HttpxClient
 
+from tests.client.httpx_.mock_tools import MockTools
 
 PRODUCTS = [{"name": "Pencil"}, {"name": "Headphones"}]
 

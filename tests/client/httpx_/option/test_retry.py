@@ -6,8 +6,6 @@ from typing import Any
 from unittest.mock import Mock, call, patch
 
 import pytest
-
-from client.httpx_.mock_tools import MockTools
 from meatie import (
     MeatieError,
     ResponseError,
@@ -18,6 +16,8 @@ from meatie import (
 )
 from meatie_httpx import HttpxClient
 from requests import Session
+
+from tests.client.httpx_.mock_tools import MockTools
 
 PRODUCTS = [{"name": "headphones"}]
 

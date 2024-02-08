@@ -6,7 +6,7 @@ from json import JSONDecodeError
 from typing import Any
 from unittest.mock import Mock
 
-from httpx import Response, Client
+from httpx import Client, Response
 
 
 class MockTools:
