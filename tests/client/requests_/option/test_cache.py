@@ -3,7 +3,7 @@
 
 from typing import Any, cast
 
-from meatie import INF, Cache, endpoint
+from meatie import INF, cache, endpoint
 from meatie_requests import RequestsClient
 from requests import Session
 
@@ -20,7 +20,7 @@ def test_local_cache_is_isolated(mock_tools: MockTools) -> None:
         def __init__(self) -> None:
             super().__init__(cast(Session, session))
 
-        @endpoint("/api/v1/products", Cache(ttl=INF, shared=False))
+        @endpoint("/api/v1/products", cache(ttl=INF, shared=False))
         def get_products(self) -> list[Any]:
             ...
 
@@ -50,7 +50,7 @@ def test_global_cache_is_shared(mock_tools: MockTools) -> None:
         def __init__(self) -> None:
             super().__init__(session)
 
-        @endpoint("/api/v1/products", Cache(ttl=INF, shared=True))
+        @endpoint("/api/v1/products", cache(ttl=INF, shared=True))
         def get_products(self) -> list[Any]:
             ...
 

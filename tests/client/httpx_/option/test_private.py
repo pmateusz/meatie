@@ -4,7 +4,7 @@
 from typing import Any
 from unittest.mock import patch
 
-from meatie import Private, endpoint
+from meatie import endpoint, private
 from meatie_httpx import HttpxClient
 
 from tests.client.httpx_.mock_tools import MockTools
@@ -19,7 +19,7 @@ def test_calls_authenticate_on_private_endpoint(mock_tools: MockTools) -> None:
         def __init__(self) -> None:
             super().__init__(client)
 
-        @endpoint("/api/v1/products", Private)
+        @endpoint("/api/v1/products", private)
         def get_products(self) -> list[Any]:
             ...
 

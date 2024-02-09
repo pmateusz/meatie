@@ -14,9 +14,9 @@ import pytest
 from aiohttp import ClientSession
 from meatie import HOUR, Limiter, Rate, Request, endpoint
 from meatie.aio import (
-    Cache,
-    Limit,
-    Private,
+    cache,
+    limit,
+    private,
 )
 from meatie_aiohttp import AiohttpClient
 
@@ -118,11 +118,11 @@ class Binance(AiohttpClient):
         signature = raw_signature.hexdigest()
         request.query_params["signature"] = signature
 
-    @endpoint("/api/v3/exchangeInfo", Cache(ttl=HOUR), Limit(tokens=20))
+    @endpoint("/api/v3/exchangeInfo", cache(ttl=HOUR), limit(tokens=20))
     async def get_exchange_info(self) -> ExchangeInfo:
         ...
 
-    @endpoint("/sapi/v1/asset/wallet/balance", Private, Limit(tokens=60))
+    @endpoint("/sapi/v1/asset/wallet/balance", private, limit(tokens=60))
     async def get_asset_wallet_balance(self) -> list[AssetWalletBalance]:
         ...
 

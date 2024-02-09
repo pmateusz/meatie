@@ -9,10 +9,10 @@ import pytest
 from meatie import (
     MeatieError,
     ResponseError,
-    Retry,
     after_attempt,
     endpoint,
     exponential,
+    retry,
 )
 from meatie_httpx import HttpxClient
 from requests import Session
@@ -30,7 +30,7 @@ def test_no_retry_on_success_status(mock_tools: MockTools) -> None:
         def __init__(self) -> None:
             super().__init__(session)
 
-        @endpoint("/api/v1/products", Retry())
+        @endpoint("/api/v1/products", retry())
         def get_products(self) -> list[Any]:
             ...
 
@@ -51,7 +51,7 @@ def test_no_retry_on_bad_request(mock_tools: MockTools) -> None:
         def __init__(self) -> None:
             super().__init__(client)
 
-        @endpoint("/api/v1/products", Retry())
+        @endpoint("/api/v1/products", retry())
         def get_products(self) -> list[Any]:
             ...
 
@@ -76,7 +76,7 @@ def test_can_retry(mock_tools: MockTools) -> None:
         def __init__(self) -> None:
             super().__init__(session)
 
-        @endpoint("/api/v1/products", Retry())
+        @endpoint("/api/v1/products", retry())
         def get_products(self) -> list[Any]:
             ...
 
@@ -101,7 +101,7 @@ def test_can_throw_rate_limit_exceeded(mock_tools: MockTools) -> None:
 
         @endpoint(
             "/api/v1/products",
-            Retry(wait=exponential(), stop=after_attempt(attempts)),
+            retry(wait=exponential(), stop=after_attempt(attempts)),
         )
         def get_products(self) -> list[Any]:
             ...

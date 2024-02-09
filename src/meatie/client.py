@@ -5,22 +5,22 @@ from typing import Any, Optional, TypeVar
 
 from typing_extensions import Self
 
-from meatie import INF, CacheStore, Limiter, Rate, Request
+from meatie import INF, Cache, Limiter, Rate, Request
 
 
 class BaseClient:
-    shared_cache: CacheStore
+    shared_cache: Cache
 
     def __init__(
         self,
-        local_cache: Optional[CacheStore] = None,
+        local_cache: Optional[Cache] = None,
         limiter: Optional[Limiter] = None,
     ):
-        self.local_cache = local_cache if local_cache is not None else CacheStore()
+        self.local_cache = local_cache if local_cache is not None else Cache()
         self.limiter = limiter if limiter is not None else Limiter(Rate.max, INF)
 
     def __init_subclass__(cls, **kwargs: Any) -> None:
-        cls.shared_cache = CacheStore()
+        cls.shared_cache = Cache()
 
     def __enter__(self) -> Self:
         return self

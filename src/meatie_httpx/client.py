@@ -3,7 +3,7 @@
 from typing import Any, Optional
 
 import httpx
-from meatie import BaseClient, CacheStore
+from meatie import BaseClient, Cache
 from meatie.error import (
     MeatieError,
     ProxyError,
@@ -23,7 +23,7 @@ class HttpxClient(BaseClient):
         self,
         client: httpx.Client,
         client_params: Optional[dict[str, Any]] = None,
-        local_cache: Optional[CacheStore] = None,
+        local_cache: Optional[Cache] = None,
         limiter: Optional[Any] = None,
     ) -> None:
         super().__init__(local_cache, limiter)

@@ -7,7 +7,7 @@ from unittest.mock import patch
 import pytest
 from aiohttp import ClientSession
 from meatie import endpoint
-from meatie.aio import Private
+from meatie.aio import private
 from meatie_aiohttp import AiohttpClient
 
 from tests.client.aiohttp_.mock_tools import MockTools
@@ -23,7 +23,7 @@ async def test_calls_authenticate_on_private_endpoint(mock_tools: MockTools) -> 
         def __init__(self) -> None:
             super().__init__(cast(ClientSession, session))
 
-        @endpoint("/api/v1/products", Private)
+        @endpoint("/api/v1/products", private)
         async def get_products(self) -> list[Any]:
             ...
 

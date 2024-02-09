@@ -1,14 +1,14 @@
 #  Copyright 2023 The Meatie Authors. All rights reserved.
 #  Use of this source code is governed by a BSD-style license that can be found in the LICENSE file.
 
-from .cache import CacheOption as Cache
-from .limit import LimitOption as Limit
-from .private import Instance as Private
-from .retry import RetryOption as Retry
+from .cache_option import cache
+from .limit_option import limit
+from .private_option import private
+from .retry_option import retry
 
 __all__ = [
-    "Cache",
-    "Limit",
-    "Retry",
-    "Private",
+    "cache",
+    "limit",
+    "retry",
+    "private",
 ]

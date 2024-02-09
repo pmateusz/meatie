@@ -20,10 +20,10 @@ from meatie import (
     has_status,
 )
 from meatie.aio import (
-    Cache,
-    Limit,
-    Private,
-    Retry,
+    cache,
+    limit,
+    private,
+    retry,
 )
 from meatie.types import Request
 from meatie_aiohttp import AiohttpClient
@@ -137,7 +137,7 @@ async def test_private_endpoint_example(dump_model: Callable[[Any], Any]) -> Non
         def __init__(self, session: ClientSession) -> None:
             super().__init__(session)
 
-        @endpoint("/api/v1/quote/request", Private)
+        @endpoint("/api/v1/quote/request", private)
         async def post_request_quote(
             self, basket: Annotated[Basket, ApiRef("body")]
         ) -> BasketQuote:
@@ -172,7 +172,7 @@ async def test_cache_endpoint_example() -> None:
         def __init__(self, session: ClientSession) -> None:
             super().__init__(session)
 
-        @endpoint("/api/v1/products", Cache(ttl=5 * MINUTE))
+        @endpoint("/api/v1/products", cache(ttl=5 * MINUTE))
         async def get_products(self) -> list[Product]:
             ...
 
@@ -211,8 +211,8 @@ async def test_retry_example(mock_tools: MockTools, dump_model: Callable[[Any], 
 
         @endpoint(
             "/api/v1/products",
-            Retry(
-                retry=has_status(HTTPStatus.TOO_MANY_REQUESTS),
+            retry(
+                on=has_status(HTTPStatus.TOO_MANY_REQUESTS),
                 wait=exponential(),
                 sleep_func=AsyncMock(),
             ),
@@ -256,7 +256,7 @@ async def test_rate_limit_example(mock_tools: MockTools, dump_model: Callable[[A
                 ),
             )
 
-        @endpoint("/api/v1/products", Limit(tokens=5, sleep_func=sleep_func))
+        @endpoint("/api/v1/products", limit(tokens=5, sleep_func=sleep_func))
         async def get_products(self) -> list[Product]:
             ...
 

@@ -7,7 +7,7 @@ from unittest.mock import AsyncMock, patch
 import pytest
 from aiohttp import ClientSession
 from meatie import Limiter, Rate, endpoint
-from meatie.aio import Limit
+from meatie.aio import limit
 from meatie_aiohttp import AiohttpClient
 
 from tests.client.aiohttp_.mock_tools import MockTools
@@ -32,7 +32,7 @@ async def test_waits_until_tokens_are_available(mock_tools: MockTools) -> None:
                     limiter=Limiter(Rate(1), capacity=2, init_tokens=0, init_time=current_time),
                 )
 
-            @endpoint("/api/v1/products", Limit(sleep_func=sleep_func, tokens=2))
+            @endpoint("/api/v1/products", limit(sleep_func=sleep_func, tokens=2))
             async def get_products(self) -> list[Any]:
                 ...
 

@@ -4,7 +4,7 @@ import asyncio
 from typing import Any, Optional
 
 import aiohttp
-from meatie import CacheStore, Request
+from meatie import Cache, Request
 from meatie.aio import BaseAsyncClient
 from meatie.error import (
     MeatieError,
@@ -23,7 +23,7 @@ class AiohttpClient(BaseAsyncClient):
         self,
         session: aiohttp.ClientSession,
         session_params: Optional[dict[str, Any]] = None,
-        local_cache: Optional[CacheStore] = None,
+        local_cache: Optional[Cache] = None,
         limiter: Optional[Any] = None,
     ) -> None:
         super().__init__(local_cache, limiter)

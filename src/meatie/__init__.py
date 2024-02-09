@@ -34,16 +34,16 @@ from .internal.retry import (
     fixed,
     jit,
 )
-from .internal.cache import CacheStore
+from .internal.cache import Cache
 from .internal.limit import Limiter, Rate
 from .client import BaseClient
 from .api_ref import ApiRef
 from .descriptor import EndpointDescriptor, Context
 from .option import (
-    Cache,
-    Limit,
-    Retry,
-    Private,
+    limit,
+    cache,
+    retry,
+    private,
 )
 from .endpoint import endpoint
 
@@ -82,17 +82,17 @@ __all__ = [
     "has_status",
     "has_exception_type",
     "has_exception_cause_type",
-    "Retry",
-    "CacheStore",
+    "Cache",
     "Limiter",
     "Rate",
     "ApiRef",
     "BaseClient",
     "Context",
     "EndpointDescriptor",
-    "Cache",
-    "Limit",
-    "Private",
+    "retry",
+    "limit",
+    "cache",
+    "private",
     "endpoint",
 ]
 

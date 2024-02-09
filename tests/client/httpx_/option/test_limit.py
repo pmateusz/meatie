@@ -4,7 +4,7 @@
 from typing import Any
 from unittest.mock import patch
 
-from meatie import Limit, Limiter, Rate, endpoint
+from meatie import Limiter, Rate, endpoint, limit
 from meatie_httpx import HttpxClient
 
 from tests.client.httpx_.mock_tools import MockTools
@@ -27,7 +27,7 @@ def test_waits_until_tokens_are_available(mock_tools: MockTools) -> None:
                     limiter=Limiter(Rate(1), capacity=2, init_tokens=0, init_time=current_time),
                 )
 
-            @endpoint("/api/v1/products", Limit(tokens=2))
+            @endpoint("/api/v1/products", limit(tokens=2))
             def get_products(self) -> list[Any]:
                 ...
 

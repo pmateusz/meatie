@@ -3,7 +3,7 @@
 from typing import Any, Optional
 
 import requests.exceptions
-from meatie import BaseClient, CacheStore, Request
+from meatie import BaseClient, Cache, Request
 from meatie.error import (
     MeatieError,
     ProxyError,
@@ -23,7 +23,7 @@ class RequestsClient(BaseClient):
         self,
         session: Session,
         session_params: Optional[dict[str, Any]] = None,
-        local_cache: Optional[CacheStore] = None,
+        local_cache: Optional[Cache] = None,
         limiter: Optional[Any] = None,
     ) -> None:
         super().__init__(local_cache, limiter)

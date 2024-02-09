@@ -8,7 +8,7 @@ from unittest.mock import AsyncMock, Mock
 import pytest
 from aiohttp import ClientResponseError, ClientSession
 from meatie import after_attempt, endpoint, exponential
-from meatie.aio import Retry
+from meatie.aio import retry
 from meatie_aiohttp import AiohttpClient
 
 from tests.client.aiohttp_.mock_tools import MockTools
@@ -25,7 +25,7 @@ async def test_no_retry_on_success_status(mock_tools: MockTools) -> None:
         def __init__(self) -> None:
             super().__init__(cast(ClientSession, session))
 
-        @endpoint("/api/v1/products", Retry())
+        @endpoint("/api/v1/products", retry())
         async def get_products(self) -> list[Any]:
             ...
 
@@ -47,7 +47,7 @@ async def test_no_retry_on_bad_request(mock_tools: MockTools) -> None:
         def __init__(self) -> None:
             super().__init__(cast(ClientSession, session))
 
-        @endpoint("/api/v1/products", Retry())
+        @endpoint("/api/v1/products", retry())
         async def get_products(self) -> list[Any]:
             ...
 
@@ -71,7 +71,7 @@ async def test_can_retry(mock_tools: MockTools) -> None:
         def __init__(self) -> None:
             super().__init__(cast(ClientSession, session))
 
-        @endpoint("/api/v1/products", Retry(sleep_func=AsyncMock()))
+        @endpoint("/api/v1/products", retry(sleep_func=AsyncMock()))
         async def get_products(self) -> list[Any]:
             ...
 
@@ -96,7 +96,7 @@ async def test_can_throw_rate_limit_exceeded(mock_tools: MockTools) -> None:
 
         @endpoint(
             "/api/v1/products",
-            Retry(sleep_func=AsyncMock(), wait=exponential(), stop=after_attempt(attempts)),
+            retry(sleep_func=AsyncMock(), wait=exponential(), stop=after_attempt(attempts)),
         )
         async def get_products(self) -> list[Any]:
             ...
