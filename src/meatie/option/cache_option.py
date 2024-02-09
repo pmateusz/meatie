@@ -5,9 +5,11 @@ import abc
 import urllib.parse
 from typing import Generic
 
-from meatie import CacheStore, Duration
+from meatie import Cache, Duration
 from meatie.descriptor import Context, EndpointDescriptor
 from meatie.internal.types import PT, T
+
+__all__ = ["cache"]
 
 
 class CacheOption:
@@ -25,6 +27,9 @@ class CacheOption:
             operator = _LocalOperator[T](self.ttl)
 
         descriptor.register_operator(CacheOption.__PRIORITY, operator)
+
+
+cache = CacheOption
 
 
 class _Operator(Generic[T]):
@@ -46,15 +51,15 @@ class _Operator(Generic[T]):
         return value
 
     @abc.abstractmethod
-    def _storage(self, ctx: Context[T]) -> CacheStore:
+    def _storage(self, ctx: Context[T]) -> Cache:
         ...
 
 
 class _LocalOperator(_Operator[T]):
-    def _storage(self, ctx: Context[T]) -> CacheStore:
+    def _storage(self, ctx: Context[T]) -> Cache:
         return ctx.client.local_cache
 
 
 class _SharedOperator(_Operator[T]):
-    def _storage(self, ctx: Context[T]) -> CacheStore:
+    def _storage(self, ctx: Context[T]) -> Cache:
         return ctx.client.shared_cache

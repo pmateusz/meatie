@@ -2,23 +2,24 @@
 #  Use of this source code is governed by a BSD-style license that can be found in the LICENSE file.
 
 
-import asyncio
 import time
 from http import HTTPStatus
-from typing import Awaitable, Callable, Optional
+from typing import Optional
 
 from meatie import (
     Condition,
-    Duration,
+    Context,
+    EndpointDescriptor,
+    RateLimitExceeded,
     RetryContext,
-    RetryError,
     has_status,
     never,
     zero,
 )
-from meatie.aio import AsyncContext, AsyncEndpointDescriptor
 from meatie.internal.retry import WaitFunc
 from meatie.internal.types import PT, T
+
+__all__ = ["retry"]
 
 
 class RetryOption:
@@ -26,36 +27,36 @@ class RetryOption:
 
     def __init__(
         self,
-        retry: Condition = has_status(HTTPStatus.TOO_MANY_REQUESTS),
+        on: Condition = has_status(HTTPStatus.TOO_MANY_REQUESTS),
         wait: WaitFunc = zero,
         stop: Condition = never,
-        sleep_func: Callable[[Duration], Awaitable[None]] = asyncio.sleep,
     ) -> None:
-        self.__retry = retry
+        self.__on = on
         self.__wait = wait
         self.__stop = stop
-        self.__sleep_func = sleep_func
 
-    def __call__(self, descriptor: AsyncEndpointDescriptor[PT, T]) -> None:
+    def __call__(self, descriptor: EndpointDescriptor[PT, T]) -> None:
         descriptor.register_operator(RetryOption.__PRIORITY, self.__operator)
 
-    async def __operator(self, operation_ctx: AsyncContext[T]) -> T:
-        retry_ctx = RetryContext(attempt_number=1, started_at=time.monotonic())
+    def __operator(self, operation_ctx: Context[T]) -> T:
+        retry_ctx = RetryContext(
+            attempt_number=1, started_at=time.monotonic(), error=None, response=None
+        )
         last_result: Optional[T] = None
         stopped = False
         while not stopped:
             if retry_ctx.attempt_number > 1:
                 wait_time = self.__wait(retry_ctx)
                 if wait_time > 0.0:
-                    await self.__sleep_func(wait_time)
+                    time.sleep(wait_time)
 
             try:
-                last_result = await operation_ctx.proceed()
+                last_result = operation_ctx.proceed()
                 retry_ctx.response = operation_ctx.response
-            except Exception as exc:
+            except BaseException as exc:
                 retry_ctx.error = exc
 
-            if not self.__retry(retry_ctx):
+            if not self.__on(retry_ctx):
                 break
 
             retry_ctx.attempt_number += 1
@@ -66,4 +67,7 @@ class RetryOption:
 
         if retry_ctx.error is not None:
             raise retry_ctx.error
-        raise RetryError()
+        raise RateLimitExceeded()
+
+
+retry = RetryOption

@@ -3,6 +3,8 @@
 from meatie.descriptor import Context, EndpointDescriptor
 from meatie.internal.types import PT, ResponseBodyType
 
+__all__ = ["private"]
+
 
 class PrivateOption:
     __PRIORITY = 50
@@ -16,4 +18,4 @@ class PrivateOption:
         return ctx.proceed()
 
 
-Instance = PrivateOption()
+private = PrivateOption()

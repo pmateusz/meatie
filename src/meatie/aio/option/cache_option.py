@@ -7,8 +7,10 @@ from typing import Generic
 
 from meatie import Duration
 from meatie.aio import AsyncContext, AsyncEndpointDescriptor
-from meatie.internal.cache import CacheStore
+from meatie.internal.cache import Cache
 from meatie.internal.types import PT, T
+
+__all__ = ["cache"]
 
 
 class CacheOption:
@@ -26,6 +28,9 @@ class CacheOption:
             operator = _LocalOperator[T](self.ttl)
 
         descriptor.register_operator(CacheOption.__PRIORITY, operator)
+
+
+cache = CacheOption
 
 
 class _Operator(Generic[T]):
@@ -47,15 +52,15 @@ class _Operator(Generic[T]):
         return value
 
     @abc.abstractmethod
-    def _storage(self, ctx: AsyncContext[T]) -> CacheStore:
+    def _storage(self, ctx: AsyncContext[T]) -> Cache:
         ...
 
 
 class _LocalOperator(_Operator[T]):
-    def _storage(self, ctx: AsyncContext[T]) -> CacheStore:
+    def _storage(self, ctx: AsyncContext[T]) -> Cache:
         return ctx.client.local_cache
 
 
 class _SharedOperator(_Operator[T]):
-    def _storage(self, ctx: AsyncContext[T]) -> CacheStore:
+    def _storage(self, ctx: AsyncContext[T]) -> Cache:
         return ctx.client.shared_cache

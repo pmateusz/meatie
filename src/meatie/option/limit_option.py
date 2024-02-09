@@ -9,6 +9,8 @@ from meatie.descriptor import Context, EndpointDescriptor
 from meatie.internal.limit import Tokens
 from meatie.internal.types import PT, T
 
+__all__ = ["limit"]
+
 
 class LimitOption:
     __PRIORITY = 80
@@ -28,3 +30,6 @@ class LimitOption:
             time.sleep(delay)
 
         return ctx.proceed()
+
+
+limit = LimitOption

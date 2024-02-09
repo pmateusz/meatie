@@ -3,19 +3,22 @@
 
 
 import asyncio
-import time as sys_time
+import time
 from typing import Awaitable, Callable
 
+from meatie import Duration
 from meatie.aio import AsyncContext, AsyncEndpointDescriptor
 from meatie.internal.limit import Tokens
 from meatie.internal.types import PT, T
+
+__all__ = ["limit"]
 
 
 class LimitOption:
     __PRIORITY = 80
 
     def __init__(
-        self, tokens: Tokens, sleep_func: Callable[[Tokens], Awaitable[None]] = asyncio.sleep
+        self, tokens: Tokens, sleep_func: Callable[[Duration], Awaitable[None]] = asyncio.sleep
     ) -> None:
         self.tokens = tokens
         self.sleep_func = sleep_func
@@ -25,10 +28,13 @@ class LimitOption:
             descriptor.register_operator(LimitOption.__PRIORITY, self.__operator)
 
     async def __operator(self, ctx: AsyncContext[T]) -> T:
-        current_time = sys_time.monotonic()
+        current_time = time.monotonic()
         reservation = ctx.client.limiter.reserve_at(current_time, self.tokens)
         delay = reservation.ready_at - current_time
         if delay > 0:
             await self.sleep_func(delay)
 
         return await ctx.proceed()
+
+
+limit = LimitOption
