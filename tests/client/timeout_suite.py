@@ -31,4 +31,4 @@ class TimeoutSuite:
             client.send(request)
 
         # THEN
-        assert exc_info.value.cause is not None
+        assert exc_info.value.__cause__ is not None

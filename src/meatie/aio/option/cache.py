@@ -7,9 +7,7 @@ from typing import Generic
 
 from meatie import Duration
 from meatie.aio import AsyncContext, AsyncEndpointDescriptor
-from meatie.internal import (
-    CacheStore,
-)
+from meatie.internal.cache import CacheStore
 from meatie.internal.types import PT, T
 
 

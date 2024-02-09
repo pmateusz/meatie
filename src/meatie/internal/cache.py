@@ -7,6 +7,8 @@ from typing import Any
 
 from meatie import Duration, Time
 
+__all__ = ["CacheStore"]
+
 
 # TODO: implement limit on storage size to avoid memory leaks using OrderedDict
 class CacheStore:

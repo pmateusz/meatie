@@ -2,114 +2,22 @@
 #  Use of this source code is governed by a BSD-style license that can be found in the LICENSE file.
 
 
-import abc
 import time
-from dataclasses import dataclass
 from http import HTTPStatus
-from typing import Callable, Optional
+from typing import Optional
 
-import aiohttp
-
-from meatie import Context, EndpointDescriptor, RateLimitExceeded
-from meatie.internal.types import PT, Response, T
-
-
-@dataclass()
-class RetryContext:
-    attempt_number: int
-    started_at: float
-    error: Optional[Exception]
-    response: Optional[Response]
-
-
-class _BaseCondition:
-    @abc.abstractmethod
-    def __call__(self, ctx: RetryContext) -> bool:
-        pass
-
-    def __and__(self, other: "_BaseCondition") -> "_BaseCondition":
-        return _AndCondition(self, other)
-
-    def __or__(self, other: "_BaseCondition") -> "_BaseCondition":
-        return _OrCondition(self, other)
-
-
-class _AndCondition(_BaseCondition):
-    def __init__(self, left: _BaseCondition, right: _BaseCondition) -> None:
-        self._left = left
-        self._right = right
-
-    def __call__(self, ctx: RetryContext) -> bool:
-        return self._left(ctx) and self._right(ctx)
-
-
-class _OrCondition(_BaseCondition):
-    def __init__(self, left: _BaseCondition, right: _BaseCondition) -> None:
-        self._left = left
-        self._right = right
-
-    def __call__(self, ctx: RetryContext) -> bool:
-        return self._left(ctx) or self._right(ctx)
-
-
-def _no_wait(_: RetryContext) -> float:
-    return 0.0
-
-
-class RetryOnStatusCode(_BaseCondition):
-    def __init__(self, status: int) -> None:
-        self.status = status
-
-    def __call__(self, ctx: RetryContext) -> bool:
-        if ctx.response is not None:
-            return ctx.response.status == self.status
-
-        if isinstance(ctx.error, aiohttp.ClientResponseError):
-            return ctx.error.status == self.status
-
-        return False
-
-
-class RetryOnExceptionType(_BaseCondition):
-    def __init__(self, exc_type: type[BaseException]) -> None:
-        self.exc_type = exc_type
-
-    def __call__(self, ctx: RetryContext) -> bool:
-        return isinstance(ctx.error, self.exc_type)
-
-
-RetryOnServerConnectionError = RetryOnExceptionType(aiohttp.ServerConnectionError)
-RetryOnTooManyRequestsStatus = RetryOnStatusCode(HTTPStatus.TOO_MANY_REQUESTS)
-NoWait = _no_wait
-
-
-class WaitExponential(_BaseCondition):
-    def __init__(self, multiplier: int = 2, lower_bound: int = 1, upper_bound: int = 3600) -> None:
-        self._multiplier = multiplier
-        self._lower_bound = lower_bound
-        self._upper_bound = upper_bound
-
-    def __call__(self, ctx: RetryContext) -> bool:
-        return max(min(self._multiplier**ctx.attempt_number, self._upper_bound), self._lower_bound)
-
-
-def _never_stop(ctx: RetryContext) -> bool:
-    return False
-
-
-class StopAfter:
-    def __init__(self, attempts: int) -> None:
-        self.attempts = attempts
-
-    def __call__(self, ctx: RetryContext) -> bool:
-        return ctx.attempt_number > self.attempts
-
-
-NeverStop = _never_stop
-
-StopCondition = Callable[[RetryContext], bool]
-RetryCondition = Callable[[RetryContext], bool]
-WaitFunc = Callable[[RetryContext], float]
+from meatie import (
+    Condition,
+    Context,
+    EndpointDescriptor,
+    RateLimitExceeded,
+    RetryContext,
+    has_status,
+    never,
+    zero,
+)
+from meatie.internal.retry import WaitFunc
+from meatie.internal.types import PT, T
 
 
 class RetryOption:
@@ -117,9 +25,9 @@ class RetryOption:
 
     def __init__(
         self,
-        retry: RetryCondition = (RetryOnTooManyRequestsStatus | RetryOnServerConnectionError),
-        wait: WaitFunc = NoWait,
-        stop: StopCondition = NeverStop,
+        retry: Condition = has_status(HTTPStatus.TOO_MANY_REQUESTS),
+        wait: WaitFunc = zero,
+        stop: Condition = never,
     ) -> None:
         self.__retry = retry
         self.__wait = wait

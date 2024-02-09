@@ -10,11 +10,10 @@ from typing import (
     Optional,
 )
 
-from typing_extensions import Callable, Self, Union, get_type_hints
-
 from meatie import ApiRef, Method, Request
-from meatie.internal import PT, RequestBodyType, T
 from meatie.internal.adapter import JsonAdapter, TypeAdapter, get_adapter
+from meatie.internal.types import PT, RequestBodyType, T
+from typing_extensions import Callable, Self, Union, get_type_hints
 
 from . import Kind, Parameter, PathTemplate
 

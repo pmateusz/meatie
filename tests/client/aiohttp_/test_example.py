@@ -10,14 +10,20 @@ from unittest.mock import AsyncMock, Mock, call, patch
 
 import pytest
 from aiohttp import ClientSession
-from meatie import MINUTE, ApiRef, Limiter, Rate, endpoint
+from meatie import (
+    MINUTE,
+    ApiRef,
+    Limiter,
+    Rate,
+    endpoint,
+    exponential,
+    has_status,
+)
 from meatie.aio import (
     Cache,
     Limit,
     Private,
     Retry,
-    RetryOnTooManyRequestsStatus,
-    WaitExponential,
 )
 from meatie.types import Request
 from meatie_aiohttp import AiohttpClient
@@ -206,7 +212,9 @@ async def test_retry_example(mock_tools: MockTools, dump_model: Callable[[Any], 
         @endpoint(
             "/api/v1/products",
             Retry(
-                retry=RetryOnTooManyRequestsStatus, wait=WaitExponential(), sleep_func=AsyncMock()
+                retry=has_status(HTTPStatus.TOO_MANY_REQUESTS),
+                wait=exponential(),
+                sleep_func=AsyncMock(),
             ),
         )
         async def get_products(self) -> list[Product]:

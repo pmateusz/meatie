@@ -172,7 +172,7 @@ class DefaultSuite:
         assert exc.response is not None
         assert "{invalid-json}" == exc.text
         assert HTTPStatus.OK == exc.response.status
-        assert isinstance(exc.cause, JSONDecodeError)
+        assert isinstance(exc.__cause__, JSONDecodeError)
 
     @staticmethod
     def test_can_handle_connection_reset(http_server: HTTPTestServer, client: Client) -> None:
@@ -187,7 +187,7 @@ class DefaultSuite:
             client.send(request)
 
         # THEN
-        assert exc_info.value.cause is not None
+        assert exc_info.value.__cause__ is not None
 
     @staticmethod
     def test_rejects_untrusted_cert(
@@ -202,7 +202,7 @@ class DefaultSuite:
             client.send(request)
 
         # THEN
-        assert exc_info.value.cause is not None
+        assert exc_info.value.__cause__ is not None
 
     @staticmethod
     def test_rejects_http_protocol_when_https_is_requested(
@@ -218,7 +218,7 @@ class DefaultSuite:
             client.send(request)
 
         # THEN
-        assert exc_info.value.cause is not None
+        assert exc_info.value.__cause__ is not None
 
     @staticmethod
     def test_can_handle_connection_error(client: Client) -> None:
@@ -230,7 +230,7 @@ class DefaultSuite:
             client.send(request)
 
         # THEN
-        assert exc_info.value.cause is not None
+        assert exc_info.value.__cause__ is not None
 
     @staticmethod
     def test_can_handle_schema_error(http_server: HTTPTestServer, client: Client) -> None:
@@ -244,4 +244,4 @@ class DefaultSuite:
             client.send(request)
 
         # THEN
-        assert exc_info.value.cause is not None
+        assert exc_info.value.__cause__ is not None

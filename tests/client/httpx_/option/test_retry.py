@@ -10,9 +10,9 @@ from meatie import (
     MeatieError,
     ResponseError,
     Retry,
-    StopAfter,
-    WaitExponential,
+    after_attempt,
     endpoint,
+    exponential,
 )
 from meatie_httpx import HttpxClient
 from requests import Session
@@ -101,7 +101,7 @@ def test_can_throw_rate_limit_exceeded(mock_tools: MockTools) -> None:
 
         @endpoint(
             "/api/v1/products",
-            Retry(wait=WaitExponential(), stop=StopAfter(attempts)),
+            Retry(wait=exponential(), stop=after_attempt(attempts)),
         )
         def get_products(self) -> list[Any]:
             ...

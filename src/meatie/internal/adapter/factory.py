@@ -17,7 +17,6 @@ from typing import (
 )
 
 from aiohttp import ClientResponse
-
 from meatie.internal.types import T
 
 from . import (

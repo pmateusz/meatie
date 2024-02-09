@@ -3,10 +3,10 @@
 
 # isort:skip_file
 import importlib.metadata
-from .internal import CacheStore, Limiter, Rate
 from .types import Request, Method, Duration, Time, INF, MINUTE, HOUR, DAY
 from .error import (
     MeatieError,
+    RetryError,
     RequestError,
     RateLimitExceeded,
     TransportError,
@@ -17,6 +17,25 @@ from .error import (
     ResponseError,
     ParseResponseError,
 )
+from .internal.retry import (
+    RetryContext,
+    BaseCondition,
+    Condition,
+    after,
+    after_attempt,
+    always,
+    never,
+    has_status,
+    has_exception_type,
+    has_exception_cause_type,
+    zero,
+    uniform,
+    exponential,
+    fixed,
+    jit,
+)
+from .internal.cache import CacheStore
+from .internal.limit import Limiter, Rate
 from .client import BaseClient
 from .api_ref import ApiRef
 from .descriptor import EndpointDescriptor, Context
@@ -24,14 +43,6 @@ from .option import (
     Cache,
     Limit,
     Retry,
-    WaitExponential,
-    NoWait,
-    NeverStop,
-    RetryOnStatusCode,
-    RetryOnTooManyRequestsStatus,
-    RetryOnServerConnectionError,
-    RetryOnExceptionType,
-    StopAfter,
     Private,
 )
 from .endpoint import endpoint
@@ -43,8 +54,10 @@ __all__ = [
     "MINUTE",
     "HOUR",
     "DAY",
+    "Method",
     "Request",
     "MeatieError",
+    "RetryError",
     "RequestError",
     "RateLimitExceeded",
     "TransportError",
@@ -54,7 +67,22 @@ __all__ = [
     "HttpStatusError",
     "ResponseError",
     "ParseResponseError",
-    "Method",
+    "RetryContext",
+    "BaseCondition",
+    "Condition",
+    "zero",
+    "uniform",
+    "exponential",
+    "fixed",
+    "jit",
+    "never",
+    "after",
+    "after_attempt",
+    "always",
+    "has_status",
+    "has_exception_type",
+    "has_exception_cause_type",
+    "Retry",
     "CacheStore",
     "Limiter",
     "Rate",
@@ -64,15 +92,6 @@ __all__ = [
     "EndpointDescriptor",
     "Cache",
     "Limit",
-    "Retry",
-    "WaitExponential",
-    "NoWait",
-    "NeverStop",
-    "RetryOnStatusCode",
-    "RetryOnTooManyRequestsStatus",
-    "RetryOnServerConnectionError",
-    "RetryOnExceptionType",
-    "StopAfter",
     "Private",
     "endpoint",
 ]

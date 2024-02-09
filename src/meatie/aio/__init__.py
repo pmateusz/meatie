@@ -9,14 +9,6 @@ from .option import (
     Cache,
     Limit,
     Retry,
-    WaitExponential,
-    NoWait,
-    NeverStop,
-    RetryOnStatusCode,
-    RetryOnTooManyRequestsStatus,
-    RetryOnServerConnectionError,
-    RetryOnExceptionType,
-    StopAfter,
     Private,
 )
 
@@ -27,13 +19,5 @@ __all__ = [
     "Cache",
     "Limit",
     "Retry",
-    "WaitExponential",
-    "NoWait",
-    "NeverStop",
-    "RetryOnStatusCode",
-    "RetryOnTooManyRequestsStatus",
-    "RetryOnServerConnectionError",
-    "RetryOnExceptionType",
-    "StopAfter",
     "Private",
 ]

@@ -4,12 +4,11 @@ from dataclasses import is_dataclass
 from inspect import isclass
 from typing import Any, Generic
 
+from meatie.error import ParseResponseError
+from meatie.internal.types import AsyncResponse, Response, T
 from pydantic import BaseModel, ValidationError
 from pydantic import TypeAdapter as pydantic_TypeAdapter
 from typing_extensions import is_typeddict
-
-from meatie.error import ParseResponseError
-from meatie.internal.types import AsyncResponse, Response, T
 
 from . import JsonAdapter, TypeAdapter
 
