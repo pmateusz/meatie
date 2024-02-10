@@ -8,7 +8,7 @@ init:
 	pip install poetry pre-commit
 
 install:
-	poetry install --with=dev
+	poetry install --with=test --with=pydantic --all-extras
 
 install-pydantic-v1:
 	pip install pydantic[dotenv]===1.10.0
