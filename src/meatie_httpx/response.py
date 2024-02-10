@@ -3,12 +3,12 @@
 from json import JSONDecodeError
 from typing import Any
 
-from httpx import Response
+import httpx
 from meatie.error import ParseResponseError, ResponseError
 
 
-class HttpxResponse:
-    def __init__(self, response: Response) -> None:
+class Response:
+    def __init__(self, response: httpx.Response) -> None:
         self.response = response
 
     @property

@@ -37,7 +37,6 @@ from .internal.retry import (
 from .internal.cache import Cache
 from .internal.limit import Limiter, Rate
 from .client import BaseClient
-from .api_ref import ApiRef
 from .descriptor import EndpointDescriptor, Context
 from .option import (
     limit,
@@ -85,10 +84,10 @@ __all__ = [
     "Cache",
     "Limiter",
     "Rate",
-    "ApiRef",
     "BaseClient",
     "Context",
     "EndpointDescriptor",
+    "api_ref",
     "retry",
     "limit",
     "cache",

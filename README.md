@@ -29,10 +29,10 @@
 
 Meatie is a Python metaprogramming library that eliminates the need for boilerplate code when integrating with REST
 APIs. The library generates code for calling a REST API based on method signatures annotated with type hints. Meatie
-abstracts away mechanics related to HTTP communication, such as building URLs, encoding query parameters, parsing, and
-dumping Pydantic models. With some modest additional configuration effort, generated HTTP clients offer rate limiting,
-retries, and caching. Meatie is compatible with Pydantic V1 and V2. Python 3.9 is the minimum officially supported
-version.
+abstracts away mechanics related to HTTP communication, such as building URLs, encoding query parameters, serializing
+and deserializing request and response body. With some modest additional configuration, generated methods provide rate
+limiting, retries, and caching. Meatie works with major HTTP client libraries (request, httpx, aiohttp). It offers
+integration with Pydantic V1 and V2. The minimum officially supported version is Python 3.9.
 
 ## TL;DR
 
@@ -41,7 +41,8 @@ Generate HTTP clients using type annotations.
 ```python
 from typing import Annotated
 from aiohttp import ClientSession
-from meatie.aio import ApiRef, Client, endpoint
+from meatie import api_ref, endpoint
+from meatie_aiohttp import Client
 from meatie_example.store import Product, Basket, BasketQuote  # Pydantic models
 
 
@@ -55,7 +56,7 @@ class OnlineStore(Client):
         ...
 
     @endpoint("/api/v1/quote/request")
-    async def post_request_quote(self, basket: Annotated[Basket, ApiRef("body")]) -> BasketQuote:
+    async def post_request_quote(self, basket: Annotated[Basket, api_ref("body")]) -> BasketQuote:
         # Dumps a Pydantic model :basket to JSON and sends it as payload of an HTTP POST request.
         ...
 
@@ -63,6 +64,28 @@ class OnlineStore(Client):
     async def post_accept_quote(self, quote_id: int) -> None:
         # URLs can reference method parameters. Parameters not referenced in the URL are sent as HTTP query params.
         ...
+```
+
+### HTTP Client Support
+
+Meatie supports leading HTTP client libraries: `requests`, `httpx`, and `aiohttp`.
+
+#### Requests
+
+```python
+
+```
+
+#### HTTPX
+
+```python
+
+```
+
+#### Aiohttp
+
+```python
+
 ```
 
 ### Cache
@@ -221,14 +244,14 @@ class Binance(Client):
             raise RuntimeError("'secret' is None")
 
         request.headers["X-MBX-APIKEY"] = self.api_key
-        request.query_params["timestamp"] = int(time.monotonic() * 1000)
+        request.params["timestamp"] = int(time.monotonic() * 1000)
 
-        query_params = urllib.parse.urlencode(request.query_params)
+        query_params = urllib.parse.urlencode(request.params)
         raw_signature = hmac.new(
             self.secret.encode("utf-8"), query_params.encode("utf-8"), hashlib.sha256
         )
         signature = raw_signature.hexdigest()
-        request.query_params["signature"] = signature
+        request.params["signature"] = signature
 
     @endpoint("/sapi/v1/asset/wallet/balance", Private)
     async def get_asset_wallet_balance(self) -> list[AssetWalletBalance]:

@@ -5,7 +5,7 @@ from typing import Any
 from unittest.mock import patch
 
 from meatie import endpoint, private
-from meatie_httpx import HttpxClient
+from meatie_httpx import Client
 from mock_tools import HttpxMockTools
 
 
@@ -14,7 +14,7 @@ def test_calls_authenticate_on_private_endpoint(mock_tools: HttpxMockTools) -> N
     products = [{"name": "pencil"}, {"name": "headphones"}]
     client = mock_tools.client_with_json_response(json=products)
 
-    class Store(HttpxClient):
+    class Store(Client):
         def __init__(self) -> None:
             super().__init__(client)
 

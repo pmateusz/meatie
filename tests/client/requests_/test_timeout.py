@@ -4,12 +4,12 @@ from typing import Generator
 
 import pytest
 import requests
-from meatie_requests.client import RequestsClient
+from meatie_requests.client import Client
 from suite.client import TimeoutSuite
 
 
 class TestRequestsTimeoutSuite(TimeoutSuite):
     @pytest.fixture(name="client")
-    def client_fixture(self) -> Generator[RequestsClient, None, None]:
-        with RequestsClient(requests.Session(), session_params={"timeout": 0.005}) as client:
+    def client_fixture(self) -> Generator[Client, None, None]:
+        with Client(requests.Session(), session_params={"timeout": 0.005}) as client:
             yield client

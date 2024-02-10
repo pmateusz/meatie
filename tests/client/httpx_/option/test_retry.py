@@ -14,7 +14,7 @@ from meatie import (
     exponential,
     retry,
 )
-from meatie_httpx import HttpxClient
+from meatie_httpx import Client
 from mock_tools import HttpxMockTools
 from requests import Session
 
@@ -25,7 +25,7 @@ def test_no_retry_on_success_status(mock_tools: HttpxMockTools) -> None:
     # GIVEN
     session = mock_tools.client_with_json_response(json=PRODUCTS, status=HTTPStatus.OK)
 
-    class Store(HttpxClient):
+    class Store(Client):
         def __init__(self) -> None:
             super().__init__(session)
 
@@ -46,7 +46,7 @@ def test_no_retry_on_bad_request(mock_tools: HttpxMockTools) -> None:
     # GIVEN
     client = mock_tools.client_with_json_client_response_error(HTTPStatus.BAD_REQUEST)
 
-    class Store(HttpxClient):
+    class Store(Client):
         def __init__(self) -> None:
             super().__init__(client)
 
@@ -71,7 +71,7 @@ def test_can_retry(mock_tools: HttpxMockTools) -> None:
         spec=Session, request=Mock(side_effect=[too_many_requests_response, ok_response])
     )
 
-    class Store(HttpxClient):
+    class Store(Client):
         def __init__(self) -> None:
             super().__init__(session)
 
@@ -95,7 +95,7 @@ def test_can_throw_rate_limit_exceeded(mock_tools: HttpxMockTools) -> None:
     sleep_func = Mock()
     attempts = 5
 
-    class Store(HttpxClient):
+    class Store(Client):
         def __init__(self) -> None:
             super().__init__(session)
 

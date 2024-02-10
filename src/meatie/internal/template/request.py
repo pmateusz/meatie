@@ -10,7 +10,8 @@ from typing import (
     Optional,
 )
 
-from meatie import ApiRef, Method, Request
+from meatie import Method, Request
+from meatie.api_ref import ApiRef
 from meatie.internal.adapter import JsonAdapter, TypeAdapter, get_adapter
 from meatie.internal.types import PT, RequestBodyType, T
 from typing_extensions import Callable, Self, Union, get_type_hints
@@ -97,7 +98,7 @@ class RequestTemplate(Generic[RequestBodyType]):
             body_json = None
 
         return Request(
-            method=self.method, path=path, query_params=query_kwargs, headers={}, json=body_json
+            method=self.method, path=path, params=query_kwargs, headers={}, json=body_json
         )
 
     @classmethod

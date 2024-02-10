@@ -5,7 +5,7 @@ from typing import Any
 from unittest.mock import patch
 
 from meatie import Limiter, Rate, endpoint, limit
-from meatie_httpx import HttpxClient
+from meatie_httpx import Client
 from mock_tools import HttpxMockTools
 
 
@@ -19,7 +19,7 @@ def test_waits_until_tokens_are_available(mock_tools: HttpxMockTools) -> None:
     with patch("time.monotonic") as time_monotonic, patch("time.sleep") as time_sleep:
         time_monotonic.return_value = current_time
 
-        class Store(HttpxClient):
+        class Store(Client):
             def __init__(self) -> None:
                 super().__init__(
                     client,

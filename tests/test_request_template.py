@@ -6,7 +6,7 @@ from typing import Annotated, Any, Optional
 from unittest.mock import Mock
 
 import pytest
-from meatie import ApiRef
+from meatie import api_ref
 from meatie.internal.adapter import JsonAdapter, NoneAdapter
 from meatie.internal.template import (
     Kind,
@@ -126,7 +126,7 @@ def test_build_template() -> None:
 
     # THEN
     assert "/api/v1/order/1/position" == request.path
-    assert {"orderBy": "price"} == request.query_params
+    assert {"orderBy": "price"} == request.params
 
 
 def test_build_template_with_default_value() -> None:
@@ -145,7 +145,7 @@ def test_build_template_with_default_value() -> None:
 
     # THEN
     assert "/api/v1/orders" == request.path
-    assert {"limit": 100} == request.query_params
+    assert {"limit": 100} == request.params
 
 
 def test_create_template_from_signature() -> None:
@@ -153,7 +153,7 @@ def test_create_template_from_signature() -> None:
     path_template = PathTemplate.from_string("/api/v1/order/{order_id}/position")
 
     async def get_positions_by_order_id(
-        order_id: int, sort_by: Annotated[str, ApiRef("orderBy")]
+        order_id: int, sort_by: Annotated[str, api_ref("orderBy")]
     ) -> list[Any]:
         return []
 

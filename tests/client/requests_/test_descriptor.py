@@ -8,8 +8,7 @@ import pytest
 from meatie import Request, endpoint
 from meatie.descriptor import Context, EndpointDescriptor
 from meatie.internal.template import RequestTemplate
-from meatie.internal.types import Client
-from meatie_requests import RequestsClient
+from meatie_requests import Client
 
 from tests.conftest import MockTools
 
@@ -20,7 +19,7 @@ def test_get_without_parameters(mock_tools: MockTools) -> None:
     # GIVEN
     session = mock_tools.session_with_json_response(json=PRODUCTS)
 
-    class Store(RequestsClient):
+    class Store(Client):
         def __init__(self) -> None:
             super().__init__(session)
 
@@ -41,7 +40,7 @@ def test_post_with_body(mock_tools: MockTools) -> None:
     # GIVEN
     session = mock_tools.session_with_json_response(json=None)
 
-    class Store(RequestsClient):
+    class Store(Client):
         def __init__(self) -> None:
             super().__init__(session)
 
@@ -61,7 +60,7 @@ def test_get_with_default_parameter(mock_tools: MockTools) -> None:
     # GIVEN
     session = mock_tools.session_with_json_response(json=PRODUCTS)
 
-    class Store(RequestsClient):
+    class Store(Client):
         def __init__(self) -> None:
             super().__init__(session)
 
@@ -81,7 +80,7 @@ def test_get_with_skip_unset_optional_parameter(mock_tools: MockTools) -> None:
     # GIVEN
     session = mock_tools.session_with_json_response(json=PRODUCTS)
 
-    class Store(RequestsClient):
+    class Store(Client):
         def __init__(self) -> None:
             super().__init__(session)
 
@@ -101,7 +100,7 @@ def test_get_with_skip_optional_parameter_set_to_none(mock_tools: MockTools) -> 
     # GIVEN
     session = mock_tools.session_with_json_response(json=PRODUCTS)
 
-    class Store(RequestsClient):
+    class Store(Client):
         def __init__(self) -> None:
             super().__init__(session)
 
@@ -121,7 +120,7 @@ def test_get_with_send_optional_parameter(mock_tools: MockTools) -> None:
     # GIVEN
     session = mock_tools.session_with_json_response(json=PRODUCTS)
 
-    class Store(RequestsClient):
+    class Store(Client):
         def __init__(self) -> None:
             super().__init__(session)
 

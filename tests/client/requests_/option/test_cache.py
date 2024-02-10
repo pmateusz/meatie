@@ -4,7 +4,7 @@
 from typing import Any, cast
 
 from meatie import INF, cache, endpoint
-from meatie_requests import RequestsClient
+from meatie_requests import Client
 from mock_tools import RequestsMockTools
 from requests import Session
 
@@ -15,7 +15,7 @@ def test_local_cache_is_isolated(mock_tools: RequestsMockTools) -> None:
     # GIVEN
     session = mock_tools.session_with_json_response(json=PRODUCTS)
 
-    class Store(RequestsClient):
+    class Store(Client):
         def __init__(self) -> None:
             super().__init__(cast(Session, session))
 
@@ -45,7 +45,7 @@ def test_global_cache_is_shared(mock_tools: RequestsMockTools) -> None:
     # GIVEN
     session = mock_tools.session_with_json_response(json=PRODUCTS)
 
-    class Store(RequestsClient):
+    class Store(Client):
         def __init__(self) -> None:
             super().__init__(session)
 

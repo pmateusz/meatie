@@ -15,10 +15,10 @@ from meatie.error import (
 from requests import Session
 from typing_extensions import Self
 
-from . import RequestsResponse
+from . import Response
 
 
-class RequestsClient(BaseClient):
+class Client(BaseClient):
     def __init__(
         self,
         session: Session,
@@ -31,7 +31,7 @@ class RequestsClient(BaseClient):
         self.session = session
         self.session_params = session_params if session_params else {}
 
-    def send(self, request: Request) -> RequestsResponse:
+    def send(self, request: Request) -> Response:
         kwargs: dict[str, Any] = self.session_params.copy()
 
         if request.data is not None:
@@ -43,8 +43,8 @@ class RequestsClient(BaseClient):
         if request.headers:
             kwargs["headers"] = request.headers
 
-        if request.query_params:
-            kwargs["params"] = request.query_params
+        if request.params:
+            kwargs["params"] = request.params
 
         try:
             response = self.session.request(request.method, request.path, **kwargs)
@@ -68,7 +68,7 @@ class RequestsClient(BaseClient):
         except requests.exceptions.RequestException as exc:
             raise MeatieError(exc) from exc
 
-        return RequestsResponse(response)
+        return Response(response)
 
     def __enter__(self) -> Self:
         return self

@@ -4,7 +4,7 @@
 from typing import Any
 
 from meatie import INF, cache, endpoint
-from meatie_httpx import HttpxClient
+from meatie_httpx import Client
 from mock_tools import HttpxMockTools
 
 PRODUCTS = [{"name": "pencil"}, {"name": "headphones"}]
@@ -14,7 +14,7 @@ def test_local_cache_is_isolated(mock_tools: HttpxMockTools) -> None:
     # GIVEN
     client = mock_tools.client_with_json_response(json=PRODUCTS)
 
-    class Store(HttpxClient):
+    class Store(Client):
         def __init__(self) -> None:
             super().__init__(client)
 
@@ -44,7 +44,7 @@ def test_global_cache_is_shared(mock_tools: HttpxMockTools) -> None:
     # GIVEN
     client = mock_tools.client_with_json_response(json=PRODUCTS)
 
-    class Store(HttpxClient):
+    class Store(Client):
         def __init__(self) -> None:
             super().__init__(client)
 

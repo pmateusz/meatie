@@ -15,10 +15,10 @@ from meatie.error import (
 from meatie.types import Request
 from typing_extensions import Self
 
-from . import HttpxResponse
+from . import Response
 
 
-class HttpxClient(BaseClient):
+class Client(BaseClient):
     def __init__(
         self,
         client: httpx.Client,
@@ -31,7 +31,7 @@ class HttpxClient(BaseClient):
         self.client = client
         self.client_params = client_params if client_params else {}
 
-    def send(self, request: Request) -> HttpxResponse:
+    def send(self, request: Request) -> Response:
         kwargs: dict[str, Any] = self.client_params.copy()
 
         if request.data is not None:
@@ -43,8 +43,8 @@ class HttpxClient(BaseClient):
         if request.headers:
             kwargs["headers"] = request.headers
 
-        if request.query_params:
-            kwargs["params"] = request.query_params
+        if request.params:
+            kwargs["params"] = request.params
 
         try:
             response = self.client.request(request.method, request.path, **kwargs)
@@ -60,7 +60,7 @@ class HttpxClient(BaseClient):
             raise TransportError(exc) from exc
         except httpx.HTTPError as exc:
             raise MeatieError(exc) from exc
-        return HttpxResponse(response)
+        return Response(response)
 
     def __enter__(self) -> Self:
         return self

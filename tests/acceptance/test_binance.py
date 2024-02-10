@@ -13,7 +13,7 @@ from typing import Any, Optional, Union
 import pytest
 from aiohttp import ClientSession
 from meatie import HOUR, Limiter, Rate, Request, cache, endpoint, limit, private
-from meatie_aiohttp import AiohttpClient
+from meatie_aiohttp import Client
 
 pydantic = pytest.importorskip("pydantic", minversion="2.0.0")
 BaseModel: type = pydantic.BaseModel
@@ -74,7 +74,7 @@ def settings_fixture() -> Settings:
         pytest.skip("Failed to load settings")
 
 
-class Binance(AiohttpClient):
+class Binance(Client):
     def __init__(
         self,
         proxy: Optional[Union[AnyHttpUrl, str]] = None,
@@ -103,15 +103,15 @@ class Binance(AiohttpClient):
 
         timestamp = int(time.monotonic() * 1000) - 15000
         request.headers["X-MBX-APIKEY"] = self.api_key
-        request.query_params["recvWindow"] = str(60000)
-        request.query_params["timestamp"] = str(timestamp)
+        request.params["recvWindow"] = str(60000)
+        request.params["timestamp"] = str(timestamp)
 
-        query_params = urllib.parse.urlencode(request.query_params)
+        query_params = urllib.parse.urlencode(request.params)
         raw_signature = hmac.new(
             self.secret.encode("utf-8"), query_params.encode("utf-8"), hashlib.sha256
         )
         signature = raw_signature.hexdigest()
-        request.query_params["signature"] = signature
+        request.params["signature"] = signature
 
     @endpoint("/api/v3/exchangeInfo", cache(ttl=HOUR), limit(tokens=20))
     async def get_exchange_info(self) -> ExchangeInfo:

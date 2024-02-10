@@ -7,7 +7,7 @@ from aiohttp import ClientResponse, ContentTypeError
 from meatie.error import ParseResponseError, ResponseError
 
 
-class AiohttpResponse:
+class Response:
     def __init__(self, response: ClientResponse) -> None:
         self.response = response
 

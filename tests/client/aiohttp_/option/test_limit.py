@@ -7,7 +7,7 @@ from unittest.mock import AsyncMock, patch
 import pytest
 from aiohttp import ClientSession
 from meatie import Limiter, Rate, endpoint, limit
-from meatie_aiohttp import AiohttpClient
+from meatie_aiohttp import Client
 from mock_tools import AiohttpMockTools
 
 
@@ -23,7 +23,7 @@ async def test_waits_until_tokens_are_available(mock_tools: AiohttpMockTools) ->
     with patch("time.monotonic") as time_monotonic:
         time_monotonic.return_value = current_time
 
-        class Store(AiohttpClient):
+        class Store(Client):
             def __init__(self) -> None:
                 super().__init__(
                     cast(ClientSession, session),

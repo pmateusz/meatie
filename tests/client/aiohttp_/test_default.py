@@ -9,7 +9,7 @@ import pytest
 from http_test import ClientAdapter, HTTPTestServer, StatusHandler
 from meatie import Request
 from meatie.internal.types import Client
-from meatie_aiohttp import AiohttpClient
+from meatie_aiohttp import Client as AiohttpClient
 from suite.client import DefaultSuite
 
 
@@ -19,7 +19,7 @@ class TestAiohttpDefaultSuite(DefaultSuite):
         self,
         event_loop: asyncio.AbstractEventLoop,
         create_client_session: Callable[..., aiohttp.ClientSession],
-    ) -> Generator[Client, None, None]:
+    ) -> Generator[ClientAdapter, None, None]:
         with ClientAdapter(event_loop, AiohttpClient(create_client_session())) as client:
             yield client
 
@@ -27,9 +27,7 @@ class TestAiohttpDefaultSuite(DefaultSuite):
     def test_can_handle_schema_error(http_server: HTTPTestServer, client: Client) -> None:
         # GIVEN
         http_server.handler = StatusHandler(HTTPStatus.OK)
-        request = Request(
-            "GET", f"unknown://localhost:{http_server.port}", query_params={}, headers={}
-        )
+        request = Request("GET", f"unknown://localhost:{http_server.port}", params={}, headers={})
 
         # WHEN
         response = client.send(request)

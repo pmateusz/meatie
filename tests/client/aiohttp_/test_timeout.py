@@ -6,7 +6,7 @@ from typing import Callable, Generator
 import aiohttp
 import pytest
 from http_test import ClientAdapter
-from meatie_aiohttp import AiohttpClient
+from meatie_aiohttp import Client
 from suite.client import TimeoutSuite
 
 
@@ -19,6 +19,6 @@ class TestAiohttpTimeoutSuite(TimeoutSuite):
     ) -> Generator[ClientAdapter, None, None]:
         with ClientAdapter(
             event_loop,
-            AiohttpClient(create_client_session(timeout=aiohttp.ClientTimeout(total=0.005))),
+            Client(create_client_session(timeout=aiohttp.ClientTimeout(total=0.005))),
         ) as client:
             yield client

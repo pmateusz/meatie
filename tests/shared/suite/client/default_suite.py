@@ -26,7 +26,7 @@ class DefaultSuite:
     def test_can_send_get_request(http_server: HTTPTestServer, client: Client) -> None:
         # GIVEN
         http_server.handler = StatusHandler(HTTPStatus.OK)
-        request = Request("GET", http_server.base_url, query_params={}, headers={})
+        request = Request("GET", http_server.base_url, params={}, headers={})
 
         # WHEN
         response = client.send(request)
@@ -38,7 +38,7 @@ class DefaultSuite:
     def test_can_send_query_params(http_server: HTTPTestServer, client: Client) -> None:
         # GIVEN
         http_server.handler = diagnostic_handler
-        request = Request("GET", http_server.base_url, query_params={"param": 123}, headers={})
+        request = Request("GET", http_server.base_url, params={"param": 123}, headers={})
 
         # WHEN
         response = client.send(request)
@@ -53,7 +53,7 @@ class DefaultSuite:
     def test_can_send_headers(http_server: HTTPTestServer, client: Client) -> None:
         # GIVEN
         http_server.handler = diagnostic_handler
-        request = Request("GET", http_server.base_url, query_params={}, headers={"x-header": "123"})
+        request = Request("GET", http_server.base_url, params={}, headers={"x-header": "123"})
 
         # WHEN
         response = client.send(request)
@@ -69,7 +69,7 @@ class DefaultSuite:
     def test_can_send_post_binary_request(http_server: HTTPTestServer, client: Client) -> None:
         # GIVEN
         http_server.handler = echo_handler
-        request = Request("POST", http_server.base_url, query_params={}, headers={}, data=b"body")
+        request = Request("POST", http_server.base_url, params={}, headers={}, data=b"body")
 
         # WHEN
         response = client.send(request)
@@ -82,7 +82,7 @@ class DefaultSuite:
     def test_can_send_post_text_request(http_server: HTTPTestServer, client: Client) -> None:
         # GIVEN
         http_server.handler = echo_handler
-        request = Request("POST", http_server.base_url, query_params={}, headers={}, data="body")
+        request = Request("POST", http_server.base_url, params={}, headers={}, data="body")
 
         # WHEN
         response = client.send(request)
@@ -95,9 +95,7 @@ class DefaultSuite:
     def test_can_send_post_json_request(http_server: HTTPTestServer, client: Client) -> None:
         # GIVEN
         http_server.handler = echo_handler
-        request = Request(
-            "POST", http_server.base_url, query_params={}, headers={}, json={"key": "123"}
-        )
+        request = Request("POST", http_server.base_url, params={}, headers={}, json={"key": "123"})
 
         # WHEN
         response = client.send(request)
@@ -110,7 +108,7 @@ class DefaultSuite:
     def test_can_receive_4xx_status(http_server: HTTPTestServer, client: Client) -> None:
         # GIVEN
         http_server.handler = StatusHandler(HTTPStatus.BAD_REQUEST)
-        request = Request("GET", http_server.base_url, query_params={}, headers={})
+        request = Request("GET", http_server.base_url, params={}, headers={})
 
         # WHEN
         response = client.send(request)
@@ -122,7 +120,7 @@ class DefaultSuite:
     def test_can_receive_5xx_status(http_server: HTTPTestServer, client: Client) -> None:
         # GIVEN
         http_server.handler = StatusHandler(HTTPStatus.INTERNAL_SERVER_ERROR)
-        request = Request("GET", http_server.base_url, query_params={}, headers={})
+        request = Request("GET", http_server.base_url, params={}, headers={})
 
         # WHEN
         response = client.send(request)
@@ -141,7 +139,7 @@ class DefaultSuite:
             )
 
         http_server.handler = malformed_text_handler
-        request = Request("GET", http_server.base_url, query_params={}, headers={})
+        request = Request("GET", http_server.base_url, params={}, headers={})
 
         # WHEN
         response = client.send(request)
@@ -160,7 +158,7 @@ class DefaultSuite:
             )
 
         http_server.handler = malformed_text_handler
-        request = Request("GET", http_server.base_url, query_params={}, headers={})
+        request = Request("GET", http_server.base_url, params={}, headers={})
 
         # WHEN
         response = client.send(request)
@@ -180,7 +178,7 @@ class DefaultSuite:
             handler.wfile.close()
 
         http_server.handler = connection_reset_handler
-        request = Request("GET", http_server.base_url, query_params={}, headers={})
+        request = Request("GET", http_server.base_url, params={}, headers={})
 
         # WHEN
         with pytest.raises(ServerError) as exc_info:
@@ -195,7 +193,7 @@ class DefaultSuite:
     ) -> None:
         # GIVEN
         untrusted_https_server.handler = StatusHandler(HTTPStatus.OK)
-        request = Request("GET", untrusted_https_server.base_url, query_params={}, headers={})
+        request = Request("GET", untrusted_https_server.base_url, params={}, headers={})
 
         # WHEN
         with pytest.raises(ServerError) as exc_info:
@@ -209,9 +207,7 @@ class DefaultSuite:
         http_server: HTTPTestServer, client: Client
     ) -> None:
         # GIVEN
-        request = Request(
-            "GET", f"https://localhost:{http_server.port}", query_params={}, headers={}
-        )
+        request = Request("GET", f"https://localhost:{http_server.port}", params={}, headers={})
 
         # WHEN
         with pytest.raises(ServerError) as exc_info:
@@ -223,7 +219,7 @@ class DefaultSuite:
     @staticmethod
     def test_can_handle_connection_error(client: Client) -> None:
         # GIVEN
-        request = Request("GET", "http://localhost:1234", query_params={}, headers={})
+        request = Request("GET", "http://localhost:1234", params={}, headers={})
 
         # WHEN
         with pytest.raises(ServerError) as exc_info:
@@ -235,9 +231,7 @@ class DefaultSuite:
     @staticmethod
     def test_can_handle_schema_error(http_server: HTTPTestServer, client: Client) -> None:
         # GIVEN
-        request = Request(
-            "GET", f"unknown://localhost:{http_server.port}", query_params={}, headers={}
-        )
+        request = Request("GET", f"unknown://localhost:{http_server.port}", params={}, headers={})
 
         # WHEN
         with pytest.raises(RequestError) as exc_info:

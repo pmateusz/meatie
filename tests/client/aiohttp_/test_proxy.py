@@ -6,7 +6,7 @@ from typing import Callable, Generator
 import aiohttp
 import pytest
 from http_test import ClientAdapter
-from meatie_aiohttp import AiohttpClient
+from meatie_aiohttp import Client
 from suite.client import ProxyErrorSuite
 
 
@@ -19,8 +19,6 @@ class TestAiohttpProxyErrorSuite(ProxyErrorSuite):
     ) -> Generator[ClientAdapter, None, None]:
         with ClientAdapter(
             event_loop,
-            AiohttpClient(
-                create_client_session(), session_params={"proxy": "http://localhost:3128"}
-            ),
+            Client(create_client_session(), session_params={"proxy": "http://localhost:3128"}),
         ) as client:
             yield client

@@ -4,7 +4,7 @@ from asyncio import AbstractEventLoop
 from typing import Any, Optional
 
 from meatie import Request
-from meatie.internal.types import AsyncClient, AsyncResponse, Response
+from meatie.internal.types import AsyncClient, AsyncResponse, Client
 from typing_extensions import Self
 
 
@@ -27,12 +27,12 @@ class ResponseAdapter:
         return self.loop.run_until_complete(self.response.json())
 
 
-class ClientAdapter:
+class ClientAdapter(Client):
     def __init__(self, loop: AbstractEventLoop, client: AsyncClient) -> None:
         self.loop = loop
         self.client = client
 
-    def send(self, request: Request) -> Response:
+    def send(self, request: Request) -> ResponseAdapter:
         async_response = self.loop.run_until_complete(self.client.send(request))
         return ResponseAdapter(self.loop, async_response)
 

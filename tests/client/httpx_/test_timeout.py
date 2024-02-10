@@ -4,12 +4,12 @@ from typing import Generator
 
 import httpx
 import pytest
-from meatie_httpx import HttpxClient
+from meatie_httpx import Client
 from suite.client import TimeoutSuite
 
 
 class TestHttpxTimeoutSuite(TimeoutSuite):
     @pytest.fixture(name="client")
-    def client_fixture(self) -> Generator[HttpxClient, None, None]:
-        with HttpxClient(httpx.Client(), client_params={"timeout": 0.005}) as client:
+    def client_fixture(self) -> Generator[Client, None, None]:
+        with Client(httpx.Client(), client_params={"timeout": 0.005}) as client:
             yield client

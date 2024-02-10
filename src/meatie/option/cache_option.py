@@ -48,8 +48,8 @@ cache = CacheOption
 
 def get_key(request: Request) -> str:
     key = request.path
-    if request.query_params:
-        key += "?" + urllib.parse.urlencode(request.query_params)
+    if request.params:
+        key += "?" + urllib.parse.urlencode(request.params)
     return key
 
 

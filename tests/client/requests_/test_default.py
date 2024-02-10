@@ -4,12 +4,12 @@ from typing import Generator
 
 import pytest
 import requests
-from meatie_requests.client import RequestsClient
+from meatie_requests.client import Client
 from suite.client import DefaultSuite
 
 
 class TestRequestsDefaultSuite(DefaultSuite):
     @pytest.fixture(name="client")
-    def client_fixture(self) -> Generator[RequestsClient, None, None]:
-        with RequestsClient(requests.Session()) as client:
+    def client_fixture(self) -> Generator[Client, None, None]:
+        with Client(requests.Session()) as client:
             yield client

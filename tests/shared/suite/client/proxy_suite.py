@@ -11,7 +11,7 @@ class ProxyErrorSuite:
     @staticmethod
     def test_can_handle_proxy_error(client: Client, http_server: HTTPTestServer) -> None:
         # GIVEN
-        request = Request("GET", http_server.base_url, query_params={}, headers={})
+        request = Request("GET", http_server.base_url, params={}, headers={})
 
         # WHEN
         with pytest.raises(ProxyError) as exc_info:

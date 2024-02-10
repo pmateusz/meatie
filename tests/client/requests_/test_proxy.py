@@ -6,14 +6,14 @@ from typing import Generator
 
 import pytest
 import requests
-from meatie_requests.client import RequestsClient
+from meatie_requests.client import Client
 from suite.client import ProxyErrorSuite
 
 
 class TestRequestsProxyErrorSuite(ProxyErrorSuite):
     @pytest.fixture(name="client")
-    def client_fixture(self) -> Generator[RequestsClient, None, None]:
-        with RequestsClient(
+    def client_fixture(self) -> Generator[Client, None, None]:
+        with Client(
             requests.Session(),
             session_params={
                 "proxies": {

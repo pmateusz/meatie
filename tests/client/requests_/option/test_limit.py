@@ -5,7 +5,7 @@ from typing import Any, cast
 from unittest.mock import patch
 
 from meatie import Limiter, Rate, endpoint, limit
-from meatie_requests import RequestsClient
+from meatie_requests import Client
 from mock_tools import RequestsMockTools
 from requests import Session
 
@@ -20,7 +20,7 @@ def test_waits_until_tokens_are_available(mock_tools: RequestsMockTools) -> None
     with patch("time.monotonic") as time_monotonic, patch("time.sleep") as time_sleep:
         time_monotonic.return_value = current_time
 
-        class Store(RequestsClient):
+        class Store(Client):
             def __init__(self) -> None:
                 super().__init__(
                     cast(Session, session),

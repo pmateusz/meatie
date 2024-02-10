@@ -15,10 +15,10 @@ from meatie.error import (
 )
 from meatie.internal.types import AsyncResponse
 
-from . import AiohttpResponse
+from . import Response
 
 
-class AiohttpClient(BaseAsyncClient):
+class Client(BaseAsyncClient):
     def __init__(
         self,
         session: aiohttp.ClientSession,
@@ -43,8 +43,8 @@ class AiohttpClient(BaseAsyncClient):
         if request.headers:
             kwargs["headers"] = request.headers
 
-        if request.query_params:
-            kwargs["params"] = request.query_params
+        if request.params:
+            kwargs["params"] = request.params
 
         try:
             response = await self.session.request(request.method, request.path, **kwargs)
@@ -65,7 +65,7 @@ class AiohttpClient(BaseAsyncClient):
             raise TransportError(exc) from exc
         except Exception as exc:
             raise MeatieError(exc) from exc
-        return AiohttpResponse(response)
+        return Response(response)
 
     async def __aexit__(
         self,

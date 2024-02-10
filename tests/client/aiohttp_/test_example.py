@@ -12,10 +12,10 @@ import pytest
 from aiohttp import ClientSession
 from meatie import (
     MINUTE,
-    ApiRef,
     Limiter,
     Rate,
     Request,
+    api_ref,
     cache,
     endpoint,
     exponential,
@@ -24,7 +24,7 @@ from meatie import (
     private,
     retry,
 )
-from meatie_aiohttp import AiohttpClient
+from meatie_aiohttp import Client
 from mock_tools import AiohttpMockTools
 
 pydantic = pytest.importorskip("pydantic")
@@ -52,7 +52,7 @@ class BasketQuote(BaseModel):
     currency: str
 
 
-class OnlineStore(AiohttpClient):
+class OnlineStore(Client):
     def __init__(self, session: ClientSession) -> None:
         super().__init__(session)
 
@@ -61,7 +61,7 @@ class OnlineStore(AiohttpClient):
         ...
 
     @endpoint("/api/v1/quote/request")
-    async def post_request_quote(self, basket: Annotated[Basket, ApiRef("body")]) -> BasketQuote:
+    async def post_request_quote(self, basket: Annotated[Basket, api_ref("body")]) -> BasketQuote:
         ...
 
     @endpoint("/api/v1/quote/{quote_id}/accept", method="POST")
@@ -72,7 +72,7 @@ class OnlineStore(AiohttpClient):
 @pytest.mark.asyncio()
 async def test_plain_example(dump_model: Callable[[Any], Any]) -> None:
     # GIVEN
-    class OnlineStore(AiohttpClient):
+    class OnlineStore(Client):
         def __init__(self, session: ClientSession) -> None:
             super().__init__(session)
 
@@ -82,7 +82,7 @@ async def test_plain_example(dump_model: Callable[[Any], Any]) -> None:
 
         @endpoint("/api/v1/quote/request")
         async def post_request_quote(
-            self, basket: Annotated[Basket, ApiRef("body")]
+            self, basket: Annotated[Basket, api_ref("body")]
         ) -> BasketQuote:
             ...
 
@@ -130,13 +130,13 @@ async def test_plain_example(dump_model: Callable[[Any], Any]) -> None:
 @pytest.mark.asyncio()
 async def test_private_endpoint_example(dump_model: Callable[[Any], Any]) -> None:
     # GIVEN
-    class OnlineStore(AiohttpClient):
+    class OnlineStore(Client):
         def __init__(self, session: ClientSession) -> None:
             super().__init__(session)
 
         @endpoint("/api/v1/quote/request", private)
         async def post_request_quote(
-            self, basket: Annotated[Basket, ApiRef("body")]
+            self, basket: Annotated[Basket, api_ref("body")]
         ) -> BasketQuote:
             ...
 
@@ -165,7 +165,7 @@ async def test_private_endpoint_example(dump_model: Callable[[Any], Any]) -> Non
 @pytest.mark.asyncio()
 async def test_cache_endpoint_example() -> None:
     # GIVEN
-    class OnlineStore(AiohttpClient):
+    class OnlineStore(Client):
         def __init__(self, session: ClientSession) -> None:
             super().__init__(session)
 
@@ -204,7 +204,7 @@ async def test_retry_example(
     mock_tools: AiohttpMockTools, dump_model: Callable[[Any], Any]
 ) -> None:
     # GIVEN
-    class OnlineStore(AiohttpClient):
+    class OnlineStore(Client):
         def __init__(self, session: ClientSession) -> None:
             super().__init__(session)
 
@@ -248,7 +248,7 @@ async def test_rate_limit_example(
     current_time = 1000
     sleep_func = AsyncMock()
 
-    class OnlineStore(AiohttpClient):
+    class OnlineStore(Client):
         def __init__(self, session: ClientSession) -> None:
             super().__init__(
                 session,

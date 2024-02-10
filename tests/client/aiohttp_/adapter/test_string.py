@@ -6,7 +6,7 @@ from http.server import BaseHTTPRequestHandler
 import pytest
 from http_test import HTTPTestServer
 from meatie import endpoint
-from meatie_aiohttp import AiohttpClient
+from meatie_aiohttp import Client
 
 
 @pytest.mark.asyncio()
@@ -19,7 +19,7 @@ async def test_can_parse_string(http_server: HTTPTestServer) -> None:
 
     http_server.handler = handler
 
-    class TestClient(AiohttpClient):
+    class TestClient(Client):
         @endpoint("/")
         async def get_response(self) -> str:
             ...
@@ -43,7 +43,7 @@ async def test_can_handle_invalid_encoding(http_server: HTTPTestServer) -> None:
 
     http_server.handler = handler
 
-    class TestClient(AiohttpClient):
+    class TestClient(Client):
         @endpoint("/")
         async def get_response(self) -> str:
             ...

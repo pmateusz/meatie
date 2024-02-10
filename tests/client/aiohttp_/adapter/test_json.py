@@ -6,7 +6,7 @@ from http.server import BaseHTTPRequestHandler
 import pytest
 from http_test import HTTPTestServer
 from meatie import ParseResponseError, endpoint
-from meatie_aiohttp import AiohttpClient
+from meatie_aiohttp import Client
 
 
 @pytest.mark.asyncio()
@@ -20,7 +20,7 @@ async def test_can_parse_json(http_server: HTTPTestServer) -> None:
 
     http_server.handler = handler
 
-    class TestClient(AiohttpClient):
+    class TestClient(Client):
         @endpoint("/")
         async def get_response(self) -> dict[str, str]:
             ...
@@ -45,7 +45,7 @@ async def test_can_handle_invalid_content_type(http_server: HTTPTestServer) -> N
 
     http_server.handler = handler
 
-    class TestClient(AiohttpClient):
+    class TestClient(Client):
         @endpoint("/")
         async def get_response(self) -> dict[str, str]:
             ...
@@ -72,7 +72,7 @@ async def test_can_handle_corrupted_json(http_server: HTTPTestServer) -> None:
 
     http_server.handler = handler
 
-    class TestClient(AiohttpClient):
+    class TestClient(Client):
         @endpoint("/")
         async def get_response(self) -> dict[str, str]:
             ...

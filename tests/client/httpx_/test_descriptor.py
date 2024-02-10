@@ -7,8 +7,7 @@ from unittest.mock import ANY, Mock
 import pytest
 from meatie import Context, EndpointDescriptor, Request, endpoint
 from meatie.internal.template import RequestTemplate
-from meatie.internal.types import Client
-from meatie_httpx import HttpxClient
+from meatie_httpx import Client
 from mock_tools import HttpxMockTools
 
 PRODUCTS = [{"name": "Pencil"}, {"name": "Headphones"}]
@@ -18,7 +17,7 @@ def test_get_without_parameters(mock_tools: HttpxMockTools) -> None:
     # GIVEN
     client = mock_tools.client_with_json_response(json=PRODUCTS)
 
-    class Store(HttpxClient):
+    class Store(Client):
         def __init__(self) -> None:
             super().__init__(client)
 
@@ -39,7 +38,7 @@ def test_post_with_body(mock_tools: HttpxMockTools) -> None:
     # GIVEN
     client = mock_tools.client_with_json_response(json=None)
 
-    class Store(HttpxClient):
+    class Store(Client):
         def __init__(self) -> None:
             super().__init__(client)
 
@@ -59,7 +58,7 @@ def test_get_with_default_parameter(mock_tools: HttpxMockTools) -> None:
     # GIVEN
     client = mock_tools.client_with_json_response(json=PRODUCTS)
 
-    class Store(HttpxClient):
+    class Store(Client):
         def __init__(self) -> None:
             super().__init__(client)
 
@@ -79,7 +78,7 @@ def test_get_with_skip_unset_optional_parameter(mock_tools: HttpxMockTools) -> N
     # GIVEN
     client = mock_tools.client_with_json_response(json=PRODUCTS)
 
-    class Store(HttpxClient):
+    class Store(Client):
         def __init__(self) -> None:
             super().__init__(client)
 
@@ -99,7 +98,7 @@ def test_get_with_skip_optional_parameter_set_to_none(mock_tools: HttpxMockTools
     # GIVEN
     client = mock_tools.client_with_json_response(json=PRODUCTS)
 
-    class Store(HttpxClient):
+    class Store(Client):
         def __init__(self) -> None:
             super().__init__(client)
 
@@ -119,7 +118,7 @@ def test_get_with_send_optional_parameter(mock_tools: HttpxMockTools) -> None:
     # GIVEN
     client = mock_tools.client_with_json_response(json=PRODUCTS)
 
-    class Store(HttpxClient):
+    class Store(Client):
         def __init__(self) -> None:
             super().__init__(client)
 

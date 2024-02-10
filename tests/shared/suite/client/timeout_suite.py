@@ -24,7 +24,7 @@ class TimeoutSuite:
             handler.send_response(HTTPStatus.OK)
 
         http_server.handler = timeout_handler
-        request = Request("GET", http_server.base_url, query_params={}, headers={})
+        request = Request("GET", http_server.base_url, params={}, headers={})
 
         # WHEN
         with pytest.raises(Timeout) as exc_info:

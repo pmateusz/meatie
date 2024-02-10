@@ -7,7 +7,7 @@ from http.server import BaseHTTPRequestHandler
 import pytest
 from http_test import HTTPTestServer
 from meatie import ParseResponseError, endpoint
-from meatie_aiohttp import AiohttpClient
+from meatie_aiohttp import Client
 
 pydantic = pytest.importorskip("pydantic")
 BaseModel: type = pydantic.BaseModel
@@ -28,7 +28,7 @@ async def test_can_parse_pydantic_model(http_server: HTTPTestServer) -> None:
 
     http_server.handler = handler
 
-    class TestClient(AiohttpClient):
+    class TestClient(Client):
         @endpoint("/")
         async def get_response(self) -> ResponseV1:
             ...
@@ -52,7 +52,7 @@ async def test_can_handle_corrupted_pydantic_model(http_server: HTTPTestServer) 
 
     http_server.handler = handler
 
-    class TestClient(AiohttpClient):
+    class TestClient(Client):
         @endpoint("/")
         async def get_response(self) -> ResponseV1:
             ...
@@ -86,7 +86,7 @@ async def test_can_handle_corrupted_pydantic_model_with_enum(http_server: HTTPTe
 
     http_server.handler = handler
 
-    class TestClient(AiohttpClient):
+    class TestClient(Client):
         @endpoint("/")
         async def get_response(self) -> ResponseV2:
             ...

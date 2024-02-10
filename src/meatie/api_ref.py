@@ -5,6 +5,8 @@ from typing import Any, get_args
 
 from typing_extensions import Self
 
+__all__ = ["api_ref"]
+
 
 class ApiRef:
     __slots__ = ("name",)
@@ -26,3 +28,6 @@ class ApiRef:
             if isinstance(arg, cls):
                 return arg
         return cls(name=parameter.name)
+
+
+api_ref = ApiRef

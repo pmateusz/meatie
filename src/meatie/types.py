@@ -21,7 +21,7 @@ INF = float("inf")
 class Request:
     method: Method
     path: str
-    query_params: dict[str, Union[str, int]]
+    params: dict[str, Union[str, int]]
     headers: dict[str, Union[str, bytes]]
     data: Optional[Union[str, bytes]] = None
     json: Any = None

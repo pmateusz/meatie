@@ -2,7 +2,7 @@
 #  Use of this source code is governed by a BSD-style license that can be found in the LICENSE file.
 
 # isort:skip_file
-from .response import RequestsResponse
-from .client import RequestsClient
+from .response import Response
+from .client import Client
 
-__all__ = ["RequestsResponse", "RequestsClient"]
+__all__ = ["Response", "Client"]
