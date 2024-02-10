@@ -4,7 +4,7 @@
 
 from dataclasses import dataclass
 
-from meatie.internal.time_ import Time
+from meatie import Time
 
 Tokens = float
 

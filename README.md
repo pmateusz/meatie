@@ -29,10 +29,10 @@
 
 Meatie is a Python metaprogramming library that eliminates the need for boilerplate code when integrating with REST
 APIs. The library generates code for calling a REST API based on method signatures annotated with type hints. Meatie
-abstracts away mechanics related to HTTP communication, such as building URLs, encoding query parameters, parsing, and
-dumping Pydantic models. With some modest additional configuration effort, generated HTTP clients offer rate limiting,
-retries, and caching. Meatie is compatible with Pydantic V1 and V2. Python 3.9 is the minimum officially supported
-version.
+abstracts away mechanics related to HTTP communication, such as building URLs, encoding query parameters, serializing
+and deserializing request and response body. With some modest additional configuration, generated methods provide rate
+limiting, retries, and caching. Meatie works with major HTTP client libraries (request, httpx, aiohttp). It offers
+integration with Pydantic V1 and V2. The minimum officially supported version is Python 3.9.
 
 ## TL;DR
 
@@ -41,7 +41,8 @@ Generate HTTP clients using type annotations.
 ```python
 from typing import Annotated
 from aiohttp import ClientSession
-from meatie.aio import ApiRef, Client, endpoint
+from meatie import api_ref, endpoint
+from meatie_aiohttp import Client
 from meatie_example.store import Product, Basket, BasketQuote  # Pydantic models
 
 
@@ -55,7 +56,7 @@ class OnlineStore(Client):
         ...
 
     @endpoint("/api/v1/quote/request")
-    async def post_request_quote(self, basket: Annotated[Basket, ApiRef("body")]) -> BasketQuote:
+    async def post_request_quote(self, basket: Annotated[Basket, api_ref("body")]) -> BasketQuote:
         # Dumps a Pydantic model :basket to JSON and sends it as payload of an HTTP POST request.
         ...
 
@@ -65,13 +66,52 @@ class OnlineStore(Client):
         ...
 ```
 
-### Cache
+### HTTP Client Support
 
-Cache result for given TTL.
+Meatie supports leading HTTP client libraries: `requests`, `httpx`, and `aiohttp`.
+
+#### Requests
+
+```python
+from meatie import endpoint
+from meatie_requests import Client
+from requests import Session
+from meatie_example.store import Product
+
+
+class OnlineStore(Client):
+    def __init__(self) -> None:
+        super().__init__(Session())
+
+    @endpoint("https://test.store.com/api/v1/products")  # requests does not support base_url
+    def get_products(self) -> list[Product]:
+        ...
+```
+
+#### HTTPX
+
+```python
+from meatie import endpoint
+from meatie_httpx import Client
+import httpx
+from meatie_example.store import Product
+
+
+class OnlineStore(Client):
+    def __init__(self) -> None:
+        super().__init__(httpx.Client(base_url="https://test.store.com"))
+
+    @endpoint("/api/v1/products")
+    def get_products(self) -> list[Product]:
+        ...
+```
+
+#### Aiohttp
 
 ```python
 from aiohttp import ClientSession
-from meatie.aio import Client, endpoint, Cache, HOUR
+from meatie import endpoint
+from meatie_aiohttp import Client
 from meatie_example.store import Product
 
 
@@ -79,7 +119,27 @@ class OnlineStore(Client):
     def __init__(self) -> None:
         super().__init__(ClientSession(base_url="https://test.store.com"))
 
-    @endpoint("/api/v1/products", Cache(ttl=4 * HOUR))
+    @endpoint("/api/v1/products")
+    async def get_products(self) -> list[Product]:
+        ...
+```
+
+### Cache
+
+Cache result for given TTL.
+
+```python
+from aiohttp import ClientSession
+from meatie import endpoint, cache, HOUR
+from meatie_aiohttp import Client
+from meatie_example.store import Product
+
+
+class OnlineStore(Client):
+    def __init__(self) -> None:
+        super().__init__(ClientSession(base_url="https://test.store.com"))
+
+    @endpoint("/api/v1/products", cache(ttl=4 * HOUR))
     async def get_products(self) -> list[Product]:
         ...
 ```
@@ -91,7 +151,7 @@ By default, every instance of an HTTP client uses an independent cache. The beha
 definition to share cached results across all instances of the same HTTP client class.
 
 ```python
-@endpoint("/api/v1/products", Cache(ttl=4 * HOUR, shared=True))
+@endpoint("/api/v1/products", cache(ttl=4 * HOUR, shared=True))
 async def get_products(self) -> list[Product]:
     ...
 ```
@@ -111,7 +171,8 @@ client that otherwise is very likely to be rejected anyway.
 
 ```python
 from aiohttp import ClientSession
-from meatie.aio import Client, endpoint, Limit, Limiter, Rate
+from meatie import endpoint, limit, Limiter, Rate
+from meatie_aiohttp import Client
 from meatie_example.store import Product
 
 
@@ -120,7 +181,7 @@ class OnlineStore(Client):
         super().__init__(ClientSession(base_url="https://test.store.com"),
                          limiter=Limiter(rate=Rate(tokens_per_sec=1), capacity=300))
 
-    @endpoint("/api/v1/products", Limit(tokens=30))
+    @endpoint("/api/v1/products", limit(tokens=30))
     async def get_products(self) -> list[Product]:
         ...
 ```
@@ -136,16 +197,16 @@ in third-party functions. They control whether to make a retry attempt, for how 
 sleep function to use for waiting, and whether to abort further retries.
 
 ```python
+from http import HTTPStatus
 from aiohttp import ClientSession
-from meatie.aio import (
-    Client,
+from meatie import (
     endpoint,
-    Retry,
-    WaitExponential,
-    StopAfter,
-    RetryOnServerConnectionError,
-    RetryOnTooManyRequestsStatus
+    retry,
+    has_status,
+    exponential,
+    after_attempt,
 )
+from meatie_aiohttp import Client
 from meatie_example.store import Product
 
 
@@ -153,9 +214,9 @@ class OnlineStore(Client):
     def __init__(self) -> None:
         super().__init__(ClientSession(base_url="https://test.store.com"))
 
-    @endpoint("/api/v1/products", Retry(retry=RetryOnServerConnectionError | RetryOnTooManyRequestsStatus,
-                                        wait=WaitExponential(),
-                                        stop=StopAfter(attempts=5)))
+    @endpoint("/api/v1/products", retry(on=has_status(HTTPStatus.TOO_MANY_REQUESTS),
+                                        wait=exponential(),
+                                        stop=after_attempt(5)))
     async def get_products(self) -> list[Product]:
         ...
 ```
@@ -185,13 +246,12 @@ from decimal import Decimal
 from typing import Optional
 
 from aiohttp import ClientSession
-from meatie.aio import (
-    Client,
-    Private,
-    Request,
+from meatie import (
     endpoint,
+    private,
+    Request,
 )
-
+from meatie_aiohttp import Client
 from pydantic import BaseModel, Field, AnyHttpUrl
 
 
@@ -221,16 +281,16 @@ class Binance(Client):
             raise RuntimeError("'secret' is None")
 
         request.headers["X-MBX-APIKEY"] = self.api_key
-        request.query_params["timestamp"] = int(time.monotonic() * 1000)
+        request.params["timestamp"] = int(time.monotonic() * 1000)
 
-        query_params = urllib.parse.urlencode(request.query_params)
+        query_params = urllib.parse.urlencode(request.params)
         raw_signature = hmac.new(
             self.secret.encode("utf-8"), query_params.encode("utf-8"), hashlib.sha256
         )
         signature = raw_signature.hexdigest()
-        request.query_params["signature"] = signature
+        request.params["signature"] = signature
 
-    @endpoint("/sapi/v1/asset/wallet/balance", Private)
+    @endpoint("/sapi/v1/asset/wallet/balance", private)
     async def get_asset_wallet_balance(self) -> list[AssetWalletBalance]:
         ...
 ```
@@ -245,14 +305,14 @@ type of a method marked with `@endpoint` decorator can be parsed to a Pydantic m
 if it inherits from BaseModel, is a data class, or a typed dictionary. The rule extends to container types. A container
 could also be a Sequence of Pydantic convertible items or a Mapping in with Pydantic convertible type as values.
 
-Return `aiohttp.ClientResponse` directly.
+Return `meatie.AsyncResponse` directly.
 
 ```python
-from aiohttp import ClientResponse
+from meatie import AsyncResponse, endpoint
 
 
 @endpoint("/api/v1/orders")
-async def get_orders(self) -> ClientResponse:
+async def get_orders(self) -> AsyncResponse:
     ...
 ```
 
@@ -283,16 +343,15 @@ async def get_orders(self) -> list:
 #### Rename query parameters
 
 It might be more convenient to use a different name for a method parameter than the query parameter name defined by the
-REST
-API.
+REST API.
 
 ```python
 from typing import Annotated
-from meatie.aio import ApiRef
+from meatie import api_ref, endpoint
 
 
 @endpoint("/api/v1/orders")
-async def get_orders(self, since_ms: Annotated[int, ApiRef("since")]) -> list[dict]:
+async def get_orders(self, since_ms: Annotated[int, api_ref("since")]) -> list[dict]:
     ...
 ```
 
@@ -306,9 +365,49 @@ async def list_orders(self) -> list[dict]:
     ...
 ```
 
-#### Preprocess HTTP requests or postprocess HTTP responses
+#### Preprocessing of HTTP requests or postprocessing HTTP responses
 
-Cache, Limit, Private, and Retry are middleware for processing HTTP requests and postprocessing HTTP responses. Meatie
-internal architecture was designed to simplify extension by third-party middleware, without the need to modify the core
-library. We leave this topic for self-study by an interested reader. A good starting point is a code review of
-the `meatie.aio.option.limit` package.
+You may need to go beyond features provided by Meatie and extra pre-processing or post-processing steps for handling
+HTTP requests and responses. For instance, you may want to employ a distributed cache using Redis or add logging for
+HTTP communication.
+
+Meatie architecture supports extensions by third-party middleware (i.e., the adapter pattern) with no modifications to
+the core library. The code snippet below presents a simple processing step that passes a request unchanged to the
+subsequent step in the pipeline. Similarly, once the return result becomes available, it is passed back to the previous
+step in the pipeline.
+
+```python
+from typing import TypeVar
+from meatie import Context
+
+T = TypeVar
+
+
+def step(ctx: Context[T]) -> T:
+    """
+    Middleware for synchronous HTTP clients (requests and httpx)
+    """
+
+    # ctx.request contains HTTP request
+
+    result: T = ctx.proceed()  # move HTTP requests to the next step of the pipeline
+
+    # ctx.response contains HTTP response
+    return result
+```
+
+```python
+from meatie import AsyncContext
+
+
+async def step(ctx: AsyncContext[T]) -> T:
+    """
+    Middleware for asynchronous HTTP client (aiohttp).
+    """
+
+    return await ctx.proceed()
+```
+
+Features highlighted in the readme, such as rate limiting, client-side caching, and retries, are all implemented
+following the adapter pattern. The interested reader is welcome to review their implementation in the `meatie.option`
+package.

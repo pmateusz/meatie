@@ -5,7 +5,7 @@
 import time as sys_time
 from typing import Optional
 
-from meatie.internal.time_ import Time
+from meatie import Time
 
 from . import Rate, Reservation, Tokens
 

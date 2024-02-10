@@ -46,10 +46,14 @@ repos:
           ]
         language: python
         additional_dependencies:
+          - cryptography
           - pydantic
           - pydantic-settings
           - aiohttp
           - pytest
+          - pytest_asyncio
+          - types-requests
+          - httpx
   - repo: https://github.com/astral-sh/ruff-pre-commit
     rev: v0.1.7
     hooks:

@@ -60,7 +60,7 @@ jobs:
 
       - name: Install dependencies
         if: steps.cache-venv.outputs.cache-hit != 'true'
-        run: poetry install --no-interaction --no-root --with=test
+        run: poetry install --no-interaction --all-extras --no-root --with=test
 
       - name: Install pydantic v1
         if: steps.cache-venv.outputs.cache-hit != 'true' && matrix.pydantic == 'v1'
@@ -71,7 +71,7 @@ jobs:
         run: poetry install --no-interaction --no-root --with=pydantic
 
       - name: Install project
-        run: poetry install --no-interaction
+        run: poetry install --no-interaction --all-extras
 
       - name: Run pytest
         run: poetry run pytest
