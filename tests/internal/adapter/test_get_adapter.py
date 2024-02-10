@@ -3,7 +3,6 @@
 
 from unittest.mock import Mock
 
-from aiohttp import ClientResponse
 from meatie import Response
 from meatie.internal.adapter import TypeAdapter, get_adapter
 
@@ -37,7 +36,7 @@ def test_string_decoder() -> None:
 def test_response_decoder() -> None:
     # GIVEN
     response = Mock(spec=Response)
-    adapter = get_adapter(ClientResponse)
+    adapter = get_adapter(Response)
 
     # WHEN
     result = adapter.from_response(response)

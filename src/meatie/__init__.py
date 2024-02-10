@@ -39,8 +39,7 @@ from .internal.cache import Cache
 from .internal.limit import Limiter, Rate
 from .client import BaseClient
 from .descriptor import EndpointDescriptor, Context
-from .aio.descriptor import AsyncEndpointDescriptor, AsyncContext
-from .aio.client import BaseAsyncClient
+from .aio import BaseAsyncClient, AsyncEndpointDescriptor, AsyncContext
 from .option import (
     limit,
     cache,
