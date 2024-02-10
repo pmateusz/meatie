@@ -5,8 +5,8 @@ from typing import Any, Callable
 from unittest.mock import Mock
 
 import pytest
+from meatie import Response
 from meatie.internal.adapter import TypeAdapter, get_adapter
-from meatie.internal.types import Response
 
 pydantic = pytest.importorskip("pydantic")
 BaseModel: type = pydantic.BaseModel

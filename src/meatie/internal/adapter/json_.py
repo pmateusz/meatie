@@ -4,8 +4,7 @@ from json import JSONDecodeError
 from typing import Any
 
 from aiohttp import ClientError, ContentTypeError
-from meatie import ParseResponseError, ResponseError
-from meatie.internal.types import AsyncResponse, Response
+from meatie import AsyncResponse, ParseResponseError, Response, ResponseError
 
 
 class _JsonAdapter:

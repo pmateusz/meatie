@@ -4,8 +4,8 @@
 from unittest.mock import Mock
 
 from aiohttp import ClientResponse
+from meatie import Response
 from meatie.internal.adapter import TypeAdapter, get_adapter
-from meatie.internal.types import Response
 
 
 def test_bytes_decoder() -> None:

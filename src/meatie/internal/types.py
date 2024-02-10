@@ -1,8 +1,8 @@
 #  Copyright 2024 The Meatie Authors. All rights reserved.
 #  Use of this source code is governed by a BSD-style license that can be found in the LICENSE file.
-from typing import Any, TypeVar, runtime_checkable
+from typing import Any, TypeVar
 
-from meatie import Request, Response, AsyncResponse
+from meatie import AsyncResponse, Request, Response
 from typing_extensions import Optional, ParamSpec, Protocol, Self
 
 __all__ = [

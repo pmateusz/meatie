@@ -13,10 +13,10 @@ from typing import (
 
 from typing_extensions import Self
 
-from meatie import BaseClient, Request
+from meatie import BaseClient, Request, Response
 from meatie.internal.adapter import TypeAdapter
 from meatie.internal.template import RequestTemplate, get_method
-from meatie.internal.types import PT, Response, ResponseBodyType
+from meatie.internal.types import PT, ResponseBodyType
 
 Operator = Callable[["Context[ResponseBodyType]"], ResponseBodyType]
 

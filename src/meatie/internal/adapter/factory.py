@@ -16,7 +16,8 @@ from typing import (
     get_origin,
 )
 
-from meatie.internal.types import T, Response, AsyncResponse
+from meatie import AsyncResponse, Response
+from meatie.internal.types import T
 
 from . import (
     BytesAdapter,

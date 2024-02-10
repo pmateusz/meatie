@@ -7,8 +7,8 @@ from typing import Any, Generic
 
 import pydantic
 import pydantic.json
-from meatie.error import ParseResponseError
-from meatie.internal.types import AsyncResponse, Response, T
+from meatie import AsyncResponse, ParseResponseError, Response
+from meatie.internal.types import T
 from typing_extensions import is_typeddict
 
 from . import JsonAdapter, TypeAdapter
