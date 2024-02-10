@@ -3,8 +3,7 @@
 
 import abc
 import urllib.parse
-from functools import singledispatchmethod
-from typing import Any, Generic
+from typing import Generic, Union
 
 from meatie import Cache, Context, Duration, EndpointDescriptor, Request
 from meatie.aio import AsyncContext, AsyncEndpointDescriptor
@@ -20,12 +19,14 @@ class CacheOption:
         self.ttl = ttl
         self.shared = shared
 
-    @singledispatchmethod
-    def __call__(self, ctx: Any) -> None:
-        raise NotImplementedError()
+    def __call__(
+        self, descriptor: Union[EndpointDescriptor[PT, T], AsyncEndpointDescriptor[PT, T]]
+    ) -> None:
+        if isinstance(descriptor, EndpointDescriptor):
+            return self.__sync_descriptor(descriptor)
+        return self.__async_descriptor(descriptor)
 
-    @__call__.register
-    def _(self, descriptor: EndpointDescriptor[PT, T]) -> None:
+    def __sync_descriptor(self, descriptor: EndpointDescriptor[PT, T]) -> None:
         operator: Operator[T]
         if self.shared:
             operator = SharedOperator[T](self.ttl)
@@ -33,8 +34,7 @@ class CacheOption:
             operator = LocalOperator[T](self.ttl)
         descriptor.register_operator(CacheOption.__PRIORITY, operator)
 
-    @__call__.register
-    def _(self, descriptor: AsyncEndpointDescriptor[PT, T]) -> None:
+    def __async_descriptor(self, descriptor: AsyncEndpointDescriptor[PT, T]) -> None:
         operator: AsyncOperator[T]
         if self.shared:
             operator = SharedAsyncOperator[T](self.ttl)

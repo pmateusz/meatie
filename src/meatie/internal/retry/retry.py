@@ -4,8 +4,8 @@
 
 from typing import Union
 
-from ... import HttpStatusError
 from . import BaseCondition, RetryContext
+from ... import ResponseError
 
 __all__ = ["always", "has_status", "has_exception_type", "has_exception_cause_type"]
 
@@ -23,7 +23,7 @@ class RetryOnStatus(BaseCondition):
         if ctx.response is not None:
             return ctx.response.status == self.status
 
-        if isinstance(ctx.error, HttpStatusError):
+        if isinstance(ctx.error, ResponseError):
             return ctx.error.response.status == self.status
 
         return False

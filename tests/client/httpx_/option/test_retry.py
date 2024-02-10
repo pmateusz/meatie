@@ -7,12 +7,11 @@ from unittest.mock import Mock, call, patch
 
 import pytest
 from meatie import (
-    MeatieError,
     ResponseError,
     after_attempt,
     endpoint,
     exponential,
-    retry,
+    retry, RetryError,
 )
 from meatie_httpx import HttpxClient
 from requests import Session
@@ -93,6 +92,7 @@ def test_can_throw_rate_limit_exceeded(mock_tools: MockTools) -> None:
     # GIVEN
     response = mock_tools.json_response({}, HTTPStatus.TOO_MANY_REQUESTS)
     session = mock_tools.client_wrap_response(response)
+    sleep_func = Mock()
     attempts = 5
 
     class Store(HttpxClient):
@@ -101,16 +101,16 @@ def test_can_throw_rate_limit_exceeded(mock_tools: MockTools) -> None:
 
         @endpoint(
             "/api/v1/products",
-            retry(wait=exponential(), stop=after_attempt(attempts)),
+            retry(wait=exponential(), stop=after_attempt(attempts), sleep_func=sleep_func),
         )
         def get_products(self) -> list[Any]:
             ...
 
     # WHEN
-    with pytest.raises(MeatieError):
-        with Store() as api, patch("time.sleep") as sleep_mock:
+    with pytest.raises(RetryError):
+        with Store() as api:
             api.get_products()
 
     # THEN
-    sleep_mock.assert_called()
+    sleep_func.assert_called()
     assert session.request.call_count == attempts

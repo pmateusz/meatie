@@ -2,9 +2,8 @@
 #  Use of this source code is governed by a BSD-style license that can be found in the LICENSE file.
 import asyncio
 import time
-from functools import singledispatchmethod
 from http import HTTPStatus
-from typing import Any, Awaitable, Callable, Optional, Union
+from typing import Awaitable, Callable, Optional, Union
 
 from meatie import (
     Condition,
@@ -41,12 +40,14 @@ class RetryOption:
         self.__stop = stop
         self.__sleep_func = sleep_func
 
-    @singledispatchmethod
-    def __call__(self, descriptor: Any) -> None:
-        raise NotImplementedError()
+    def __call__(
+        self, descriptor: Union[EndpointDescriptor[PT, T], AsyncEndpointDescriptor[PT, T]]
+    ) -> None:
+        if isinstance(descriptor, EndpointDescriptor):
+            return self.__sync_descriptor(descriptor)
+        return self.__async_descriptor(descriptor)
 
-    @__call__.register
-    def _(self, descriptor: EndpointDescriptor[PT, T]) -> None:
+    def __sync_descriptor(self, descriptor: EndpointDescriptor[PT, T]) -> None:
         sleep_func: Union[Callable[[float], None], None] = self.__sleep_func  # type: ignore[assignment]
         if sleep_func is None:
             sleep_func = time.sleep
@@ -54,8 +55,7 @@ class RetryOption:
         operator = RetryOperator(self.__on, self.__wait, self.__stop, sleep_func)
         descriptor.register_operator(RetryOption.__PRIORITY, operator)
 
-    @__call__.register
-    def _(self, descriptor: AsyncEndpointDescriptor[PT, T]) -> None:
+    def __async_descriptor(self, descriptor: AsyncEndpointDescriptor[PT, T]) -> None:
         sleep_func: Union[Callable[[float], Awaitable[None]], None] = self.__sleep_func  # type: ignore[assignment]
         if sleep_func is None:
             sleep_func = asyncio.sleep

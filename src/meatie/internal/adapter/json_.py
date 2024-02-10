@@ -3,7 +3,7 @@
 from json import JSONDecodeError
 from typing import Any
 
-from aiohttp import ContentTypeError
+from aiohttp import ContentTypeError, ClientError
 from meatie import ParseResponseError, ResponseError
 from meatie.internal.types import AsyncResponse, Response
 
@@ -28,6 +28,8 @@ class _JsonAdapter:
         except JSONDecodeError as exc:
             text = await response.text()
             raise ParseResponseError(text, response, exc) from exc
+        except ClientError as exc:
+            raise ResponseError(response, exc) from exc
 
     @staticmethod
     def to_content(value: Any) -> Any:

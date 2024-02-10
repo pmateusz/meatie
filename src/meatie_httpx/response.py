@@ -16,7 +16,10 @@ class HttpxResponse:
         return self.response.status_code
 
     def read(self) -> bytes:
-        return self.response.content
+        try:
+            return self.response.content
+        except Exception as exc:
+            raise ResponseError(self, exc) from exc
 
     def text(self) -> str:
         try:
@@ -28,8 +31,7 @@ class HttpxResponse:
         try:
             return self.response.json()
         except JSONDecodeError as exc:
-            try:
-                text = self.response.text
-            except Exception as inner_exc:
-                raise ResponseError(self, inner_exc) from inner_exc
+            text = self.response.text
             raise ParseResponseError(text, self, exc) from exc
+        except Exception as exc:
+            raise ResponseError(self, exc) from exc

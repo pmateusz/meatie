@@ -94,6 +94,7 @@ def test_can_throw_rate_limit_exceeded(mock_tools: MockTools) -> None:
     response = mock_tools.json_response({}, HTTPStatus.TOO_MANY_REQUESTS)
     session = mock_tools.session_wrap_response(response)
     attempts = 5
+    sleep_func = Mock()
 
     class Store(RequestsClient):
         def __init__(self) -> None:
@@ -101,16 +102,16 @@ def test_can_throw_rate_limit_exceeded(mock_tools: MockTools) -> None:
 
         @endpoint(
             "/api/v1/products",
-            retry(wait=exponential(), stop=after_attempt(attempts)),
+            retry(wait=exponential(), stop=after_attempt(attempts), sleep_func=sleep_func),
         )
         def get_products(self) -> list[Any]:
             ...
 
     # WHEN
     with pytest.raises(MeatieError):
-        with Store() as api, patch("time.sleep") as sleep_mock:
+        with Store() as api:
             api.get_products()
 
     # THEN
-    sleep_mock.assert_called()
+    sleep_func.assert_called()
     assert session.request.call_count == attempts

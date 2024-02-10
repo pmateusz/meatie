@@ -16,7 +16,10 @@ class AiohttpResponse:
         return self.response.status
 
     async def read(self) -> bytes:
-        return await self.response.content.read()
+        try:
+            return await self.response.content.read()
+        except Exception as exc:
+            raise ResponseError(self, exc) from exc
 
     async def text(
         self,
@@ -30,7 +33,10 @@ class AiohttpResponse:
             "backslashreplace",
         ] = "replace",
     ) -> str:
-        return await self.response.text(encoding, errors)
+        try:
+            return await self.response.text(encoding, errors)
+        except Exception as exc:
+            raise ResponseError(self, exc) from exc
 
     async def json(self) -> dict[str, Any]:
         try:

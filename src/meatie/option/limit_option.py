@@ -2,8 +2,7 @@
 #  Use of this source code is governed by a BSD-style license that can be found in the LICENSE file.
 import asyncio
 import time
-from functools import singledispatchmethod
-from typing import Any, Awaitable, Callable, Union
+from typing import Awaitable, Callable, Union
 
 from meatie import Duration
 from meatie.aio import AsyncContext, AsyncEndpointDescriptor
@@ -25,12 +24,14 @@ class LimitOption:
         self.tokens = tokens
         self.sleep_func = sleep_func
 
-    @singledispatchmethod
-    def __call__(self, descriptor: Any) -> None:
-        raise NotImplementedError()
+    def __call__(
+        self, descriptor: Union[EndpointDescriptor[PT, T], AsyncEndpointDescriptor[PT, T]]
+    ) -> None:
+        if isinstance(descriptor, EndpointDescriptor):
+            return self.__sync_descriptor(descriptor)
+        return self.__async_descriptor(descriptor)
 
-    @__call__.register
-    def _(self, descriptor: EndpointDescriptor[PT, T]) -> None:
+    def __sync_descriptor(self, descriptor: EndpointDescriptor[PT, T]) -> None:
         if self.tokens <= 0.0:
             return
 
@@ -40,8 +41,7 @@ class LimitOption:
         operator = LimitOperator(self.tokens, sleep_func)
         descriptor.register_operator(LimitOption.__PRIORITY, operator)
 
-    @__call__.register
-    def _(self, descriptor: AsyncEndpointDescriptor[PT, T]) -> None:
+    def __async_descriptor(self, descriptor: AsyncEndpointDescriptor[PT, T]) -> None:
         if self.tokens <= 0.0:
             return
 
