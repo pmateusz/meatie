@@ -5,33 +5,30 @@ description = "Meatie is a Python metaprogramming library that eliminates the ne
 authors = ["pmateusz <pmateusz@users.noreply.github.com>"]
 readme = "README.md"
 keywords = ["http-client", "metaprogramming", "REST", "HTTP"]
-include = ["py.typed"]
 homepage = "https://github.com/pmateusz/meatie"
+repository = "https://github.com/pmateusz/meatie"
+license = "BSD-3-Clause"
+include = ["pyproject.toml", "README.md", "LICENSE.md"]
+packages = [
+    { include = "src/meatie" },
+    { include = "src/meatie_aiohttp" },
+    { include = "src/meatie_httpx" },
+    { include = "src/meatie_requests" },
+]
 
 [tool.poetry.dependencies]
 python = ">=3.9"
 typing-extensions = ">=4.7.0"
 
-[tool.poetry.group.requests]
-optional = true
+requests = { version = ">=2.26.0", optional = true }
+httpx = { version = ">=0.19.0", optional = true }
+aiohttp = { version = ">=3.7.0", optional = true }
 
-[tool.poetry.group.requests.dependencies]
-requests = ">=2.26.0"
+[tool.poetry.extras]
+requests = ["requests"]
+httpx = ["httpx"]
+aiohttp = ["aiohttp"]
 
-[tool.poetry.group.httpx]
-optional = true
-
-[tool.poetry.group.httpx.dependencies]
-httpx = ">=0.19.0"
-
-[tool.poetry.group.aiohttp]
-optional = true
-
-[tool.poetry.group.aiohttp.dependencies]
-aiohttp = ">=3.7.0"
-
-[tool.poetry.group.test]
-optional = true
 
 [tool.poetry.group.test.dependencies]
 coverage = ">=7.4.0"
@@ -51,7 +48,6 @@ optional = true
 [tool.poetry.group.pydantic.dependencies]
 pydantic = ">=2.0.0"
 pydantic-settings = ">=2.0.0"
-
 
 [tool.pytest.ini_options]
 log_cli = true
