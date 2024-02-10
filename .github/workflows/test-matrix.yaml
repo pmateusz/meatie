@@ -71,7 +71,7 @@ jobs:
         run: poetry install --no-interaction --no-root --with=pydantic
 
       - name: Install project
-        run: poetry install --no-interaction
+        run: poetry install --no-interaction --all-extras
 
       - name: Run pytest
         run: poetry run pytest
