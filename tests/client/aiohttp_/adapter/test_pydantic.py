@@ -18,7 +18,7 @@ class ResponseV1(BaseModel):
 
 
 @pytest.mark.asyncio()
-async def test_can_parse_pydantic_model(test_server: HTTPTestServer) -> None:
+async def test_can_parse_pydantic_model(http_server: HTTPTestServer) -> None:
     # GIVEN
     def handler(request: BaseHTTPRequestHandler) -> None:
         request.send_response(HTTPStatus.OK)
@@ -26,7 +26,7 @@ async def test_can_parse_pydantic_model(test_server: HTTPTestServer) -> None:
         request.end_headers()
         request.wfile.write('{"status": "ok"}'.encode("utf-8"))
 
-    test_server.handler = handler
+    http_server.handler = handler
 
     class TestClient(AiohttpClient):
         @endpoint("/")
@@ -34,7 +34,7 @@ async def test_can_parse_pydantic_model(test_server: HTTPTestServer) -> None:
             ...
 
     # WHEN
-    async with TestClient(test_server.create_session()) as client:
+    async with TestClient(http_server.create_session()) as client:
         response = await client.get_response()
 
     # THEN
@@ -42,7 +42,7 @@ async def test_can_parse_pydantic_model(test_server: HTTPTestServer) -> None:
 
 
 @pytest.mark.asyncio()
-async def test_can_handle_corrupted_pydantic_model(test_server: HTTPTestServer) -> None:
+async def test_can_handle_corrupted_pydantic_model(http_server: HTTPTestServer) -> None:
     # GIVEN
     def handler(request: BaseHTTPRequestHandler) -> None:
         request.send_response(HTTPStatus.OK)
@@ -50,7 +50,7 @@ async def test_can_handle_corrupted_pydantic_model(test_server: HTTPTestServer) 
         request.end_headers()
         request.wfile.write('{"code": "ok"}'.encode("utf-8"))
 
-    test_server.handler = handler
+    http_server.handler = handler
 
     class TestClient(AiohttpClient):
         @endpoint("/")
@@ -59,7 +59,7 @@ async def test_can_handle_corrupted_pydantic_model(test_server: HTTPTestServer) 
 
     # WHEN
     with pytest.raises(ParseResponseError) as exc_info:
-        async with TestClient(test_server.create_session()) as client:
+        async with TestClient(http_server.create_session()) as client:
             await client.get_response()
 
     # THEN
