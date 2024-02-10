@@ -3,10 +3,11 @@
 
 import abc
 import urllib.parse
-from typing import Generic
+from functools import singledispatchmethod
+from typing import Any, Generic
 
-from meatie import Cache, Duration
-from meatie.descriptor import Context, EndpointDescriptor
+from meatie import Cache, Context, Duration, EndpointDescriptor, Request
+from meatie.aio import AsyncContext, AsyncEndpointDescriptor
 from meatie.internal.types import PT, T
 
 __all__ = ["cache"]
@@ -19,29 +20,55 @@ class CacheOption:
         self.ttl = ttl
         self.shared = shared
 
-    def __call__(self, descriptor: EndpointDescriptor[PT, T]) -> None:
-        operator: _Operator[T]
-        if self.shared:
-            operator = _SharedOperator[T](self.ttl)
-        else:
-            operator = _LocalOperator[T](self.ttl)
+    @singledispatchmethod
+    def __call__(self, ctx: Any) -> None:
+        raise NotImplementedError()
 
+    @__call__.register
+    def _(self, descriptor: EndpointDescriptor[PT, T]) -> None:
+        operator: Operator[T]
+        if self.shared:
+            operator = SharedOperator[T](self.ttl)
+        else:
+            operator = LocalOperator[T](self.ttl)
+        descriptor.register_operator(CacheOption.__PRIORITY, operator)
+
+    @__call__.register
+    def _(self, descriptor: AsyncEndpointDescriptor[PT, T]) -> None:
+        operator: AsyncOperator[T]
+        if self.shared:
+            operator = SharedAsyncOperator[T](self.ttl)
+        else:
+            operator = LocalAsyncOperator[T](self.ttl)
         descriptor.register_operator(CacheOption.__PRIORITY, operator)
 
 
 cache = CacheOption
 
 
+def get_key(request: Request) -> str:
+    key = request.path
+    if request.query_params:
+        key += "?" + urllib.parse.urlencode(request.query_params)
+    return key
+
+
 class _Operator(Generic[T]):
     def __init__(self, ttl: Duration) -> None:
         self.ttl = ttl
 
-    def __call__(self, ctx: Context[T]) -> T:
-        key = ctx.request.path
-        if ctx.request.query_params:
-            key += "?" + urllib.parse.urlencode(ctx.request.query_params)
+    @abc.abstractmethod
+    def _storage(self, ctx: Context[T]) -> Cache:
+        ...
 
+
+class Operator(Generic[T]):
+    def __init__(self, ttl: Duration) -> None:
+        self.ttl = ttl
+
+    def __call__(self, ctx: Context[T]) -> T:
         storage = self._storage(ctx)
+        key = get_key(ctx.request)
         value_opt = storage.load(key)
         if value_opt is not None:
             return value_opt
@@ -55,11 +82,41 @@ class _Operator(Generic[T]):
         ...
 
 
-class _LocalOperator(_Operator[T]):
+class LocalOperator(Operator[T]):
     def _storage(self, ctx: Context[T]) -> Cache:
         return ctx.client.local_cache
 
 
-class _SharedOperator(_Operator[T]):
+class SharedOperator(Operator[T]):
     def _storage(self, ctx: Context[T]) -> Cache:
+        return ctx.client.shared_cache
+
+
+class AsyncOperator(Generic[T]):
+    def __init__(self, ttl: Duration) -> None:
+        self.ttl = ttl
+
+    async def __call__(self, ctx: AsyncContext[T]) -> T:
+        storage = self._storage(ctx)
+        key = get_key(ctx.request)
+        value_opt = storage.load(key)
+        if value_opt is not None:
+            return value_opt
+
+        value = await ctx.proceed()
+        storage.store(key, value, self.ttl)
+        return value
+
+    @abc.abstractmethod
+    def _storage(self, ctx: AsyncContext[T]) -> Cache:
+        ...
+
+
+class LocalAsyncOperator(AsyncOperator[T]):
+    def _storage(self, ctx: AsyncContext[T]) -> Cache:
+        return ctx.client.local_cache
+
+
+class SharedAsyncOperator(AsyncOperator[T]):
+    def _storage(self, ctx: AsyncContext[T]) -> Cache:
         return ctx.client.shared_cache

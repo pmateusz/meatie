@@ -7,8 +7,7 @@ from unittest.mock import AsyncMock, Mock
 
 import pytest
 from aiohttp import ClientResponseError, ClientSession
-from meatie import after_attempt, endpoint, exponential
-from meatie.aio import retry
+from meatie import after_attempt, endpoint, exponential, retry
 from meatie_aiohttp import AiohttpClient
 
 from tests.client.aiohttp_.mock_tools import MockTools

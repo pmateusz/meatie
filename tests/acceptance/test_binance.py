@@ -12,12 +12,7 @@ from typing import Any, Optional, Union
 
 import pytest
 from aiohttp import ClientSession
-from meatie import HOUR, Limiter, Rate, Request, endpoint
-from meatie.aio import (
-    cache,
-    limit,
-    private,
-)
+from meatie import HOUR, Limiter, Rate, Request, cache, endpoint, limit, private
 from meatie_aiohttp import AiohttpClient
 
 pydantic = pytest.importorskip("pydantic", minversion="2.0.0")

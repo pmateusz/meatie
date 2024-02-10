@@ -5,8 +5,7 @@ from typing import Any, cast
 
 import pytest
 from aiohttp import ClientSession
-from meatie import INF, endpoint
-from meatie.aio import cache
+from meatie import INF, cache, endpoint
 from meatie_aiohttp import AiohttpClient
 
 from tests.client.aiohttp_.mock_tools import MockTools

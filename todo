@@ -1,0 +1,5 @@
+- fix pytest
+- update readme
+- write release notes
+- py.typed
+- revise poetry and extras

@@ -15,17 +15,15 @@ from meatie import (
     ApiRef,
     Limiter,
     Rate,
+    Request,
+    cache,
     endpoint,
     exponential,
     has_status,
-)
-from meatie.aio import (
-    cache,
     limit,
     private,
     retry,
 )
-from meatie.types import Request
 from meatie_aiohttp import AiohttpClient
 
 from tests.client.aiohttp_.mock_tools import MockTools

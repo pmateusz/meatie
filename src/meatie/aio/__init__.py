@@ -5,19 +5,9 @@
 
 from .client import BaseAsyncClient
 from .descriptor import AsyncEndpointDescriptor, AsyncContext
-from .option import (
-    cache,
-    limit,
-    retry,
-    private,
-)
 
 __all__ = [
     "BaseAsyncClient",
     "AsyncEndpointDescriptor",
     "AsyncContext",
-    "cache",
-    "limit",
-    "retry",
-    "private",
 ]
