@@ -5,14 +5,13 @@ from typing import Any, cast
 
 from meatie import INF, cache, endpoint
 from meatie_requests import RequestsClient
+from mock_tools import RequestsMockTools
 from requests import Session
-
-from tests.client.requests_.mock_tools import MockTools
 
 PRODUCTS = [{"name": "pencil"}, {"name": "headphones"}]
 
 
-def test_local_cache_is_isolated(mock_tools: MockTools) -> None:
+def test_local_cache_is_isolated(mock_tools: RequestsMockTools) -> None:
     # GIVEN
     session = mock_tools.session_with_json_response(json=PRODUCTS)
 
@@ -42,7 +41,7 @@ def test_local_cache_is_isolated(mock_tools: MockTools) -> None:
     session.request.assert_called_once()
 
 
-def test_global_cache_is_shared(mock_tools: MockTools) -> None:
+def test_global_cache_is_shared(mock_tools: RequestsMockTools) -> None:
     # GIVEN
     session = mock_tools.session_with_json_response(json=PRODUCTS)
 

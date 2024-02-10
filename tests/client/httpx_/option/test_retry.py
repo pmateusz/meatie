@@ -3,25 +3,25 @@
 
 from http import HTTPStatus
 from typing import Any
-from unittest.mock import Mock, call, patch
+from unittest.mock import Mock, call
 
 import pytest
 from meatie import (
     ResponseError,
+    RetryError,
     after_attempt,
     endpoint,
     exponential,
-    retry, RetryError,
+    retry,
 )
 from meatie_httpx import HttpxClient
+from mock_tools import HttpxMockTools
 from requests import Session
-
-from tests.client.httpx_.mock_tools import MockTools
 
 PRODUCTS = [{"name": "headphones"}]
 
 
-def test_no_retry_on_success_status(mock_tools: MockTools) -> None:
+def test_no_retry_on_success_status(mock_tools: HttpxMockTools) -> None:
     # GIVEN
     session = mock_tools.client_with_json_response(json=PRODUCTS, status=HTTPStatus.OK)
 
@@ -42,7 +42,7 @@ def test_no_retry_on_success_status(mock_tools: MockTools) -> None:
     session.request.assert_called_once()
 
 
-def test_no_retry_on_bad_request(mock_tools: MockTools) -> None:
+def test_no_retry_on_bad_request(mock_tools: HttpxMockTools) -> None:
     # GIVEN
     client = mock_tools.client_with_json_client_response_error(HTTPStatus.BAD_REQUEST)
 
@@ -63,7 +63,7 @@ def test_no_retry_on_bad_request(mock_tools: MockTools) -> None:
     client.request.assert_called_once()
 
 
-def test_can_retry(mock_tools: MockTools) -> None:
+def test_can_retry(mock_tools: HttpxMockTools) -> None:
     # GIVEN
     too_many_requests_response = mock_tools.json_response({}, HTTPStatus.TOO_MANY_REQUESTS)
     ok_response = mock_tools.json_response(json=PRODUCTS)
@@ -88,7 +88,7 @@ def test_can_retry(mock_tools: MockTools) -> None:
     assert [call("GET", "/api/v1/products"), call("GET", "/api/v1/products")] == calls
 
 
-def test_can_throw_rate_limit_exceeded(mock_tools: MockTools) -> None:
+def test_can_throw_rate_limit_exceeded(mock_tools: HttpxMockTools) -> None:
     # GIVEN
     response = mock_tools.json_response({}, HTTPStatus.TOO_MANY_REQUESTS)
     session = mock_tools.client_wrap_response(response)

@@ -6,11 +6,10 @@ from unittest.mock import patch
 
 from meatie import endpoint, private
 from meatie_httpx import HttpxClient
+from mock_tools import HttpxMockTools
 
-from tests.client.httpx_.mock_tools import MockTools
 
-
-def test_calls_authenticate_on_private_endpoint(mock_tools: MockTools) -> None:
+def test_calls_authenticate_on_private_endpoint(mock_tools: HttpxMockTools) -> None:
     # GIVEN
     products = [{"name": "pencil"}, {"name": "headphones"}]
     client = mock_tools.client_with_json_response(json=products)

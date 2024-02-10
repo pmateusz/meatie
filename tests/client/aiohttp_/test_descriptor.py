@@ -11,14 +11,13 @@ from meatie.aio.descriptor import AsyncContext
 from meatie.internal.template import RequestTemplate
 from meatie.internal.types import AsyncClient
 from meatie_aiohttp import AiohttpClient
-
-from tests.client.aiohttp_.mock_tools import MockTools
+from mock_tools import AiohttpMockTools
 
 PRODUCTS = [{"name": "Pencil"}, {"name": "Headphones"}]
 
 
 @pytest.mark.asyncio()
-async def test_get_without_parameters(mock_tools: MockTools) -> None:
+async def test_get_without_parameters(mock_tools: AiohttpMockTools) -> None:
     # GIVEN
     session = mock_tools.session_with_json_response(json=PRODUCTS)
 
@@ -40,7 +39,7 @@ async def test_get_without_parameters(mock_tools: MockTools) -> None:
 
 
 @pytest.mark.asyncio()
-async def test_post_with_body(mock_tools: MockTools) -> None:
+async def test_post_with_body(mock_tools: AiohttpMockTools) -> None:
     # GIVEN
     session = mock_tools.session_with_json_response(json=None)
 
@@ -61,7 +60,7 @@ async def test_post_with_body(mock_tools: MockTools) -> None:
 
 
 @pytest.mark.asyncio()
-async def test_get_with_default_parameter(mock_tools: MockTools) -> None:
+async def test_get_with_default_parameter(mock_tools: AiohttpMockTools) -> None:
     # GIVEN
     session = mock_tools.session_with_json_response(json=PRODUCTS)
 
@@ -82,7 +81,7 @@ async def test_get_with_default_parameter(mock_tools: MockTools) -> None:
 
 
 @pytest.mark.asyncio()
-async def test_get_with_skip_unset_optional_parameter(mock_tools: MockTools) -> None:
+async def test_get_with_skip_unset_optional_parameter(mock_tools: AiohttpMockTools) -> None:
     # GIVEN
     session = mock_tools.session_with_json_response(json=PRODUCTS)
 
@@ -103,7 +102,7 @@ async def test_get_with_skip_unset_optional_parameter(mock_tools: MockTools) -> 
 
 
 @pytest.mark.asyncio()
-async def test_get_with_skip_optional_parameter_set_to_none(mock_tools: MockTools) -> None:
+async def test_get_with_skip_optional_parameter_set_to_none(mock_tools: AiohttpMockTools) -> None:
     # GIVEN
     session = mock_tools.session_with_json_response(json=PRODUCTS)
 
@@ -124,7 +123,7 @@ async def test_get_with_skip_optional_parameter_set_to_none(mock_tools: MockTool
 
 
 @pytest.mark.asyncio()
-async def test_get_with_send_optional_parameter(mock_tools: MockTools) -> None:
+async def test_get_with_send_optional_parameter(mock_tools: AiohttpMockTools) -> None:
     # GIVEN
     session = mock_tools.session_with_json_response(json=PRODUCTS)
 

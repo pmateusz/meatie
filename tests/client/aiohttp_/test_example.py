@@ -25,8 +25,7 @@ from meatie import (
     retry,
 )
 from meatie_aiohttp import AiohttpClient
-
-from tests.client.aiohttp_.mock_tools import MockTools
+from mock_tools import AiohttpMockTools
 
 pydantic = pytest.importorskip("pydantic")
 BaseModel: type = pydantic.BaseModel
@@ -201,7 +200,9 @@ async def test_cache_endpoint_example() -> None:
 
 
 @pytest.mark.asyncio()
-async def test_retry_example(mock_tools: MockTools, dump_model: Callable[[Any], Any]) -> None:
+async def test_retry_example(
+    mock_tools: AiohttpMockTools, dump_model: Callable[[Any], Any]
+) -> None:
     # GIVEN
     class OnlineStore(AiohttpClient):
         def __init__(self, session: ClientSession) -> None:
@@ -240,7 +241,9 @@ async def test_retry_example(mock_tools: MockTools, dump_model: Callable[[Any], 
 
 
 @pytest.mark.asyncio()
-async def test_rate_limit_example(mock_tools: MockTools, dump_model: Callable[[Any], Any]) -> None:
+async def test_rate_limit_example(
+    mock_tools: AiohttpMockTools, dump_model: Callable[[Any], Any]
+) -> None:
     # GIVEN
     current_time = 1000
     sleep_func = AsyncMock()

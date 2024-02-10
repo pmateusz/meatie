@@ -6,11 +6,10 @@ from unittest.mock import patch
 
 from meatie import Limiter, Rate, endpoint, limit
 from meatie_httpx import HttpxClient
+from mock_tools import HttpxMockTools
 
-from tests.client.httpx_.mock_tools import MockTools
 
-
-def test_waits_until_tokens_are_available(mock_tools: MockTools) -> None:
+def test_waits_until_tokens_are_available(mock_tools: HttpxMockTools) -> None:
     # GIVEN
     products = [{"name": "bicycle"}]
     response = mock_tools.json_response(json=products)

@@ -7,8 +7,7 @@ import aiohttp
 import pytest
 from http_test import ClientAdapter
 from meatie_aiohttp import AiohttpClient
-
-from tests.client.timeout_suite import TimeoutSuite
+from suite.client import TimeoutSuite
 
 
 class TestAiohttpTimeoutSuite(TimeoutSuite):

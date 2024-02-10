@@ -5,8 +5,7 @@ from typing import Generator
 import httpx
 import pytest
 from meatie_httpx import HttpxClient
-
-from tests.client.default_suite import DefaultSuite
+from suite.client import DefaultSuite
 
 
 class TestHttpxDefaultSuite(DefaultSuite):

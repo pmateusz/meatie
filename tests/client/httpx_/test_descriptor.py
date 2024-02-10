@@ -5,18 +5,16 @@ from typing import Any, Optional
 from unittest.mock import ANY, Mock
 
 import pytest
-from meatie import Request, endpoint
-from meatie.descriptor import Context, EndpointDescriptor
+from meatie import Context, EndpointDescriptor, Request, endpoint
 from meatie.internal.template import RequestTemplate
 from meatie.internal.types import Client
 from meatie_httpx import HttpxClient
-
-from tests.client.httpx_.mock_tools import MockTools
+from mock_tools import HttpxMockTools
 
 PRODUCTS = [{"name": "Pencil"}, {"name": "Headphones"}]
 
 
-def test_get_without_parameters(mock_tools: MockTools) -> None:
+def test_get_without_parameters(mock_tools: HttpxMockTools) -> None:
     # GIVEN
     client = mock_tools.client_with_json_response(json=PRODUCTS)
 
@@ -37,7 +35,7 @@ def test_get_without_parameters(mock_tools: MockTools) -> None:
     client.request.assert_called_once_with("GET", "/api/v1/products")
 
 
-def test_post_with_body(mock_tools: MockTools) -> None:
+def test_post_with_body(mock_tools: HttpxMockTools) -> None:
     # GIVEN
     client = mock_tools.client_with_json_response(json=None)
 
@@ -57,7 +55,7 @@ def test_post_with_body(mock_tools: MockTools) -> None:
     client.request.assert_called_once_with("POST", "/api/v1/order", json=PRODUCTS)
 
 
-def test_get_with_default_parameter(mock_tools: MockTools) -> None:
+def test_get_with_default_parameter(mock_tools: HttpxMockTools) -> None:
     # GIVEN
     client = mock_tools.client_with_json_response(json=PRODUCTS)
 
@@ -77,7 +75,7 @@ def test_get_with_default_parameter(mock_tools: MockTools) -> None:
     client.request.assert_called_once_with("GET", "/api/v1/products", params={"limit": 100})
 
 
-def test_get_with_skip_unset_optional_parameter(mock_tools: MockTools) -> None:
+def test_get_with_skip_unset_optional_parameter(mock_tools: HttpxMockTools) -> None:
     # GIVEN
     client = mock_tools.client_with_json_response(json=PRODUCTS)
 
@@ -97,7 +95,7 @@ def test_get_with_skip_unset_optional_parameter(mock_tools: MockTools) -> None:
     client.request.assert_called_once_with("GET", "/api/v1/products")
 
 
-def test_get_with_skip_optional_parameter_set_to_none(mock_tools: MockTools) -> None:
+def test_get_with_skip_optional_parameter_set_to_none(mock_tools: HttpxMockTools) -> None:
     # GIVEN
     client = mock_tools.client_with_json_response(json=PRODUCTS)
 
@@ -117,7 +115,7 @@ def test_get_with_skip_optional_parameter_set_to_none(mock_tools: MockTools) -> 
     client.request.assert_called_once_with("GET", "/api/v1/products")
 
 
-def test_get_with_send_optional_parameter(mock_tools: MockTools) -> None:
+def test_get_with_send_optional_parameter(mock_tools: HttpxMockTools) -> None:
     # GIVEN
     client = mock_tools.client_with_json_response(json=PRODUCTS)
 

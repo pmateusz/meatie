@@ -5,13 +5,12 @@ from typing import Any, Callable
 
 import aiohttp
 import pytest
-
-from tests.client.aiohttp_.mock_tools import MockTools
+from mock_tools import AiohttpMockTools
 
 
 @pytest.fixture(name="mock_tools", scope="session")
-def mock_tools_fixture() -> MockTools:
-    return MockTools()
+def mock_tools_fixture() -> AiohttpMockTools:
+    return AiohttpMockTools()
 
 
 @pytest.fixture(name="create_client_session")

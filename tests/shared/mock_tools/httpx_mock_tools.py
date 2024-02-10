@@ -9,7 +9,7 @@ from unittest.mock import Mock
 from httpx import Client, Response
 
 
-class MockTools:
+class HttpxMockTools:
     @staticmethod
     def json_response(json: Any, status: int = HTTPStatus.OK) -> Mock:
         return Mock(spec=Response, status_code=status, json=Mock(return_value=json))
@@ -21,13 +21,13 @@ class MockTools:
 
     @staticmethod
     def client_with_json_response(json: Any, status: int = HTTPStatus.OK) -> Mock:
-        response = MockTools.json_response(json, status)
-        return MockTools.client_wrap_response(response)
+        response = HttpxMockTools.json_response(json, status)
+        return HttpxMockTools.client_wrap_response(response)
 
     @staticmethod
     def client_with_json_client_response_error(status: int) -> Mock:
-        response = MockTools.json_client_response_error(status)
-        return MockTools.client_wrap_response(response)
+        response = HttpxMockTools.json_client_response_error(status)
+        return HttpxMockTools.client_wrap_response(response)
 
     @staticmethod
     def client_wrap_response(response: Mock) -> Mock:

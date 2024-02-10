@@ -55,11 +55,11 @@ pydantic-settings = ">=2.0.0"
 
 [tool.pytest.ini_options]
 log_cli = true
-pythonpath = ["src", "tests/tools"]
+pythonpath = ["src", "tests/shared"]
 addopts = ["--import-mode=importlib"]
 
 [tool.mypy]
-mypy_path = ["$MYPY_CONFIG_FILE_DIR/src", "$MYPY_CONFIG_FILE_DIR/tests/tools"]
+mypy_path = ["$MYPY_CONFIG_FILE_DIR/src", "$MYPY_CONFIG_FILE_DIR/tests/shared"]
 
 [tool.coverage.run]
 branch = true

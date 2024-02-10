@@ -10,8 +10,7 @@ from http_test import ClientAdapter, HTTPTestServer, StatusHandler
 from meatie import Request
 from meatie.internal.types import Client
 from meatie_aiohttp import AiohttpClient
-
-from tests.client.default_suite import DefaultSuite
+from suite.client import DefaultSuite
 
 
 class TestAiohttpDefaultSuite(DefaultSuite):

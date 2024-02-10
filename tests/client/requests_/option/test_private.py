@@ -6,12 +6,11 @@ from unittest.mock import patch
 
 from meatie import endpoint, private
 from meatie_requests import RequestsClient
+from mock_tools import RequestsMockTools
 from requests import Session
 
-from tests.client.requests_.mock_tools import MockTools
 
-
-def test_calls_authenticate_on_private_endpoint(mock_tools: MockTools) -> None:
+def test_calls_authenticate_on_private_endpoint(mock_tools: RequestsMockTools) -> None:
     # GIVEN
     products = [{"name": "pencil"}, {"name": "headphones"}]
     session = mock_tools.session_with_json_response(json=products)

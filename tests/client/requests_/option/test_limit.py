@@ -6,12 +6,11 @@ from unittest.mock import patch
 
 from meatie import Limiter, Rate, endpoint, limit
 from meatie_requests import RequestsClient
+from mock_tools import RequestsMockTools
 from requests import Session
 
-from tests.client.requests_.mock_tools import MockTools
 
-
-def test_waits_until_tokens_are_available(mock_tools: MockTools) -> None:
+def test_waits_until_tokens_are_available(mock_tools: RequestsMockTools) -> None:
     # GIVEN
     products = [{"name": "bicycle"}]
     response = mock_tools.json_response(json=products)

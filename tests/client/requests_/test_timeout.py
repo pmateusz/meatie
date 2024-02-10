@@ -5,8 +5,7 @@ from typing import Generator
 import pytest
 import requests
 from meatie_requests.client import RequestsClient
-
-from tests.client.timeout_suite import TimeoutSuite
+from suite.client import TimeoutSuite
 
 
 class TestRequestsTimeoutSuite(TimeoutSuite):

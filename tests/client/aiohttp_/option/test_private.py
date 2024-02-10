@@ -8,12 +8,11 @@ import pytest
 from aiohttp import ClientSession
 from meatie import endpoint, private
 from meatie_aiohttp import AiohttpClient
-
-from tests.client.aiohttp_.mock_tools import MockTools
+from mock_tools import AiohttpMockTools
 
 
 @pytest.mark.asyncio()
-async def test_calls_authenticate_on_private_endpoint(mock_tools: MockTools) -> None:
+async def test_calls_authenticate_on_private_endpoint(mock_tools: AiohttpMockTools) -> None:
     # GIVEN
     products = [{"name": "pencil"}, {"name": "headphones"}]
     session = mock_tools.session_with_json_response(json=products)

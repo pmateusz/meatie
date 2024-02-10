@@ -8,7 +8,7 @@ from unittest.mock import AsyncMock, Mock
 from aiohttp import ClientResponse, ClientResponseError, ClientSession, RequestInfo
 
 
-class MockTools:
+class AiohttpMockTools:
     @staticmethod
     def json_response(json: Any, status: int = HTTPStatus.OK) -> Mock:
         return Mock(spec=ClientResponse, status=status, json=AsyncMock(return_value=json))
@@ -20,13 +20,13 @@ class MockTools:
 
     @staticmethod
     def session_with_json_response(json: Any, status: int = HTTPStatus.OK) -> Mock:
-        response = MockTools.json_response(json, status)
-        return MockTools.session_wrap_response(response)
+        response = AiohttpMockTools.json_response(json, status)
+        return AiohttpMockTools.session_wrap_response(response)
 
     @staticmethod
     def session_with_json_client_response_error(status: int) -> Mock:
-        response = MockTools.json_client_response_error(status)
-        return MockTools.session_wrap_response(response)
+        response = AiohttpMockTools.json_client_response_error(status)
+        return AiohttpMockTools.session_wrap_response(response)
 
     @staticmethod
     def session_wrap_response(response: Mock) -> Mock:
