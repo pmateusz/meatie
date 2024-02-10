@@ -5,10 +5,10 @@ from typing import Any, get_args
 
 from typing_extensions import Self
 
-__all__ = ["api_ref"]
+__all__ = ["api_ref", "ApiReference"]
 
 
-class ApiRef:
+class ApiReference:
     __slots__ = ("name",)
 
     def __init__(self, name: str) -> None:
@@ -18,7 +18,7 @@ class ApiRef:
         return hash(self.name)
 
     def __eq__(self, other: Any) -> bool:
-        if isinstance(other, ApiRef):
+        if isinstance(other, ApiReference):
             return self.name == other.name
         return False
 
@@ -30,4 +30,4 @@ class ApiRef:
         return cls(name=parameter.name)
 
 
-api_ref = ApiRef
+api_ref = ApiReference

@@ -32,6 +32,29 @@ BaseModel: type = pydantic.BaseModel
 PositiveInt = pydantic.PositiveInt
 
 
+@pytest.fixture(name="dump_model")
+def dump_model_fixture() -> Callable[[Any], Any]:
+    try:
+        from pydantic import TypeAdapter
+
+        def dump_model_v2(model: Any) -> Any:
+            adapter = TypeAdapter(type(model))
+            return adapter.dump_python(model, mode="json", by_alias=True)
+
+        return dump_model_v2
+
+    except ImportError:
+        import json
+
+        import pydantic.json
+
+        def dump_model_v1(model: Any) -> Any:
+            json_string = json.dumps(model, default=pydantic.json.pydantic_encoder)
+            return json.loads(json_string)
+
+        return dump_model_v1
+
+
 class Product(BaseModel):
     id: int
     name: str

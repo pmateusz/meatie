@@ -16,8 +16,7 @@ from typing import (
     get_origin,
 )
 
-from aiohttp import ClientResponse
-from meatie.internal.types import T
+from meatie.internal.types import T, Response, AsyncResponse
 
 from . import (
     BytesAdapter,
@@ -107,7 +106,7 @@ def get_adapter(value_type: Union[type[T], GenericAlias, None]) -> TypeAdapter[T
             return JsonAdapter
         return _PydanticTypeAdapterFactory(value_type)
 
-    if isclass(value_type) and issubclass(value_type, ClientResponse):
+    if isclass(value_type) and (value_type is Response or value_type is AsyncResponse):
         return ClientResponseAdapter  # type: ignore[return-value]
 
     return JsonAdapter

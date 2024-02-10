@@ -11,7 +11,7 @@ from typing import (
 )
 
 from meatie import Method, Request
-from meatie.api_ref import ApiRef
+from meatie.api_reference import ApiReference
 from meatie.internal.adapter import JsonAdapter, TypeAdapter, get_adapter
 from meatie.internal.types import PT, RequestBodyType, T
 from typing_extensions import Callable, Self, Union, get_type_hints
@@ -125,7 +125,7 @@ class RequestTemplate(Generic[RequestBodyType]):
 
             param_type = type_hints[param_name]
             sig_param = signature.parameters[param_name]
-            api_ref = ApiRef.from_signature(sig_param)
+            api_ref = ApiReference.from_signature(sig_param)
             kind = Kind.QUERY
             if api_ref.name == "body":
                 kind = Kind.BODY

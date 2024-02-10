@@ -1,8 +1,8 @@
 #  Copyright 2024 The Meatie Authors. All rights reserved.
 #  Use of this source code is governed by a BSD-style license that can be found in the LICENSE file.
-from typing import Any, TypeVar
+from typing import Any, TypeVar, runtime_checkable
 
-from meatie import Request
+from meatie import Request, Response, AsyncResponse
 from typing_extensions import Optional, ParamSpec, Protocol, Self
 
 __all__ = [
@@ -13,11 +13,9 @@ __all__ = [
     "PT",
     "RequestBodyType",
     "ResponseBodyType",
-    "Response",
     "Client",
     "ClientType",
     "Context",
-    "AsyncResponse",
     "AsyncClient",
     "AsyncClientType",
     "AsyncContext",
@@ -30,21 +28,6 @@ T_Out = TypeVar("T_Out", covariant=True)
 PT = ParamSpec("PT")
 RequestBodyType = TypeVar("RequestBodyType", contravariant=True)
 ResponseBodyType = TypeVar("ResponseBodyType", covariant=True)
-
-
-class Response(Protocol):
-    @property
-    def status(self) -> int:
-        ...
-
-    def read(self) -> bytes:
-        ...
-
-    def text(self, *args: Any, **kwargs: Any) -> str:
-        ...
-
-    def json(self, *args: Any, **kwargs: Any) -> dict[str, Any]:
-        ...
 
 
 class Client(Protocol):
@@ -80,21 +63,6 @@ class Context(Protocol[ClientType, ResponseBodyType]):
         ...
 
     def proceed(self) -> ResponseBodyType:
-        ...
-
-
-class AsyncResponse(Protocol):
-    @property
-    def status(self) -> int:
-        ...
-
-    async def read(self) -> bytes:
-        ...
-
-    async def text(self, encoding: Optional[str] = None) -> str:
-        ...
-
-    async def json(self, *args: Any, **kwargs: Any) -> dict[str, Any]:
         ...
 
 

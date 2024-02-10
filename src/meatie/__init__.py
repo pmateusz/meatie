@@ -3,7 +3,8 @@
 
 # isort:skip_file
 import importlib.metadata
-from .types import Request, Method, Duration, Time, INF, MINUTE, HOUR, DAY
+from .types import Request, Response, AsyncResponse, Method, Duration, Time, INF, MINUTE, HOUR, DAY
+from .api_reference import api_ref
 from .error import (
     MeatieError,
     RetryError,
@@ -38,6 +39,8 @@ from .internal.cache import Cache
 from .internal.limit import Limiter, Rate
 from .client import BaseClient
 from .descriptor import EndpointDescriptor, Context
+from .aio.descriptor import AsyncEndpointDescriptor, AsyncContext
+from .aio.client import BaseAsyncClient
 from .option import (
     limit,
     cache,
@@ -55,6 +58,9 @@ __all__ = [
     "DAY",
     "Method",
     "Request",
+    "Response",
+    "AsyncResponse",
+    "api_ref",
     "MeatieError",
     "RetryError",
     "RequestError",
@@ -87,7 +93,9 @@ __all__ = [
     "BaseClient",
     "Context",
     "EndpointDescriptor",
-    "api_ref",
+    "BaseAsyncClient",
+    "AsyncEndpointDescriptor",
+    "AsyncContext",
     "retry",
     "limit",
     "cache",
