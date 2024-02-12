@@ -79,4 +79,7 @@ class Client(BaseClient):
         exc_val: Optional[BaseException],
         exc_tb: Any,
     ) -> None:
+        self.close()
+
+    def close(self) -> None:
         self.session.close()

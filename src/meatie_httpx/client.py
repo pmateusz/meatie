@@ -72,3 +72,6 @@ class Client(BaseClient):
         exc_tb: Any,
     ) -> None:
         self.client.close()
+
+    def close(self) -> None:
+        self.client.close()
