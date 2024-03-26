@@ -2,14 +2,16 @@
 #  Use of this source code is governed by a BSD-style license that can be found in the LICENSE file.
 from unittest.mock import Mock
 
-from meatie import has_exception_type, zero, never, Context
+from meatie import Context, has_exception_type, never, zero
 from meatie.option.retry_option import RetryOperator
 
 
 def test_exception_is_reset() -> None:
     # GIVEN
     successful_response = Mock()
-    operator = RetryOperator(on=has_exception_type(RuntimeError), wait=zero, stop=never, sleep_func=Mock())
+    operator = RetryOperator(
+        on=has_exception_type(RuntimeError), wait=zero, stop=never, sleep_func=Mock()
+    )
     ctx = Mock(spec=Context)
     call_count = 0
 
