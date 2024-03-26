@@ -85,6 +85,8 @@ class RetryOperator:
         last_result: Optional[T] = None
         stopped = False
         while not stopped:
+            retry_ctx.error = None
+            retry_ctx.response = None
             if retry_ctx.attempt_number > 1:
                 wait_time = self.__wait(retry_ctx)
                 if wait_time > 0.0:
