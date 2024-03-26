@@ -66,7 +66,12 @@ jobs:
 
       - name: Install dependencies
         if: steps.cache-venv.outputs.cache-hit != 'true'
-        run: poetry run pip install pre-commit virtualenv
+        run: |
+          poetry run install --no-root --with=dev
+          poetry run mypy --install-types --non-interactive src/**
+
+      - name: Run mypy
+        run: poetry run mypy src/**
 
       - name: Run pre-commit
         run: poetry run pre-commit run --all
