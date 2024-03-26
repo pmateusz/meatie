@@ -67,7 +67,7 @@ jobs:
       - name: Install dependencies
         if: steps.cache-venv.outputs.cache-hit != 'true'
         run: |
-          poetry install --no-root --with=dev
+          poetry install --all-extras --no-root --with=test --with=pydantic --with=dev
           poetry run mypy --install-types --non-interactive src/**
 
       - name: Run mypy
