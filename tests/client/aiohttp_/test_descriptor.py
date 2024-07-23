@@ -5,7 +5,7 @@ from typing import Annotated, Any, Optional
 from unittest.mock import ANY, Mock
 
 import pytest
-from meatie import Request, endpoint, fmt
+from meatie import Request, api_ref, endpoint
 from meatie.aio import AsyncContext, AsyncEndpointDescriptor
 from meatie.internal.template import RequestTemplate
 from meatie.internal.types import AsyncClient
@@ -51,7 +51,7 @@ async def test_get_with_formatter(mock_tools: AiohttpMockTools) -> None:
 
         @endpoint("/api/v1/transactions")
         async def get_transactions(
-            self, since: Annotated[datetime.datetime, fmt(format_date)]
+            self, since: Annotated[datetime.datetime, api_ref(fmt=format_date)]
         ) -> list[Any]:
             ...
 

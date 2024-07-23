@@ -12,7 +12,6 @@ from typing import (
 
 from meatie import Method, Request
 from meatie.api_reference import ApiReference
-from meatie.formatter import Formatter
 from meatie.internal.adapter import JsonAdapter, TypeAdapter, get_adapter
 from meatie.internal.types import PT, RequestBodyType, T
 from typing_extensions import Callable, Self, Union, get_type_hints
@@ -147,9 +146,8 @@ class RequestTemplate(Generic[RequestBodyType]):
                 default_value = sig_param.default
 
             formatter = None
-            fmt = Formatter.from_signature(sig_param)
-            if fmt is not None:
-                formatter = fmt.formatter
+            if api_ref.fmt is not None:
+                formatter = api_ref.fmt
             parameter = Parameter(kind, param_name, api_ref.name, default_value, formatter)
             parameters.append(parameter)
 

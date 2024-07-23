@@ -5,7 +5,6 @@
 import importlib.metadata
 from .types import Request, Response, AsyncResponse, Method, Duration, Time, INF, MINUTE, HOUR, DAY
 from .api_reference import api_ref
-from .formatter import fmt
 from .error import (
     MeatieError,
     RetryError,
@@ -61,7 +60,6 @@ __all__ = [
     "Response",
     "AsyncResponse",
     "api_ref",
-    "fmt",
     "MeatieError",
     "RetryError",
     "RequestError",
