@@ -5,11 +5,11 @@ from typing import Any, Optional
 from unittest.mock import ANY, Mock
 
 import pytest
-
 from meatie import Request, endpoint
 from meatie.descriptor import Context, EndpointDescriptor
 from meatie.internal.template import RequestTemplate
 from meatie_requests import Client
+
 from tests.conftest import MockTools
 
 PRODUCTS = [{"name": "Pencil"}, {"name": "Headphones"}]
@@ -121,7 +121,9 @@ def test_do_not_dispatch_query_parameter_set_to_none_in_kwargs(mock_tools: MockT
     session.request.assert_called_once_with("GET", "/api/v1/orders")
 
 
-def test_do_not_override_query_parameter_set_to_none_in_args_by_default_value(mock_tools: MockTools) -> None:
+def test_do_not_override_query_parameter_set_to_none_in_args_by_default_value(
+    mock_tools: MockTools,
+) -> None:
     # GIVEN
     session = mock_tools.session_with_json_response(json=PRODUCTS)
 
@@ -141,7 +143,9 @@ def test_do_not_override_query_parameter_set_to_none_in_args_by_default_value(mo
     session.request.assert_called_once_with("GET", "/api/v1/orders")
 
 
-def test_do_not_override_query_parameter_set_to_none_in_kwargs_by_default_value(mock_tools: MockTools) -> None:
+def test_do_not_override_query_parameter_set_to_none_in_kwargs_by_default_value(
+    mock_tools: MockTools,
+) -> None:
     # GIVEN
     session = mock_tools.session_with_json_response(json=PRODUCTS)
 
