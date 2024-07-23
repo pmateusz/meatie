@@ -1,18 +1,23 @@
 #  Copyright 2024 The Meatie Authors. All rights reserved.
 #  Use of this source code is governed by a BSD-style license that can be found in the LICENSE file.
 from enum import Enum
-from typing import Any, Optional, Literal, Annotated
+from typing import Any, Optional
 from unittest.mock import ANY, Mock
 
 import pytest
-from meatie import Request, endpoint, api_ref
+
+from meatie import Request, endpoint
 from meatie.descriptor import Context, EndpointDescriptor
 from meatie.internal.template import RequestTemplate
 from meatie_requests import Client
-
 from tests.conftest import MockTools
 
 PRODUCTS = [{"name": "Pencil"}, {"name": "Headphones"}]
+
+
+class Status(Enum):
+    PENDING = "pending"
+    SHIPPED = "shipped"
 
 
 def test_get_without_parameters(mock_tools: MockTools) -> None:
@@ -76,33 +81,84 @@ def test_get_with_default_parameter(mock_tools: MockTools) -> None:
     session.request.assert_called_once_with("GET", "/api/v1/products", params={"limit": 100})
 
 
-def test_get_with_skip_optional_parameter(mock_tools: MockTools) -> None:
+def test_do_not_dispatch_query_parameter_set_to_none_in_args(mock_tools: MockTools) -> None:
     # GIVEN
     session = mock_tools.session_with_json_response(json=PRODUCTS)
-
-    class Status(Enum):
-        PENDING = "pending"
-        SHIPPED = "shipped"
 
     class Store(Client):
         def __init__(self) -> None:
             super().__init__(session)
 
-        @endpoint("/api/v1/products")
-        def get_products(self,
-                         start: Annotated[str, api_ref("t_start")],
-                         end: Annotated[str, api_ref("t_end")],
-                         status: Status | None = None,
-                         limit: int | None = 100,
-                         order: Literal["asc", "desc"] | None = "desc") -> list[Any]:
+        @endpoint("/api/v1/orders")
+        def get_orders(self, status: Optional[Status] = None) -> list[Any]:
             ...
 
     # WHEN
     with Store() as api:
-        api.get_products(start="2021-01-01", end="2021-12-31")
+        api.get_orders(None)
 
     # THEN
-    session.request.assert_called_once_with("GET", "/api/v1/products", params={'limit': 100, 'order': 'desc', 't_start': '2021-01-01', 't_end': '2021-12-31'})
+    session.request.assert_called_once_with("GET", "/api/v1/orders")
+
+
+def test_do_not_dispatch_query_parameter_set_to_none_in_kwargs(mock_tools: MockTools) -> None:
+    # GIVEN
+    session = mock_tools.session_with_json_response(json=PRODUCTS)
+
+    class Store(Client):
+        def __init__(self) -> None:
+            super().__init__(session)
+
+        @endpoint("/api/v1/orders")
+        def get_orders(self, status: Optional[Status] = Status.PENDING) -> list[Any]:
+            ...
+
+    # WHEN
+    with Store() as api:
+        api.get_orders(status=None)
+
+    # THEN
+    session.request.assert_called_once_with("GET", "/api/v1/orders")
+
+
+def test_do_not_override_query_parameter_set_to_none_in_args_by_default_value(mock_tools: MockTools) -> None:
+    # GIVEN
+    session = mock_tools.session_with_json_response(json=PRODUCTS)
+
+    class Store(Client):
+        def __init__(self) -> None:
+            super().__init__(session)
+
+        @endpoint("/api/v1/orders")
+        def get_orders(self, status: Optional[Status] = Status.PENDING) -> list[Any]:
+            ...
+
+    # WHEN
+    with Store() as api:
+        api.get_orders(None)
+
+    # THEN
+    session.request.assert_called_once_with("GET", "/api/v1/orders")
+
+
+def test_do_not_override_query_parameter_set_to_none_in_kwargs_by_default_value(mock_tools: MockTools) -> None:
+    # GIVEN
+    session = mock_tools.session_with_json_response(json=PRODUCTS)
+
+    class Store(Client):
+        def __init__(self) -> None:
+            super().__init__(session)
+
+        @endpoint("/api/v1/orders")
+        def get_orders(self, status: Optional[Status] = Status.PENDING) -> list[Any]:
+            ...
+
+    # WHEN
+    with Store() as api:
+        api.get_orders(status=None)
+
+    # THEN
+    session.request.assert_called_once_with("GET", "/api/v1/orders")
 
 
 def test_get_with_skip_unset_optional_parameter_with_default(mock_tools: MockTools) -> None:
