@@ -92,7 +92,7 @@ def test_get_with_skip_optional_parameter(mock_tools: MockTools) -> None:
         def get_products(self,
                          start: Annotated[str, api_ref("t_start")],
                          end: Annotated[str, api_ref("t_end")],
-                         status: Status | None,
+                         status: Status | None = None,
                          limit: int | None = 100,
                          order: Literal["asc", "desc"] | None = "desc") -> list[Any]:
             ...
