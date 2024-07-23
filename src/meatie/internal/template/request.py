@@ -52,25 +52,24 @@ class RequestTemplate(Generic[RequestBodyType]):
             raise RuntimeError("Too many arguments passed to the function.")
 
         value_by_param = {}
+
+        # set arguments passed as args to corresponding values
         for index, value in enumerate(args):
             param = self.params[index]
             value_by_param[param] = value
 
+        # set arguments to default parameter values if arguments were not passed already as args
         for param in self.params:
             if param.default_value is None or param in value_by_param:
                 continue
             value_by_param[param] = param.default_value
 
+        # override default values by actual values passed in kwargs
         for name, value in kwargs.items():
             param_opt = self.__param_by_name.get(name)
             if param_opt is None:
                 raise ValueError(f"Parameter '{name}' is not mentioned in the endpoint definition.")
-
-            if value is None:
-                if param_opt in value_by_param:
-                    del value_by_param[param_opt]
-            else:
-                value_by_param[param_opt] = value
+            value_by_param[param_opt] = value
 
         path_kwargs = {}
         query_kwargs = {}
@@ -81,7 +80,9 @@ class RequestTemplate(Generic[RequestBodyType]):
                 continue
 
             if param.kind == Kind.QUERY:
-                query_kwargs[param.api_ref] = value
+                # emit query parameters only if underlying value is not None
+                if value is not None:
+                    query_kwargs[param.api_ref] = value
                 continue
 
             if param.kind == Kind.BODY:
