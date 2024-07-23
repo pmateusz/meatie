@@ -11,10 +11,10 @@ __all__ = ["fmt", "Formatter"]
 class Formatter:
     __slots__ = ("formatter",)
 
-    def __init__(self, formatter: Callable[[any], any]) -> None:
+    def __init__(self, formatter: Callable[[Any], Any]) -> None:
         self.formatter = formatter
 
-    def __call__(self, value: any) -> any:
+    def __call__(self, value: Any) -> Any:
         return self.formatter(value)
 
     def __hash__(self) -> int:
