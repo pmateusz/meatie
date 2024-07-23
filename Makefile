@@ -5,7 +5,7 @@ init:
 	python -m venv .venv
 	. .venv/bin/activate
 	pip install --upgrade pip
-	pip install poetry pre-commit
+	pip install pre-commit
 
 install:
 	poetry install --with=test --with=pydantic --all-extras
