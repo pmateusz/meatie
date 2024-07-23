@@ -12,6 +12,7 @@ from typing import (
 
 from meatie import Method, Request
 from meatie.api_reference import ApiReference
+from meatie.formatter import Formatter
 from meatie.internal.adapter import JsonAdapter, TypeAdapter, get_adapter
 from meatie.internal.types import PT, RequestBodyType, T
 from typing_extensions import Callable, Self, Union, get_type_hints
@@ -76,17 +77,24 @@ class RequestTemplate(Generic[RequestBodyType]):
         body_value: Any = None
         for param, value in value_by_param.items():
             if param.kind == Kind.PATH:
+                if param.formatter is not None:
+                    value = param.formatter(value)
                 path_kwargs[param.api_ref] = value
                 continue
 
             if param.kind == Kind.QUERY:
                 # emit query parameters only if underlying value is not None
                 if value is not None:
+                    if param.formatter is not None:
+                        value = param.formatter(value)
                     query_kwargs[param.api_ref] = value
                 continue
 
             if param.kind == Kind.BODY:
-                body_value = value
+                if param.formatter is not None:
+                    body_value = param.formatter(value)
+                else:
+                    body_value = value
                 continue
 
             raise NotImplementedError(f"Kind {param.kind} is not supported")  # pragma: no cover
@@ -137,7 +145,12 @@ class RequestTemplate(Generic[RequestBodyType]):
             default_value = None
             if sig_param.default is not inspect.Parameter.empty:
                 default_value = sig_param.default
-            parameter = Parameter(kind, param_name, api_ref.name, default_value)
+
+            formatter = None
+            fmt = Formatter.from_signature(sig_param)
+            if fmt is not None:
+                formatter = fmt.formatter
+            parameter = Parameter(kind, param_name, api_ref.name, default_value, formatter)
             parameters.append(parameter)
 
         return cls.validate_object(template, parameters, signature, request_encoder, method)
