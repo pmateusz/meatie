@@ -1,11 +1,11 @@
 #  Copyright 2024 The Meatie Authors. All rights reserved.
 #  Use of this source code is governed by a BSD-style license that can be found in the LICENSE file.
-
-from typing import Any, Optional
+import datetime
+from typing import Annotated, Any, Optional
 from unittest.mock import ANY, Mock
 
 import pytest
-from meatie import Request, endpoint
+from meatie import Request, api_ref, endpoint
 from meatie.aio import AsyncContext, AsyncEndpointDescriptor
 from meatie.internal.template import RequestTemplate
 from meatie.internal.types import AsyncClient
@@ -35,6 +35,35 @@ async def test_get_without_parameters(mock_tools: AiohttpMockTools) -> None:
     # THEN
     assert PRODUCTS == result
     session.request.assert_awaited_once_with("GET", "/api/v1/products")
+
+
+@pytest.mark.asyncio()
+async def test_get_with_formatter(mock_tools: AiohttpMockTools) -> None:
+    # GIVEN
+    session = mock_tools.session_with_json_response(json=PRODUCTS)
+
+    def format_date(date: datetime.datetime) -> str:
+        return date.strftime("%Y-%m-%d")
+
+    class Store(Client):
+        def __init__(self) -> None:
+            super().__init__(session)
+
+        @endpoint("/api/v1/transactions")
+        async def get_transactions(
+            self, since: Annotated[datetime.datetime, api_ref(fmt=format_date)]
+        ) -> list[Any]:
+            ...
+
+    # WHEN
+    async with Store() as api:
+        result = await api.get_transactions(since=datetime.datetime(2006, 1, 2))
+
+    # THEN
+    assert PRODUCTS == result
+    session.request.assert_awaited_once_with(
+        "GET", "/api/v1/transactions", params={"since": "2006-01-02"}
+    )
 
 
 @pytest.mark.asyncio()

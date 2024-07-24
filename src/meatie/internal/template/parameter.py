@@ -1,7 +1,7 @@
 #  Copyright 2024 The Meatie Authors. All rights reserved.
 #  Use of this source code is governed by a BSD-style license that can be found in the LICENSE file.
 from enum import Enum
-from typing import Any
+from typing import Any, Callable, Optional
 
 
 class Kind(Enum):
@@ -12,13 +12,21 @@ class Kind(Enum):
 
 
 class Parameter:
-    __slots__ = ("kind", "name", "api_ref", "default_value")
+    __slots__ = ("kind", "name", "api_ref", "default_value", "formatter")
 
-    def __init__(self, kind: Kind, name: str, api_ref: str, default_value: Any = None) -> None:
+    def __init__(
+        self,
+        kind: Kind,
+        name: str,
+        api_ref: str,
+        default_value: Any = None,
+        formatter: Optional[Callable[[Any], Any]] = None,
+    ) -> None:
         self.kind = kind
         self.name = name
         self.api_ref = api_ref
         self.default_value = default_value
+        self.formatter = formatter
 
     def __hash__(self) -> int:
         return hash(self.name)

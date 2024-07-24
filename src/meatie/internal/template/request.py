@@ -76,17 +76,24 @@ class RequestTemplate(Generic[RequestBodyType]):
         body_value: Any = None
         for param, value in value_by_param.items():
             if param.kind == Kind.PATH:
+                if param.formatter is not None:
+                    value = param.formatter(value)
                 path_kwargs[param.api_ref] = value
                 continue
 
             if param.kind == Kind.QUERY:
                 # emit query parameters only if underlying value is not None
                 if value is not None:
+                    if param.formatter is not None:
+                        value = param.formatter(value)
                     query_kwargs[param.api_ref] = value
                 continue
 
             if param.kind == Kind.BODY:
-                body_value = value
+                if param.formatter is not None:
+                    body_value = param.formatter(value)
+                else:
+                    body_value = value
                 continue
 
             raise NotImplementedError(f"Kind {param.kind} is not supported")  # pragma: no cover
@@ -127,6 +134,8 @@ class RequestTemplate(Generic[RequestBodyType]):
             param_type = type_hints[param_name]
             sig_param = signature.parameters[param_name]
             api_ref = ApiReference.from_signature(sig_param)
+            assert api_ref.name is not None
+
             kind = Kind.QUERY
             if api_ref.name == "body":
                 kind = Kind.BODY
@@ -137,7 +146,11 @@ class RequestTemplate(Generic[RequestBodyType]):
             default_value = None
             if sig_param.default is not inspect.Parameter.empty:
                 default_value = sig_param.default
-            parameter = Parameter(kind, param_name, api_ref.name, default_value)
+
+            formatter = None
+            if api_ref.fmt is not None:
+                formatter = api_ref.fmt
+            parameter = Parameter(kind, param_name, api_ref.name, default_value, formatter)
             parameters.append(parameter)
 
         return cls.validate_object(template, parameters, signature, request_encoder, method)
