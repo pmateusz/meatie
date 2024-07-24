@@ -134,6 +134,8 @@ class RequestTemplate(Generic[RequestBodyType]):
             param_type = type_hints[param_name]
             sig_param = signature.parameters[param_name]
             api_ref = ApiReference.from_signature(sig_param)
+            assert api_ref.name is not None
+
             kind = Kind.QUERY
             if api_ref.name == "body":
                 kind = Kind.BODY
