@@ -24,4 +24,4 @@ test-cover:
 	poetry run coverage run -m pytest
 
 check:
-	pre-commit run --all
+	pre-commit run --all && poetry run mypy --install-types --non-interactive src/**
