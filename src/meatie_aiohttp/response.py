@@ -4,12 +4,16 @@ from json.decoder import JSONDecodeError
 from typing import Any, Literal, Optional
 
 from aiohttp import ClientResponse, ContentTypeError
+from aiohttp.typedefs import DEFAULT_JSON_DECODER, JSONDecoder
 from meatie.error import ParseResponseError, ResponseError
 
 
 class Response:
-    def __init__(self, response: ClientResponse) -> None:
+    def __init__(
+        self, response: ClientResponse, *, loads: JSONDecoder = DEFAULT_JSON_DECODER
+    ) -> None:
         self.response = response
+        self.loads = loads
 
     @property
     def status(self) -> int:
@@ -40,7 +44,7 @@ class Response:
 
     async def json(self) -> dict[str, Any]:
         try:
-            return await self.response.json()
+            return await self.response.json(loads=self.loads)
         except JSONDecodeError as exc:
             text = await self._text()
             raise ParseResponseError(text, self, exc) from exc

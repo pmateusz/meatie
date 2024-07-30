@@ -4,6 +4,7 @@ import asyncio
 from typing import Any, Optional
 
 import aiohttp
+from aiohttp.typedefs import DEFAULT_JSON_DECODER, JSONDecoder
 from meatie import (
     AsyncResponse,
     BaseAsyncClient,
@@ -31,6 +32,10 @@ class Client(BaseAsyncClient):
 
         self.session = session
         self.session_params = session_params if session_params else {}
+
+    @classmethod
+    def loads(cls) -> JSONDecoder:
+        return DEFAULT_JSON_DECODER
 
     async def send(self, request: Request) -> AsyncResponse:
         kwargs: dict[str, Any] = self.session_params.copy()
@@ -66,7 +71,7 @@ class Client(BaseAsyncClient):
             raise TransportError(exc) from exc
         except Exception as exc:
             raise MeatieError(exc) from exc
-        return Response(response)
+        return Response(response, loads=self.loads())
 
     async def __aexit__(
         self,
