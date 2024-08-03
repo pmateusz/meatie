@@ -30,7 +30,7 @@ class ApiReference:
         for arg in get_args(parameter.annotation):
             if isinstance(arg, cls):
                 if arg.name is None:
-                    arg.name = parameter.name
+                    return cls(name=parameter.name, fmt=arg.fmt)
                 return arg
         return cls(name=parameter.name, fmt=None)
 
