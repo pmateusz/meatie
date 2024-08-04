@@ -30,13 +30,13 @@ jobs:
 
       - name: Restore poetry from cache
         id: cache-poetry-restore
-        uses: actions/cache/restore@v3
+        uses: actions/cache/restore@v4
         with:
           path: ~/.local
           key: lint/poetry/runner/${{ runner.os }}/python/${{ steps.setup-python.outputs.python-version }}
 
       - name: Install poetry
-        if: steps.cache-poetry-restore.outputs.cache-hit != 'true'
+        if: ${{ steps.cache-poetry-restore.outputs.cache-hit != 'true' }}
         uses: snok/install-poetry@v1
         with:
           virtualenvs-create: true
@@ -48,14 +48,15 @@ jobs:
 
       - name: Save poetry cache
         id: cache-poetry-save
-        uses: actions/cache/save@v3
+        if: ${{ steps.cache-poetry-restore.outputs.cache-hit != 'true' }}
+        uses: actions/cache/save@v4
         with:
           path: ~/.local
           key: lint/poetry/runner/${{ runner.os }}/python/${{ steps.setup-python.outputs.python-version }}/version/${{ env.POETRY_VERSION }}
 
       - name: Cache virtual environment
         id: cache-venv
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: |
             .venv
@@ -65,7 +66,7 @@ jobs:
           key: lint/venv/branch/${{ env.branch }}/runner/${{ runner.os }}/python/${{ steps.setup-python.outputs.python-version }}/hash/${{ hashFiles('**/CACHEDIR.TAG', 'poetry.lock') }}
 
       - name: Install dependencies
-        if: steps.cache-venv.outputs.cache-hit != 'true'
+        if: ${{ steps.cache-venv.outputs.cache-hit != 'true' }}
         run: |
           poetry install --all-extras --no-root --with=test --with=pydantic --with=dev
           poetry run mypy --install-types --non-interactive src/**
