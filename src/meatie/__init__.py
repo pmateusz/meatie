@@ -45,6 +45,7 @@ from .option import (
     cache,
     retry,
     private,
+    body,
 )
 from .endpoint import endpoint
 
@@ -99,6 +100,7 @@ __all__ = [
     "limit",
     "cache",
     "private",
+    "body",
     "endpoint",
 ]
 

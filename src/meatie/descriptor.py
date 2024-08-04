@@ -27,6 +27,8 @@ class EndpointDescriptor(Generic[PT, ResponseBodyType]):
     ) -> None:
         self.template = template
         self.response_decoder = response_decoder
+        self.get_json: Optional[Callable[[Any], dict[str, Any]]] = None
+        self.get_text: Optional[Callable[[Any], str]] = None
         self.__operator_by_priority: dict[int, Operator[ResponseBodyType]] = {}
 
     def __set_name__(self, owner: type[object], name: str) -> None:
@@ -59,7 +61,7 @@ class EndpointDescriptor(Generic[PT, ResponseBodyType]):
         operators = [operator for _, operator in priority_operator_pair]
 
         return BoundEndpointDescriptor(  # type: ignore[return-value]
-            instance, operators, self.template, self.response_decoder
+            instance, operators, self.template, self.response_decoder, self.get_json, self.get_text
         )
 
 
@@ -106,12 +108,16 @@ class BoundEndpointDescriptor(Generic[PT, ResponseBodyType]):
         operators: Iterable[Operator[ResponseBodyType]],
         template: RequestTemplate[Any],
         response_decoder: TypeAdapter[ResponseBodyType],
+        get_json: Optional[Callable[[Any], dict[str, Any]]],
+        get_text: Optional[Callable[[Any], str]],
     ) -> None:
         self.__instance = instance
         self.__operators = list(operators)
         self.__operators.append(self.__send_request)
         self.__template = template
         self.__response_decoder = response_decoder
+        self.__get_json = get_json
+        self.__get_text = get_text
 
     def __call__(self, *args: PT.args, **kwargs: PT.kwargs) -> ResponseBodyType:
         request = self.__template.build_request(*args, **kwargs)
@@ -120,5 +126,9 @@ class BoundEndpointDescriptor(Generic[PT, ResponseBodyType]):
 
     def __send_request(self, context: Context[ResponseBodyType]) -> ResponseBodyType:
         response = self.__instance.send(context.request)
+        if self.__get_json is not None:
+            response.get_json = self.__get_json
+        if self.__get_text is not None:
+            response.get_text = self.__get_text
         context.response = response
         return self.__response_decoder.from_response(response)

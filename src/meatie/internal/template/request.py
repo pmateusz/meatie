@@ -168,9 +168,6 @@ class RequestTemplate(Generic[RequestBodyType]):
         if template_str == "":
             raise ValueError("'path' is empty")
 
-        if not template_str.startswith("/"):
-            raise ValueError("'path' must start with '/'")
-
         visited_api_refs = set()
         for param in params:
             if param.name == "self":

@@ -36,10 +36,10 @@ class AsyncResponse(Protocol):
     async def read(self) -> bytes:
         ...
 
-    async def text(self, encoding: Optional[str] = None) -> str:
+    async def text(self) -> str:
         ...
 
-    async def json(self, *args: Any, **kwargs: Any) -> dict[str, Any]:
+    async def json(self) -> dict[str, Any]:
         ...
 
 
@@ -52,8 +52,8 @@ class Response(Protocol):
     def read(self) -> bytes:
         ...
 
-    def text(self, *args: Any, **kwargs: Any) -> str:
+    def text(self) -> str:
         ...
 
-    def json(self, *args: Any, **kwargs: Any) -> dict[str, Any]:
+    def json(self) -> dict[str, Any]:
         ...
