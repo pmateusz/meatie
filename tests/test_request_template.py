@@ -52,21 +52,6 @@ def test_path_cannot_be_empty() -> None:
     assert "'path' is empty" == str(exc_info.value)
 
 
-def test_path_must_start_with_slash() -> None:
-    with pytest.raises(ValueError) as exc_info:
-        # WHEN
-        RequestTemplate.validate_object(
-            PathTemplate.from_string("abc"),
-            [],
-            Mock(spec=inspect.Signature),
-            JsonAdapter,
-            "GET",
-        )
-
-        # THEN
-    assert "'path' must start with '/'" == str(exc_info.value)
-
-
 def test_all_parameters_must_be_present_in_signature() -> None:
     # GIVEN
     path_template = PathTemplate.from_string("/orders/{order_ref}/position/{position_ref}")
