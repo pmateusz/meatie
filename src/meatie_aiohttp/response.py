@@ -52,4 +52,4 @@ class Response:
 
     @classmethod
     def get_text(cls, response: ClientResponse) -> Awaitable[str]:
-        return response.text()
+        return response.text(errors="replace")
