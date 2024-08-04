@@ -36,7 +36,7 @@ jobs:
           key: test/poetry/runner/${{ runner.os }}/python/${{ steps.setup-python.outputs.python-version }}
 
       - name: Install poetry
-        if: steps.cache-poetry-restore.outputs.cache-hit != 'true'
+        if: ${{steps.cache-poetry-restore.outputs.cache-hit != 'true'}}
         uses: snok/install-poetry@v1
         with:
           virtualenvs-create: true
@@ -48,7 +48,7 @@ jobs:
 
       - name: Save poetry cache
         id: cache-poetry-save
-        if: steps.cache-poetry-restore.outputs.cache-hit != 'true'
+        if: ${{steps.cache-poetry-restore.outputs.cache-hit != 'true'}}
         uses: actions/cache/save@v4
         with:
           path: ~/.local
@@ -62,7 +62,7 @@ jobs:
           key: test/branch/${{ env.branch }}/runner/${{ runner.os }}/python/${{ steps.setup-python.outputs.python-version }}/hash/${{ hashFiles('poetry.lock') }}
 
       - name: Install dependencies
-        if: steps.cache-venv.outputs.cache-hit != 'true'
+        if: ${{steps.cache-venv.outputs.cache-hit != 'true'}}
         run: poetry install --no-interaction --all-extras --no-root --with=test --with=pydantic --with=dev
 
       - name: Install project
