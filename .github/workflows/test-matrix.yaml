@@ -28,7 +28,7 @@ jobs:
 
       - name: Restore poetry from cache
         id: cache-poetry-restore
-        uses: actions/cache/restore@v3
+        uses: actions/cache/restore@v4
         with:
           path: ~/.local
           key: test-all/poetry/runner/${{ runner.os }}/python/${{ steps.setup-python.outputs.python-version }}
@@ -46,28 +46,28 @@ jobs:
 
       - name: Save poetry cache
         id: cache-poetry-save
-        uses: actions/cache/save@v3
+        uses: actions/cache/save@v4
         with:
           path: ~/.local
           key: test-all/poetry/runner/${{ runner.os }}/python/${{ steps.setup-python.outputs.python-version }}/version/${{ env.POETRY_VERSION }}
 
       - name: Cache virtual environment
         id: cache-venv
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: .venv
           key: test/branch/${{ env.branch }}/runner/${{ runner.os }}/python/${{ steps.setup-python.outputs.python-version }}/pydantic/${{ matrix.pydantic }}/hash/${{ hashFiles('poetry.lock') }}
 
       - name: Install dependencies
-        if: steps.cache-venv.outputs.cache-hit != 'true'
+        if: ${{steps.cache-venv.outputs.cache-hit != 'true'}}
         run: poetry install --no-interaction --all-extras --no-root --with=test
 
       - name: Install pydantic v1
-        if: steps.cache-venv.outputs.cache-hit != 'true' && matrix.pydantic == 'v1'
+        if: ${{steps.cache-venv.outputs.cache-hit != 'true' && matrix.pydantic == 'v1'}}
         run: poetry run pip install pydantic===1.10.13
 
       - name: Install pydantic v2
-        if: steps.cache-venv.outputs.cache-hit != 'true' && matrix.pydantic == 'v2'
+        if: ${{steps.cache-venv.outputs.cache-hit != 'true' && matrix.pydantic == 'v2'}}
         run: poetry install --no-interaction --no-root --with=pydantic
 
       - name: Install project

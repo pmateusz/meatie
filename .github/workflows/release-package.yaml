@@ -43,7 +43,7 @@ jobs:
 
       - name: Save poetry cache
         id: cache-poetry-save
-        uses: actions/cache/save@v3
+        uses: actions/cache/save@v4
         with:
           path: ~/.local
           key: release-package/poetry/runner/${{ runner.os }}/python/${{ steps.setup-python.outputs.python-version }}/version/${{ env.POETRY_VERSION }}
