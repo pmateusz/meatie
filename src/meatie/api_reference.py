@@ -14,6 +14,14 @@ class ApiReference:
     def __init__(
         self, name: Optional[str] = None, fmt: Optional[Callable[[Any], Any]] = None
     ) -> None:
+        """
+        Customize handling of a parameter in the HTTP request.
+
+        :param name: name of the query parameter in the HTTP request, if not set the name of the Python parameter is
+         used by default
+        :param fmt: conversion function to apply on the parameter value before sending the HTTP request
+        """
+
         self.name = name
         self.fmt = fmt
 
@@ -21,8 +29,9 @@ class ApiReference:
         return hash(self.name)
 
     def __eq__(self, other: Any) -> bool:
+        # Python interpreter seems to reuse annotations, for that reason we also need to include the formatter
         if isinstance(other, ApiReference):
-            return self.name == other.name
+            return self.name == other.name and self.fmt == other.fmt
         return False
 
     @classmethod
@@ -30,7 +39,7 @@ class ApiReference:
         for arg in get_args(parameter.annotation):
             if isinstance(arg, cls):
                 if arg.name is None:
-                    arg.name = parameter.name
+                    return cls(name=parameter.name, fmt=arg.fmt)
                 return arg
         return cls(name=parameter.name, fmt=None)
 

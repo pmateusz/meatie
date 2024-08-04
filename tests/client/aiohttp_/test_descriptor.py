@@ -1,6 +1,7 @@
 #  Copyright 2024 The Meatie Authors. All rights reserved.
 #  Use of this source code is governed by a BSD-style license that can be found in the LICENSE file.
 import datetime
+import json
 from typing import Annotated, Any, Optional
 from unittest.mock import ANY, Mock
 
@@ -85,6 +86,62 @@ async def test_post_with_body(mock_tools: AiohttpMockTools) -> None:
 
     # THEN
     session.request.assert_awaited_once_with("POST", "/api/v1/order", json=PRODUCTS)
+
+
+@pytest.mark.asyncio()
+async def test_post_with_bytes_body(mock_tools: AiohttpMockTools) -> None:
+    # GIVEN
+    session = mock_tools.session_with_json_response(json=None)
+
+    class Store(Client):
+        def __init__(self) -> None:
+            super().__init__(session)
+
+        @endpoint("/api/v1/order")
+        async def post_order(self, body: bytes) -> None:
+            ...
+
+    # WHEN
+    async with Store() as api:
+        await api.post_order(json.dumps(PRODUCTS, separators=(",", ":")).encode())
+
+    # THEN
+    session.request.assert_awaited_once_with(
+        "POST", "/api/v1/order", json=b'[{"name":"Pencil"},{"name":"Headphones"}]'
+    )
+
+
+@pytest.mark.asyncio()
+async def test_handles_optional_parameters_with_default_name(mock_tools: AiohttpMockTools) -> None:
+    # GIVEN
+    session = mock_tools.session_with_json_response(json=None)
+
+    def int_timestamp(value: datetime.datetime) -> int:
+        return int(value.timestamp())
+
+    class Store(Client):
+        def __init__(self) -> None:
+            super().__init__(session)
+
+        @endpoint("/api/v1/orders")
+        async def get_orders(
+            self,
+            begin: Annotated[datetime.datetime, api_ref(fmt=int_timestamp)] = None,
+            end: Annotated[datetime.datetime, api_ref(fmt=int_timestamp)] = None,
+        ) -> list[Any]:
+            ...
+
+    begin = datetime.datetime(2024, 8, 1)
+    end = datetime.datetime(2024, 8, 3)
+
+    # WHEN
+    async with Store() as api:
+        await api.get_orders(begin, end)
+
+    # THEN
+    session.request.assert_awaited_once_with(
+        "GET", "/api/v1/orders", params={"begin": int_timestamp(begin), "end": int_timestamp(end)}
+    )
 
 
 @pytest.mark.asyncio()
