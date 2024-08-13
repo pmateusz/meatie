@@ -44,7 +44,7 @@ class Response:
             raise ParseResponseError(text, self, exc) from exc
         except ContentTypeError as exc:
             text = await self.text()
-            raise ParseResponseError(text, exc) from exc
+            raise ParseResponseError(text, self, exc) from exc
 
     @classmethod
     def get_json(cls, response: ClientResponse) -> Awaitable[dict[str, Any]]:
