@@ -1,5 +1,10 @@
 name: Release Package
-on: [ workflow_dispatch ]
+on:
+  push:
+    tags:
+      - "*.*.*"
+  workflow_dispatch: { }
+
 concurrency:
   group: release-git-tag
 jobs:
@@ -10,8 +15,6 @@ jobs:
     needs: [ check-branch ]
     timeout-minutes: 5
     runs-on: ubuntu-latest
-    env:
-      branch: ${{ github.head_ref || github.ref_name }}
     steps:
       - name: Checkout branch
         uses: actions/checkout@v4
@@ -50,6 +53,9 @@ jobs:
 
       - name: Install project and dependencies
         run: poetry install --no-interaction
+
+      - name: Set project version
+        run: poetry version $(echo -n ${{ github.ref_name }} | grep -oP '\d+.\d+.\d+')
 
       - name: Build package
         run: poetry build
