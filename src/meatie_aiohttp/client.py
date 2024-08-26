@@ -11,6 +11,7 @@ from meatie import (
     MeatieError,
     ProxyError,
     Request,
+    RequestError,
     ServerError,
     Timeout,
     TransportError,
@@ -62,6 +63,8 @@ class Client(BaseAsyncClient):
             raise ServerError(exc) from exc
         except (aiohttp.ServerTimeoutError, asyncio.TimeoutError) as exc:
             raise Timeout(exc) from exc
+        except (aiohttp.InvalidURL, aiohttp.NonHttpUrlClientError) as exc:
+            raise RequestError(exc) from exc
         except (aiohttp.TooManyRedirects, aiohttp.ClientError) as exc:
             raise TransportError(exc) from exc
         except Exception as exc:
