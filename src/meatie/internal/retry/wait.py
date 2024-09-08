@@ -37,7 +37,7 @@ class WaitZero(BaseWait):
         return 0.0
 
 
-class WaitExponential:
+class WaitExponential(BaseWait):
     def __init__(
         self, exp_base: float = 2.0, multiplier: float = 2.0, lb: float = 0.0, ub: float = HOUR
     ) -> None:
@@ -54,7 +54,7 @@ class WaitExponential:
         return max(self.lb, min(result, self.ub))
 
 
-class WaitFixed:
+class WaitFixed(BaseWait):
     def __init__(self, delays: Union[Duration, tuple[Duration, ...]]) -> None:
         if isinstance(delays, Duration):
             self.__delays: tuple[Duration, ...] = (delays,)
@@ -68,7 +68,7 @@ class WaitFixed:
         return 0.0
 
 
-class WaitUniform:
+class WaitUniform(BaseWait):
     def __init__(self, lb: Duration, ub: Duration) -> None:
         self.lb = lb
         self.ub = ub
