@@ -14,8 +14,6 @@ __all__ = ["limit"]
 
 
 class LimitOption:
-    __PRIORITY = 80
-
     def __init__(
         self,
         tokens: Tokens,
@@ -31,6 +29,10 @@ class LimitOption:
             return self.__sync_descriptor(descriptor)
         return self.__async_descriptor(descriptor)
 
+    @property
+    def priority(self) -> int:
+        return 60
+
     def __sync_descriptor(self, descriptor: EndpointDescriptor[PT, T]) -> None:
         if self.tokens <= 0.0:
             return
@@ -39,7 +41,7 @@ class LimitOption:
         if self.sleep_func is not None:
             sleep_func = self.sleep_func  # type: ignore[assignment]
         operator = LimitOperator(self.tokens, sleep_func)
-        descriptor.register_operator(LimitOption.__PRIORITY, operator)
+        descriptor.register_operator(self.priority, operator)
 
     def __async_descriptor(self, descriptor: AsyncEndpointDescriptor[PT, T]) -> None:
         if self.tokens <= 0.0:
@@ -49,7 +51,7 @@ class LimitOption:
         if self.sleep_func is not None:
             sleep_func = self.sleep_func  # type: ignore[assignment]
         operator = AsyncLimitOperator(self.tokens, sleep_func)
-        descriptor.register_operator(LimitOption.__PRIORITY, operator)
+        descriptor.register_operator(self.priority, operator)
 
 
 limit = LimitOption
