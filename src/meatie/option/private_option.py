@@ -10,8 +10,6 @@ __all__ = ["private"]
 
 
 class PrivateOption:
-    __PRIORITY = 50
-
     def __call__(
         self, descriptor: Union[EndpointDescriptor[PT, T], AsyncEndpointDescriptor[PT, T]]
     ) -> None:
@@ -19,11 +17,15 @@ class PrivateOption:
             return self.__sync_descriptor(descriptor)
         return self.__async_descriptor(descriptor)
 
+    @property
+    def priority(self) -> int:
+        return 80
+
     def __sync_descriptor(self, descriptor: EndpointDescriptor[PT, T]) -> None:
-        descriptor.register_operator(PrivateOption.__PRIORITY, operator)
+        descriptor.register_operator(self.priority, operator)
 
     def __async_descriptor(self, descriptor: AsyncEndpointDescriptor[PT, T]) -> None:
-        descriptor.register_operator(PrivateOption.__PRIORITY, async_operator)
+        descriptor.register_operator(self.priority, async_operator)
 
 
 def operator(ctx: Context[T]) -> T:

@@ -24,7 +24,7 @@ __all__ = ["retry"]
 
 
 class RetryOption:
-    __PRIORITY = 75
+    __PRIORITY = 40
 
     def __init__(
         self,

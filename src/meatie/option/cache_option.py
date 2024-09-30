@@ -13,8 +13,6 @@ __all__ = ["cache"]
 
 
 class CacheOption:
-    __PRIORITY = 25
-
     def __init__(self, ttl: Duration, shared: bool = False) -> None:
         self.ttl = ttl
         self.shared = shared
@@ -26,13 +24,17 @@ class CacheOption:
             return self.__sync_descriptor(descriptor)
         return self.__async_descriptor(descriptor)
 
+    @property
+    def priority(self) -> int:
+        return 20
+
     def __sync_descriptor(self, descriptor: EndpointDescriptor[PT, T]) -> None:
         operator: Operator[T]
         if self.shared:
             operator = SharedOperator[T](self.ttl)
         else:
             operator = LocalOperator[T](self.ttl)
-        descriptor.register_operator(CacheOption.__PRIORITY, operator)
+        descriptor.register_operator(self.priority, operator)
 
     def __async_descriptor(self, descriptor: AsyncEndpointDescriptor[PT, T]) -> None:
         operator: AsyncOperator[T]
@@ -40,7 +42,7 @@ class CacheOption:
             operator = SharedAsyncOperator[T](self.ttl)
         else:
             operator = LocalAsyncOperator[T](self.ttl)
-        descriptor.register_operator(CacheOption.__PRIORITY, operator)
+        descriptor.register_operator(self.priority, operator)
 
 
 cache = CacheOption
