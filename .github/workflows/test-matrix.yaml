@@ -8,14 +8,14 @@ jobs:
       branch: ${{ github.head_ref || github.ref_name }}
     strategy:
       matrix:
-        python_version: [ '3.9', '3.10', '3.11', '3.12' ]
+        python_version: [ '3.9', '3.10', '3.11', '3.12', '3.13' ]
         pydantic: [ 'no', 'v1', 'v2' ]
         include:
           - python_version: '3.9'
           - python_version: '3.10'
           - python_version: '3.11'
-            pydantic: 'v2'
           - python_version: '3.12'
+          - python_version: '3.13'
     steps:
       - uses: actions/checkout@v4
         with:
