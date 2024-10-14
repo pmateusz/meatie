@@ -4,9 +4,9 @@ from http import HTTPStatus
 from http.server import BaseHTTPRequestHandler
 
 import pytest
+from aiohttp import ClientSession
 from http_test import HTTPTestServer
 from meatie import endpoint
-from aiohttp import ClientSession
 from meatie_aiohttp import Client
 
 

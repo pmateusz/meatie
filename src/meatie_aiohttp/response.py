@@ -3,7 +3,7 @@
 from json.decoder import JSONDecodeError
 from typing import Any, Awaitable, Callable, Optional
 
-from aiohttp import ClientResponse, ContentTypeError, ClientError
+from aiohttp import ClientError, ClientResponse, ContentTypeError
 from meatie.error import ParseResponseError, ResponseError
 
 

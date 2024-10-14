@@ -5,6 +5,7 @@ from http import HTTPStatus
 from typing import Any
 from unittest.mock import Mock, call
 
+import httpx
 import pytest
 from meatie import (
     ResponseError,
@@ -15,7 +16,6 @@ from meatie import (
     retry,
 )
 from meatie_httpx import Client
-import httpx
 
 PRODUCTS = [{"name": "headphones"}]
 

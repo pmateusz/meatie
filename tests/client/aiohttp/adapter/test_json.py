@@ -7,11 +7,10 @@ from http import HTTPStatus
 from http.server import BaseHTTPRequestHandler
 
 import pytest
-from aiohttp import ClientResponse
+from aiohttp import ClientResponse, ClientSession
 from http_test import HTTPTestServer
 from meatie import ParseResponseError, body, endpoint
 from meatie_aiohttp import Client
-from aiohttp import ClientSession
 
 
 @pytest.mark.asyncio()
