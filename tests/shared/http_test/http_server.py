@@ -8,7 +8,6 @@ from http.server import BaseHTTPRequestHandler, HTTPServer, SimpleHTTPRequestHan
 from threading import Thread
 from typing import Any, Callable, Optional
 
-from aiohttp import ClientSession
 from typing_extensions import Self
 
 
@@ -169,9 +168,6 @@ class HTTPTestServer:
         self, exc_type: Optional[type[BaseException]], exc_val: Optional[BaseException], exc_tb: Any
     ) -> None:
         self.stop()
-
-    def create_session(self) -> ClientSession:
-        return ClientSession(base_url=self.base_url)
 
 
 class HTTPSTestServer(HTTPTestServer):

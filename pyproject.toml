@@ -20,15 +20,23 @@ packages = [
 python = ">=3.9"
 typing-extensions = ">=4.7.0"
 
-requests = { version = ">=2.26.0", optional = true }
-httpx = { version = ">=0.19.0", optional = true }
-aiohttp = { version = ">=3.7.0", optional = true }
+[tool.poetry.group.requests]
+optional = true
 
-[tool.poetry.extras]
-requests = ["requests"]
-httpx = ["httpx"]
-aiohttp = ["aiohttp"]
+[tool.poetry.group.requests.dependencies]
+requests = ">=2.26.0"
 
+[tool.poetry.group.httpx]
+optional = true
+
+[tool.poetry.group.httpx.dependencies]
+httpx = ">=0.19.0"
+
+[tool.poetry.group.aiohttp]
+optional = true
+
+[tool.poetry.group.aiohttp.dependencies]
+aiohttp = ">=3.7.0"
 
 [tool.poetry.group.test.dependencies]
 coverage = ">=7.4.0"
@@ -41,15 +49,12 @@ optional = true
 
 [tool.poetry.group.dev.dependencies]
 mypy = ">=1.11.0"
-pre-commit = ">=3.6.0"
-virtualenv = ">=20.25.0"
 
 [tool.poetry.group.pydantic]
 optional = true
 
 [tool.poetry.group.pydantic.dependencies]
-pydantic = ">=2.0.0"
-pydantic-settings = ">=2.0.0"
+pydantic = ">=1.10.0"
 
 [tool.pytest.ini_options]
 log_cli = true

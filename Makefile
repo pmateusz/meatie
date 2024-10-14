@@ -9,11 +9,11 @@ init:
 
 .PHONY: install
 install:
-	poetry install --with=test --with=pydantic --all-extras
+	poetry install --with=test --with=pydantic --with=requests --with=aiohttp --with=httpx
 
 .PHONY: install/pydantic/v1
 install/pydantic/v1:
-	pip install pydantic[dotenv]===1.10.0
+	pip install pydantic===1.10.0
 
 .PHONY: install/pydantic/v2
 install/pydantic/v2:

@@ -15,7 +15,7 @@ jobs:
           - python_version: '3.10'
           - python_version: '3.11'
           - python_version: '3.12'
-          - python_version: '3.13.0-rc.3'
+          - python_version: '3.13'
     steps:
       - uses: actions/checkout@v4
         with:
@@ -60,7 +60,7 @@ jobs:
 
       - name: Install dependencies
         if: ${{steps.cache-venv.outputs.cache-hit != 'true'}}
-        run: poetry install --no-interaction --all-extras --no-root --with=test
+        run: poetry install --no-interaction --no-root --with=test --with=requests --with=httpx --with=aiohttp
 
       - name: Install pydantic v1
         if: ${{steps.cache-venv.outputs.cache-hit != 'true' && matrix.pydantic == 'v1'}}
@@ -68,10 +68,10 @@ jobs:
 
       - name: Install pydantic v2
         if: ${{steps.cache-venv.outputs.cache-hit != 'true' && matrix.pydantic == 'v2'}}
-        run: poetry install --no-interaction --no-root --with=pydantic
+        run: poetry install --no-interaction --no-root --with=pydantic --with=requests --with=httpx --with=aiohttp
 
       - name: Install project
-        run: poetry install --no-interaction --all-extras
+        run: poetry install --no-interaction --only-root
 
       - name: Run pytest
         run: poetry run pytest
