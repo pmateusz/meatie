@@ -3,13 +3,13 @@
 from unittest.mock import Mock
 
 import pytest
-from aiohttp import ClientResponse
+from meatie import Response
 from meatie.internal.adapter import ClientResponseAdapter
 
 
 def test_to_json() -> None:
     # GIVEN
-    response = Mock(spec=ClientResponse)
+    response = Mock(spec=Response)
 
     # WHEN
     with pytest.raises(RuntimeError) as exc_info:

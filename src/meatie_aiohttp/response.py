@@ -3,7 +3,7 @@
 from json.decoder import JSONDecodeError
 from typing import Any, Awaitable, Callable, Optional
 
-from aiohttp import ClientResponse, ContentTypeError
+from aiohttp import ClientResponse, ContentTypeError, ClientError
 from meatie.error import ParseResponseError, ResponseError
 
 
@@ -45,6 +45,8 @@ class Response:
         except ContentTypeError as exc:
             text = await self.text()
             raise ParseResponseError(text, self, exc) from exc
+        except ClientError as exc:
+            raise ResponseError(self, exc) from exc
 
     @classmethod
     def get_json(cls, response: ClientResponse) -> Awaitable[dict[str, Any]]:

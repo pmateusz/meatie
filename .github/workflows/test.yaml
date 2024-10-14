@@ -63,10 +63,10 @@ jobs:
 
       - name: Install dependencies
         if: ${{steps.cache-venv.outputs.cache-hit != 'true'}}
-        run: poetry install --no-interaction --all-extras --no-root --with=test --with=pydantic --with=dev
+        run: poetry install --no-interaction --no-root --with=test --with=pydantic --with=dev --with=requests --with=httpx --with=aiohttp
 
       - name: Install project
-        run: poetry install --no-interaction --all-extras
+        run: poetry install --no-interaction --only-root
 
       - name: Run pytest
         run: poetry run pytest
