@@ -8,14 +8,20 @@ jobs:
       branch: ${{ github.head_ref || github.ref_name }}
     strategy:
       matrix:
-        python_version: [ '3.9', '3.10', '3.11', '3.12', '3.13.0-rc.3' ]
-        pydantic: [ 'no', 'v1', 'v2' ]
+        python_version: [ '3.9', '3.10', '3.11', '3.12', '3.13' ]
+        dependencies: [ 'test,aiohttp,requests,httpx' ]
+        pydantic: [ 'v2' ]
         include:
-          - python_version: '3.9'
-          - python_version: '3.10'
-          - python_version: '3.11'
           - python_version: '3.12'
-          - python_version: '3.13'
+            dependencies: 'test,aiohttp'
+          - python_version: '3.12'
+            dependencies: 'test,requests'
+          - python_version: '3.12'
+            dependencies: 'test,httpx'
+          - python_version: '3.12'
+            pydantic: 'v1'
+          - python_version: '3.12'
+            pydantic: 'no'
     steps:
       - uses: actions/checkout@v4
         with:
@@ -60,7 +66,7 @@ jobs:
 
       - name: Install dependencies
         if: ${{steps.cache-venv.outputs.cache-hit != 'true'}}
-        run: poetry install --no-interaction --no-root --with=test --with=requests --with=httpx --with=aiohttp
+        run: poetry install --no-interaction --no-root --with=${{ matrix.dependencies }}
 
       - name: Install pydantic v1
         if: ${{steps.cache-venv.outputs.cache-hit != 'true' && matrix.pydantic == 'v1'}}
@@ -68,7 +74,7 @@ jobs:
 
       - name: Install pydantic v2
         if: ${{steps.cache-venv.outputs.cache-hit != 'true' && matrix.pydantic == 'v2'}}
-        run: poetry install --no-interaction --no-root --with=pydantic --with=requests --with=httpx --with=aiohttp
+        run: poetry install --no-interaction --no-root --with=pydantic --sync
 
       - name: Install project
         run: poetry install --no-interaction --only-root
