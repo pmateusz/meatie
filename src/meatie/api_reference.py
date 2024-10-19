@@ -9,10 +9,13 @@ __all__ = ["api_ref", "ApiReference"]
 
 
 class ApiReference:
-    __slots__ = ("name", "fmt")
+    __slots__ = ("name", "fmt", "unwrap")
 
     def __init__(
-        self, name: Optional[str] = None, fmt: Optional[Callable[[Any], Any]] = None
+        self,
+        name: Optional[str] = None,
+        fmt: Optional[Callable[[Any], Any]] = None,
+        unwrap: Optional[Callable[[Any], dict[str, Any]]] = None,
     ) -> None:
         """
         Customize handling of a parameter in the HTTP request.
@@ -24,6 +27,7 @@ class ApiReference:
 
         self.name = name
         self.fmt = fmt
+        self.unwrap = unwrap
 
     def __hash__(self) -> int:
         return hash(self.name)
@@ -31,7 +35,7 @@ class ApiReference:
     def __eq__(self, other: Any) -> bool:
         # Python interpreter seems to reuse annotations, for that reason we also need to include the formatter
         if isinstance(other, ApiReference):
-            return self.name == other.name and self.fmt == other.fmt
+            return self.name == other.name and self.fmt == other.fmt and self.unwrap == other.unwrap
         return False
 
     @classmethod
@@ -39,9 +43,9 @@ class ApiReference:
         for arg in get_args(parameter.annotation):
             if isinstance(arg, cls):
                 if arg.name is None:
-                    return cls(name=parameter.name, fmt=arg.fmt)
+                    return cls(name=parameter.name, fmt=arg.fmt, unwrap=arg.unwrap)
                 return arg
-        return cls(name=parameter.name, fmt=None)
+        return cls(name=parameter.name, fmt=None, unwrap=None)
 
 
 api_ref = ApiReference

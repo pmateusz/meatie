@@ -12,7 +12,7 @@ class Kind(Enum):
 
 
 class Parameter:
-    __slots__ = ("kind", "name", "api_ref", "default_value", "formatter")
+    __slots__ = ("kind", "name", "api_ref", "default_value", "formatter", "marshaller")
 
     def __init__(
         self,
@@ -21,12 +21,14 @@ class Parameter:
         api_ref: str,
         default_value: Any = None,
         formatter: Optional[Callable[[Any], Any]] = None,
+        marshaller: Optional[Callable[[Any], dict[str, Any]]] = None,
     ) -> None:
         self.kind = kind
         self.name = name
         self.api_ref = api_ref
         self.default_value = default_value
         self.formatter = formatter
+        self.marshaller = marshaller
 
     def __hash__(self) -> int:
         return hash(self.name)

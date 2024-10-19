@@ -83,10 +83,17 @@ class RequestTemplate(Generic[RequestBodyType]):
 
             if param.kind == Kind.QUERY:
                 # emit query parameters only if underlying value is not None
-                if value is not None:
-                    if param.formatter is not None:
-                        value = param.formatter(value)
-                    query_kwargs[param.api_ref] = value
+                if value is None:
+                    continue
+
+                if param.marshaller is not None:
+                    values = param.marshaller(value)
+                    query_kwargs.update(values)
+                    continue
+
+                if param.formatter is not None:
+                    value = param.formatter(value)
+                query_kwargs[param.api_ref] = value
                 continue
 
             if param.kind == Kind.BODY:
@@ -147,10 +154,9 @@ class RequestTemplate(Generic[RequestBodyType]):
             if sig_param.default is not inspect.Parameter.empty:
                 default_value = sig_param.default
 
-            formatter = None
-            if api_ref.fmt is not None:
-                formatter = api_ref.fmt
-            parameter = Parameter(kind, param_name, api_ref.name, default_value, formatter)
+            parameter = Parameter(
+                kind, param_name, api_ref.name, default_value, api_ref.fmt, api_ref.unwrap
+            )
             parameters.append(parameter)
 
         return cls.validate_object(template, parameters, signature, request_encoder, method)
