@@ -2,6 +2,7 @@
 #  Use of this source code is governed by a BSD-style license that can be found in the LICENSE file.
 import datetime
 import json
+from dataclasses import dataclass
 from typing import Annotated, Any, Optional
 from unittest.mock import ANY, Mock
 
@@ -63,6 +64,47 @@ async def test_get_with_formatter(mock_tools) -> None:
     assert PRODUCTS == result
     session.request.assert_awaited_once_with(
         "GET", "/api/v1/transactions", params={"since": "2006-01-02"}
+    )
+
+
+@pytest.mark.asyncio()
+async def test_get_with_marshaller(mock_tools) -> None:
+    # GIVEN
+    session = mock_tools.session_with_json_response(json=PRODUCTS)
+
+    @dataclass
+    class TimeRange:
+        start: datetime.datetime
+        end: datetime.datetime
+
+    layout = "%Y-%m-%d"
+
+    def format_time_range(time_range: TimeRange) -> dict[str, str]:
+        return {
+            "since": time_range.start.strftime(layout),
+            "until": time_range.end.strftime(layout),
+        }
+
+    class Store(Client):
+        def __init__(self) -> None:
+            super().__init__(session)
+
+        @endpoint("/api/v1/transactions")
+        async def get_transactions(
+            self, time_range: Annotated[TimeRange, api_ref(unwrap=format_time_range)]
+        ) -> list[Any]:
+            ...
+
+    # WHEN
+    async with Store() as api:
+        result = await api.get_transactions(
+            time_range=TimeRange(start=datetime.datetime(2006, 1, 2),
+                                 end=datetime.datetime(2006, 1, 3)))
+
+    # THEN
+    assert PRODUCTS == result
+    session.request.assert_awaited_once_with(
+        "GET", "/api/v1/transactions", params={"since": "2006-01-02", "until": "2006-01-03"}
     )
 
 
