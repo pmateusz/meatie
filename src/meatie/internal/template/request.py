@@ -154,7 +154,9 @@ class RequestTemplate(Generic[RequestBodyType]):
             if sig_param.default is not inspect.Parameter.empty:
                 default_value = sig_param.default
 
-            parameter = Parameter(kind, param_name, api_ref.name, default_value, api_ref.fmt, api_ref.unwrap)
+            parameter = Parameter(
+                kind, param_name, api_ref.name, default_value, api_ref.fmt, api_ref.unwrap
+            )
             parameters.append(parameter)
 
         return cls.validate_object(template, parameters, signature, request_encoder, method)

@@ -98,8 +98,10 @@ async def test_get_with_marshaller(mock_tools) -> None:
     # WHEN
     async with Store() as api:
         result = await api.get_transactions(
-            time_range=TimeRange(start=datetime.datetime(2006, 1, 2),
-                                 end=datetime.datetime(2006, 1, 3)))
+            time_range=TimeRange(
+                start=datetime.datetime(2006, 1, 2), end=datetime.datetime(2006, 1, 3)
+            )
+        )
 
     # THEN
     assert PRODUCTS == result

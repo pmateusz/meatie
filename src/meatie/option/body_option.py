@@ -14,9 +14,7 @@ class BodyOption:
 
     def __init__(
         self,
-        json: Optional[
-            Union[Callable[[Any], Any], Callable[[Any], Awaitable[Any]]]
-        ] = None,
+        json: Optional[Union[Callable[[Any], Any], Callable[[Any], Awaitable[Any]]]] = None,
         text: Optional[Union[Callable[[Any], str], Callable[[Any], Awaitable[str]]]] = None,
     ) -> None:
         """

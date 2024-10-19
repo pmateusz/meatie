@@ -12,7 +12,10 @@ class ApiReference:
     __slots__ = ("name", "fmt", "unwrap")
 
     def __init__(
-        self, name: Optional[str] = None, fmt: Optional[Callable[[Any], Any]] = None, unwrap: Optional[Callable[[Any], dict[str, Any]]] = None
+        self,
+        name: Optional[str] = None,
+        fmt: Optional[Callable[[Any], Any]] = None,
+        unwrap: Optional[Callable[[Any], dict[str, Any]]] = None,
     ) -> None:
         """
         Customize handling of a parameter in the HTTP request.
