@@ -39,10 +39,9 @@ def test_get_without_parameters(mock_tools) -> None:
     session.request.assert_called_once_with("GET", "/api/v1/products")
 
 
-@pytest.mark.asyncio()
-async def test_get_response(mock_tools) -> None:
+def test_get_response(mock_tools) -> None:
     # GIVEN
-    session = mock_tools.client_with_json_response(json=PRODUCTS)
+    session = mock_tools.session_with_json_response(json=PRODUCTS)
 
     class Store(Client):
         def __init__(self) -> None:
