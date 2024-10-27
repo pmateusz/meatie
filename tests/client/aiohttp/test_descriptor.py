@@ -7,7 +7,7 @@ from typing import Annotated, Any, Optional
 from unittest.mock import ANY, Mock
 
 import pytest
-from meatie import Request, api_ref, endpoint
+from meatie import AsyncResponse, Request, api_ref, endpoint
 from meatie.aio import AsyncContext, AsyncEndpointDescriptor
 from meatie.internal.template import RequestTemplate
 from meatie.internal.types import AsyncClient
@@ -65,6 +65,30 @@ async def test_get_with_formatter(mock_tools) -> None:
     session.request.assert_awaited_once_with(
         "GET", "/api/v1/transactions", params={"since": "2006-01-02"}
     )
+
+
+@pytest.mark.asyncio()
+async def test_get_response(mock_tools) -> None:
+    # GIVEN
+    session = mock_tools.session_with_json_response(json=PRODUCTS)
+
+    class Store(Client):
+        def __init__(self) -> None:
+            super().__init__(session)
+
+        @endpoint("/api/v1/products")
+        async def get_products(self) -> AsyncResponse:
+            ...
+
+    # WHEN
+    async with Store() as api:
+        response = await api.get_products()
+
+    # THEN
+    assert isinstance(response, AsyncResponse)
+    result = await response.json()
+    assert PRODUCTS == result
+    session.request.assert_awaited_once_with("GET", "/api/v1/products")
 
 
 @pytest.mark.asyncio()
