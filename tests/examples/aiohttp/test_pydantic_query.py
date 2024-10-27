@@ -5,10 +5,10 @@ from typing import Annotated, Any, Optional
 
 import pytest
 from aiohttp import ClientSession
+from http_test import Handler, HTTPTestServer
 from meatie import api_ref, endpoint
 from meatie_aiohttp import Client
 from pydantic import BaseModel, Field, field_serializer
-from http_test import Handler, HTTPTestServer
 
 
 class MySearchFilter(BaseModel):
@@ -47,13 +47,16 @@ class MyClient(Client):
 async def test_send_search_query(http_server: HTTPTestServer) -> None:
     # GIVEN
     def handler(h: Handler) -> None:
-        results = MySearchResults.model_construct(
-            data=[
+        if h.path == "/v1/search?limit=5&address=0x1234":
+            data = [
                 MyTransaction.model_construct(
                     time=datetime(2024, 10, 27), amount=Decimal("123"), symbol="BTC"
                 )
             ]
-        )
+        else:
+            data = []
+
+        results = MySearchResults.model_construct(data=data)
         h.send_json(HTTPStatus.OK, results.model_dump(mode="json"))
 
     http_server.handler = handler
@@ -61,7 +64,7 @@ async def test_send_search_query(http_server: HTTPTestServer) -> None:
         client = MyClient(session)
 
         # WHEN
-        result = await client.get_search(MySearchFilter(address="123"))
+        result = await client.get_search(MySearchFilter(address="0x1234", limit=5))
 
     # THEN
     assert result.data
