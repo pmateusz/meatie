@@ -5,7 +5,7 @@ from typing import Any, Optional
 from unittest.mock import ANY, Mock
 
 import pytest
-from meatie import Context, EndpointDescriptor, Request, endpoint
+from meatie import Context, EndpointDescriptor, Request, Response, endpoint
 from meatie.internal.template import RequestTemplate
 from meatie_httpx import Client
 
@@ -31,6 +31,29 @@ def test_get_without_parameters(mock_tools) -> None:
     # THEN
     assert PRODUCTS == result
     client.request.assert_called_once_with("GET", "/api/v1/products")
+
+
+def test_get_response(mock_tools) -> None:
+    # GIVEN
+    session = mock_tools.client_with_json_response(json=PRODUCTS)
+
+    class Store(Client):
+        def __init__(self) -> None:
+            super().__init__(session)
+
+        @endpoint("/api/v1/products")
+        def get_products(self) -> Response:
+            ...
+
+    # WHEN
+    with Store() as api:
+        response = api.get_products()
+
+    # THEN
+    assert isinstance(response, Response)
+    result = response.json()
+    assert PRODUCTS == result
+    session.request.assert_called_once_with("GET", "/api/v1/products")
 
 
 def test_post_with_body(mock_tools) -> None:

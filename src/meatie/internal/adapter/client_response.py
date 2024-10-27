@@ -11,7 +11,7 @@ class _ClientResponseAdapter:
         return response
 
     @staticmethod
-    def from_async_response(response: AsyncResponse) -> AsyncResponse:
+    async def from_async_response(response: AsyncResponse) -> AsyncResponse:
         return response
 
     @staticmethod
