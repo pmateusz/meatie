@@ -17,13 +17,13 @@ class Controller:
 
     async def delete_transaction(self, tx_hash: str) -> bool:
         response = await self._client.delete_multisig_transaction(tx_hash)
-        match response.status:
-            case HTTPStatus.NO_CONTENT:
-                return True
-            case HTTPStatus.NOT_FOUND:
-                return False
-            case _:
-                raise HttpStatusError(response)
+        if response.status == HTTPStatus.NO_CONTENT:
+            return True
+
+        if response.status == HTTPStatus.NOT_FOUND:
+            return False
+
+        raise HttpStatusError(response)
 
 
 @pytest.mark.asyncio()
