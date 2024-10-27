@@ -1,4 +1,4 @@
-# Meatie: Generate methods for calling REST APIs using type hints
+<img src="https://repository-images.githubusercontent.com/735134836/df6752b8-38fa-4550-968e-cd2eda4adb37" alt="meatie">
 
 [![GitHub Test Badge][1]][2] [![codecov.io][3]][4] [![pypi.org][5]][6] [![versions][7]][8]
 [![downloads][9]][10] [![License][11]][12]
