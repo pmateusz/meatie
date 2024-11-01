@@ -25,14 +25,20 @@ class Client(BaseClient):
         session_params: Optional[dict[str, Any]] = None,
         local_cache: Optional[Cache] = None,
         limiter: Optional[Any] = None,
+        prefix: Optional[str] = None,
     ) -> None:
         super().__init__(local_cache, limiter)
 
         self.session = session
         self.session_params = session_params if session_params else {}
+        self.prefix = prefix
 
     def send(self, request: Request) -> Response:
         kwargs: dict[str, Any] = self.session_params.copy()
+
+        path = request.path
+        if self.prefix is not None:
+            path = self.prefix + path
 
         if request.data is not None:
             kwargs["data"] = request.data
@@ -47,7 +53,7 @@ class Client(BaseClient):
             kwargs["params"] = request.params
 
         try:
-            response = self.session.request(request.method, request.path, **kwargs)
+            response = self.session.request(request.method, path, **kwargs)
         except (
             requests.exceptions.URLRequired,
             requests.exceptions.MissingSchema,

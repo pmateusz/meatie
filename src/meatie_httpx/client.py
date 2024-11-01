@@ -25,14 +25,20 @@ class Client(BaseClient):
         client_params: Optional[dict[str, Any]] = None,
         local_cache: Optional[Cache] = None,
         limiter: Optional[Any] = None,
+        prefix: Optional[str] = None,
     ) -> None:
         super().__init__(local_cache, limiter)
 
         self.client = client
         self.client_params = client_params if client_params else {}
+        self.prefix = prefix
 
     def send(self, request: Request) -> Response:
         kwargs: dict[str, Any] = self.client_params.copy()
+
+        path = request.path
+        if self.prefix is not None:
+            path = self.prefix + path
 
         if request.data is not None:
             kwargs["content"] = request.data
@@ -47,7 +53,7 @@ class Client(BaseClient):
             kwargs["params"] = request.params
 
         try:
-            response = self.client.request(request.method, request.path, **kwargs)
+            response = self.client.request(request.method, path, **kwargs)
         except (httpx.InvalidURL, httpx.UnsupportedProtocol) as exc:
             raise RequestError(exc) from exc
         except httpx.ProxyError as exc:

@@ -58,6 +58,7 @@ pydantic = ">=1.10.0"
 
 [tool.pytest.ini_options]
 log_cli = true
+asyncio_default_fixture_loop_scope = "session"
 pythonpath = ["src", "tests/shared"]
 addopts = ["--import-mode=importlib"]
 

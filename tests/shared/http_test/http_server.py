@@ -13,15 +13,18 @@ from typing_extensions import Self
 
 class Handler(SimpleHTTPRequestHandler):
     def send_json(self, status_code: HTTPStatus, message: Any) -> None:
-        try:
-            json_message = json.dumps(message)
-        except Exception as exc:
-            self.send_text(
-                HTTPStatus.INTERNAL_SERVER_ERROR, "Failed to serialize response: " + str(exc)
-            )
-            return
+        if isinstance(message, str):
+            json_data = message
+        else:
+            try:
+                json_data = json.dumps(message)
+            except Exception as exc:
+                self.send_text(
+                    HTTPStatus.INTERNAL_SERVER_ERROR, "Failed to serialize response: " + str(exc)
+                )
+                return
 
-        self.send_bytes(status_code, "application/json", json_message.encode("utf-8"))
+        self.send_bytes(status_code, "application/json", json_data.encode("utf-8"))
 
     def send_text(self, status_code: HTTPStatus, text: str) -> None:
         self.send_bytes(status_code, "text/plain", text.encode("utf-8"))
