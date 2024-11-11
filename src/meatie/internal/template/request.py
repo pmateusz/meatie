@@ -93,14 +93,15 @@ class RequestTemplate(Generic[RequestBodyType]):
 
                 if param.formatter is not None:
                     value = param.formatter(value)
+
                 query_kwargs[param.api_ref] = value
                 continue
 
             if param.kind == Kind.BODY:
-                if param.formatter is not None:
+                if param.marshaller is not None:
+                    body_value = param.marshaller(value)
+                elif param.formatter is not None:
                     body_value = param.formatter(value)
-                else:
-                    body_value = value
                 continue
 
             raise NotImplementedError(f"Kind {param.kind} is not supported")  # pragma: no cover
@@ -146,7 +147,11 @@ class RequestTemplate(Generic[RequestBodyType]):
             kind = Kind.QUERY
             if api_ref.name == "body":
                 kind = Kind.BODY
-                request_encoder = get_adapter(param_type)
+                if api_ref.fmt is None:
+                    request_encoder = get_adapter(param_type)
+                else:
+                    request_encoder = JsonAdapter
+
             elif api_ref.name in template:
                 kind = Kind.PATH
 
