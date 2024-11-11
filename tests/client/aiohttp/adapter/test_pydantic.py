@@ -4,7 +4,7 @@ import json
 from enum import Enum
 from http import HTTPStatus
 from http.server import BaseHTTPRequestHandler
-from typing import Annotated
+from typing import Annotated, Any
 
 import pytest
 from aiohttp import ClientSession
@@ -104,13 +104,8 @@ async def test_can_handle_corrupted_pydantic_model_with_enum(http_server: HTTPTe
     assert HTTPStatus.OK == exc.response.status
 
 
-class CheckoutRequest(pydantic.BaseModel):
-    ...
-
-
 class Request(pydantic.BaseModel):
-    model_config = pydantic.ConfigDict(ser_json_exclude_unset=True)
-    data: CheckoutRequest
+    data: dict[str, Any] | None
 
 
 @pytest.mark.asyncio()
@@ -141,7 +136,7 @@ async def test_post_request_body_with_fmt(http_server: HTTPTestServer) -> None:
 
     # WHEN
     async with TestClient(ClientSession(http_server.base_url)) as client:
-        response = await client.post_request(Request.model_construct(data=None))
+        response = await client.post_request(Request(data=None))
 
     # THEN
     assert response.status == HTTPStatus.OK
