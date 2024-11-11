@@ -102,6 +102,8 @@ class RequestTemplate(Generic[RequestBodyType]):
                     body_value = param.marshaller(value)
                 elif param.formatter is not None:
                     body_value = param.formatter(value)
+                else:
+                    body_value = value
                 continue
 
             raise NotImplementedError(f"Kind {param.kind} is not supported")  # pragma: no cover
