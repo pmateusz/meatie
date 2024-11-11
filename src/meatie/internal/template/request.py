@@ -12,7 +12,7 @@ from typing import (
 
 from meatie import Method, Request
 from meatie.api_reference import ApiReference
-from meatie.internal.adapter import JsonAdapter, TypeAdapter, get_adapter
+from meatie.internal.adapter import JsonAdapter, StringAdapter, TypeAdapter, get_adapter
 from meatie.internal.types import PT, RequestBodyType, T
 from typing_extensions import Callable, Self, Union, get_type_hints
 
@@ -73,7 +73,8 @@ class RequestTemplate(Generic[RequestBodyType]):
 
         path_kwargs = {}
         query_kwargs = {}
-        body_value: Any = None
+        body_json: Any = None
+        body_data: Any = None
         for param, value in value_by_param.items():
             if param.kind == Kind.PATH:
                 if param.formatter is not None:
@@ -99,22 +100,21 @@ class RequestTemplate(Generic[RequestBodyType]):
 
             if param.kind == Kind.BODY:
                 if param.formatter is not None:
-                    body_value = param.formatter(value)
+                    body_data = param.formatter(value)
                 else:
-                    body_value = value
+                    body_json = self.request_encoder.to_content(value)
                 continue
 
             raise NotImplementedError(f"Kind {param.kind} is not supported")  # pragma: no cover
 
         path = self.template.format(**path_kwargs)
-
-        if body_value is not None:
-            body_json = self.request_encoder.to_content(body_value)
-        else:
-            body_json = None
-
         return Request(
-            method=self.method, path=path, params=query_kwargs, headers={}, json=body_json
+            method=self.method,
+            path=path,
+            params=query_kwargs,
+            headers={},
+            json=body_json,
+            data=body_data,
         )
 
     @classmethod
@@ -150,7 +150,7 @@ class RequestTemplate(Generic[RequestBodyType]):
                 if api_ref.fmt is None:
                     request_encoder = get_adapter(param_type)
                 else:
-                    request_encoder = JsonAdapter
+                    request_encoder = StringAdapter
 
             elif api_ref.name in template:
                 kind = Kind.PATH
