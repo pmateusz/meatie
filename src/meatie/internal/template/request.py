@@ -98,9 +98,7 @@ class RequestTemplate(Generic[RequestBodyType]):
                 continue
 
             if param.kind == Kind.BODY:
-                if param.marshaller is not None:
-                    body_value = param.marshaller(value)
-                elif param.formatter is not None:
+                if param.formatter is not None:
                     body_value = param.formatter(value)
                 else:
                     body_value = value
