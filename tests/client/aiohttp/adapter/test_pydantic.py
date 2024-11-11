@@ -4,7 +4,7 @@ import json
 from enum import Enum
 from http import HTTPStatus
 from http.server import BaseHTTPRequestHandler
-from typing import Annotated, Any
+from typing import Annotated, Any, Optional
 
 import pytest
 from aiohttp import ClientSession
@@ -105,7 +105,7 @@ async def test_can_handle_corrupted_pydantic_model_with_enum(http_server: HTTPTe
 
 
 class Request(pydantic.BaseModel):
-    data: dict[str, Any] | None
+    data: Optional[dict[str, Any]]
 
 
 @pytest.mark.asyncio()
