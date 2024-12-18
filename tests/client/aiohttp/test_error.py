@@ -1,11 +1,10 @@
 #  Copyright 2024 The Meatie Authors. All rights reserved.
 #  Use of this source code is governed by a BSD-style license that can be found in the LICENSE file.
-from http import HTTPStatus
-from http.server import BaseHTTPRequestHandler
 
 import pytest
 from aiohttp import ClientSession
 from http_test import HTTPTestServer
+from http_test.handlers import service_unavailable
 from meatie import AsyncResponse, HttpStatusError, ResponseError, body, endpoint
 from meatie_aiohttp import Client
 
@@ -28,13 +27,7 @@ async def get_error(response: AsyncResponse) -> Exception | None:
 @pytest.mark.asyncio()
 async def test_raises_error(http_server: HTTPTestServer) -> None:
     # GIVEN
-    def handler(request: BaseHTTPRequestHandler) -> None:
-        request.send_response(HTTPStatus.SERVICE_UNAVAILABLE)
-        request.send_header("Content-Type", "application/json")
-        request.end_headers()
-        request.wfile.write('{"error": "deployment in progress"}'.encode("utf-8"))
-
-    http_server.handler = handler
+    http_server.handler = service_unavailable
 
     class TestClient(Client):
         @endpoint("/", body(error=get_error))
