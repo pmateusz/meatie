@@ -8,7 +8,7 @@ from http_test import (
     HTTPSTestServer,
     HTTPTestServer,
 )
-from http_test.handlers import Handler, diagnostic_handler, echo_handler, StatusHandler
+from http_test.handlers import Handler, StatusHandler, diagnostic_handler, echo_handler
 from meatie import (
     ParseResponseError,
     Request,
