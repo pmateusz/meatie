@@ -5,13 +5,10 @@ from json import JSONDecodeError
 
 import pytest
 from http_test import (
-    Handler,
     HTTPSTestServer,
     HTTPTestServer,
-    StatusHandler,
-    diagnostic_handler,
-    echo_handler,
 )
+from http_test.handlers import Handler, StatusHandler, diagnostic_handler, echo_handler
 from meatie import (
     ParseResponseError,
     Request,

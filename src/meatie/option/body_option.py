@@ -2,7 +2,7 @@
 #  Use of this source code is governed by a BSD-style license that can be found in the LICENSE file.
 from typing import Any, Awaitable, Callable, Optional, Union
 
-from meatie import EndpointDescriptor
+from meatie import AsyncResponse, EndpointDescriptor, Response
 from meatie.aio import AsyncEndpointDescriptor
 from meatie.internal.types import PT, T
 
@@ -10,12 +10,18 @@ __all__ = ["body"]
 
 
 class BodyOption:
-    __slots__ = ("json", "text")
+    __slots__ = ("json", "text", "error")
 
     def __init__(
         self,
         json: Optional[Union[Callable[[Any], Any], Callable[[Any], Awaitable[Any]]]] = None,
         text: Optional[Union[Callable[[Any], str], Callable[[Any], Awaitable[str]]]] = None,
+        error: Optional[
+            Union[
+                Callable[[Response], Optional[Exception]],
+                Callable[[AsyncResponse], Awaitable[Optional[Exception]]],
+            ]
+        ] = None,
     ) -> None:
         """
         Customize handling of HTTP response body.
@@ -24,16 +30,19 @@ class BodyOption:
          implemented in the client library
         :param text: function to apply on the HTTP response to extract response text, otherwise use the default method
          implemented in the client library
+        :param error: function to apply on the HTTP response to extract an error
         """
 
         self.json = json
         self.text = text
+        self.error = error
 
     def __call__(
         self, descriptor: Union[EndpointDescriptor[PT, T], AsyncEndpointDescriptor[PT, T]]
     ) -> None:
         descriptor.get_text = self.text
         descriptor.get_json = self.json
+        descriptor.get_error = self.error
 
 
 body = BodyOption

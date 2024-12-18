@@ -59,6 +59,7 @@ class AsyncEndpointDescriptor(Generic[PT, ResponseBodyType]):
         self.response_decoder = response_decoder
         self.get_json: Optional[Callable[[Any], Awaitable[dict[str, Any]]]] = None
         self.get_text: Optional[Callable[[Any], Awaitable[str]]] = None
+        self.get_error: Optional[Callable[[AsyncResponse], Awaitable[Optional[Exception]]]] = None
         self.__operator_by_priority: dict[int, AsyncOperator[ResponseBodyType]] = {}
 
     def __set_name__(self, owner: type[object], name: str) -> None:
@@ -91,7 +92,13 @@ class AsyncEndpointDescriptor(Generic[PT, ResponseBodyType]):
         operators = [operator for _, operator in priority_operator_pair]
 
         return BoundAsyncEndpointDescriptor(  # type: ignore[return-value]
-            instance, operators, self.template, self.response_decoder, self.get_json, self.get_text
+            instance,
+            operators,
+            self.template,
+            self.response_decoder,
+            self.get_json,
+            self.get_text,
+            self.get_error,
         )
 
 
@@ -102,8 +109,9 @@ class BoundAsyncEndpointDescriptor(Generic[PT, ResponseBodyType]):
         operators: Iterable[AsyncOperator[ResponseBodyType]],
         template: RequestTemplate[Any],
         response_decoder: TypeAdapter[ResponseBodyType],
-        get_json: Optional[Callable[[Any], Awaitable[dict[str, Any]]]],
+        get_json: Optional[Callable[[Any], Awaitable[Any]]],
         get_text: Optional[Callable[[Any], Awaitable[str]]],
+        get_error: Optional[Callable[[AsyncResponse], Awaitable[Optional[Exception]]]],
     ) -> None:
         self.__instance = instance
         self.__operators = list(operators)
@@ -112,6 +120,7 @@ class BoundAsyncEndpointDescriptor(Generic[PT, ResponseBodyType]):
         self.__response_decoder = response_decoder
         self.__get_json = get_json
         self.__get_text = get_text
+        self.__get_error = get_error
 
     async def __call__(self, *args: PT.args, **kwargs: PT.kwargs) -> ResponseBodyType:
         request = self.__template.build_request(*args, **kwargs)
@@ -124,5 +133,12 @@ class BoundAsyncEndpointDescriptor(Generic[PT, ResponseBodyType]):
             response.get_json = self.__get_json
         if self.__get_text is not None:
             response.get_text = self.__get_text
+
         context.response = response
+
+        if self.__get_error is not None:
+            error = await self.__get_error(response)
+            if error is not None:
+                raise error
+
         return await self.__response_decoder.from_async_response(response)
