@@ -4,11 +4,18 @@ import json
 from decimal import Decimal
 from functools import partial
 from http import HTTPStatus
-from http.server import BaseHTTPRequestHandler
 
 import pytest
 from aiohttp import ClientResponse, ClientSession
 from http_test import HTTPTestServer
+from http_test.handlers import (
+    NGINX_GATEWAY_TIMEOUT,
+    magic_number,
+    nginx_gateway_timeout,
+    status_ok,
+    status_ok_as_text,
+    truncated_json,
+)
 from meatie import ParseResponseError, body, endpoint
 from meatie_aiohttp import Client
 
@@ -16,13 +23,7 @@ from meatie_aiohttp import Client
 @pytest.mark.asyncio()
 async def test_can_parse_json(http_server: HTTPTestServer) -> None:
     # GIVEN
-    def handler(request: BaseHTTPRequestHandler) -> None:
-        request.send_response(HTTPStatus.OK)
-        request.send_header("Content-Type", "application/json")
-        request.end_headers()
-        request.wfile.write('{"status": "ok"}'.encode("utf-8"))
-
-    http_server.handler = handler
+    http_server.handler = status_ok
 
     class TestClient(Client):
         @endpoint("/")
@@ -40,14 +41,7 @@ async def test_can_parse_json(http_server: HTTPTestServer) -> None:
 @pytest.mark.asyncio()
 async def test_can_handle_invalid_content_type(http_server: HTTPTestServer) -> None:
     # GIVEN
-    content = "{'status': 'ok'}"
-
-    def handler(request: BaseHTTPRequestHandler) -> None:
-        request.send_response(HTTPStatus.OK)
-        request.end_headers()
-        request.wfile.write(content.encode("utf-8"))
-
-    http_server.handler = handler
+    http_server.handler = status_ok_as_text
 
     class TestClient(Client):
         @endpoint("/")
@@ -61,27 +55,14 @@ async def test_can_handle_invalid_content_type(http_server: HTTPTestServer) -> N
 
     # THEN
     exc = exc_info.value
-    assert content == exc.text
+    assert "{'status': 'ok'}" == exc.text
     assert HTTPStatus.OK == exc.response.status
 
 
 @pytest.mark.asyncio()
 async def test_can_handle_html_response(http_server: HTTPTestServer) -> None:
     # GIVEN
-    content = (
-        "<html>"
-        "<head><title>504 Gateway Time-out</title></head>"
-        "<body><center><h1>504 Gateway Time-out</h1></center><hr><center>nginx</center></body>"
-        "</html>"
-    )
-
-    def handler(request: BaseHTTPRequestHandler) -> None:
-        request.send_response(HTTPStatus.GATEWAY_TIMEOUT)
-        request.send_header("Content-Type", "text/html")
-        request.end_headers()
-        request.wfile.write(content.encode("utf-8"))
-
-    http_server.handler = handler
+    http_server.handler = nginx_gateway_timeout
 
     class TestClient(Client):
         @endpoint("/")
@@ -95,20 +76,14 @@ async def test_can_handle_html_response(http_server: HTTPTestServer) -> None:
 
     # THEN
     exc = exc_info.value
-    assert content == exc.text
+    assert NGINX_GATEWAY_TIMEOUT == exc.text
     assert HTTPStatus.GATEWAY_TIMEOUT == exc.response.status
 
 
 @pytest.mark.asyncio()
 async def test_can_handle_corrupted_json(http_server: HTTPTestServer) -> None:
     # GIVEN
-    def handler(request: BaseHTTPRequestHandler) -> None:
-        request.send_response(HTTPStatus.OK)
-        request.send_header("Content-Type", "application/json")
-        request.end_headers()
-        request.wfile.write("{'status':".encode("utf-8"))
-
-    http_server.handler = handler
+    http_server.handler = truncated_json
 
     class TestClient(Client):
         @endpoint("/")
@@ -128,13 +103,7 @@ async def test_can_handle_corrupted_json(http_server: HTTPTestServer) -> None:
 @pytest.mark.asyncio()
 async def test_use_custom_decoder(http_server: HTTPTestServer) -> None:
     # GIVEN response have json which will lose precision if parsed as float
-    def handler(request: BaseHTTPRequestHandler) -> None:
-        request.send_response(HTTPStatus.OK)
-        request.send_header("Content-Type", "application/json")
-        request.end_headers()
-        request.wfile.write('{"foo": 42.000000000000001}'.encode("utf-8"))
-
-    http_server.handler = handler
+    http_server.handler = magic_number
 
     async def custom_json(response: ClientResponse) -> dict[str, Decimal]:
         return await response.json(loads=partial(json.loads, parse_float=Decimal))
@@ -149,4 +118,4 @@ async def test_use_custom_decoder(http_server: HTTPTestServer) -> None:
         response = await client.get_response()
 
     # THEN
-    assert {"foo": Decimal("42.000000000000001")} == response
+    assert {"number": Decimal("42.000000000000001")} == response
