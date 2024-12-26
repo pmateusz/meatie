@@ -4,6 +4,7 @@ from decimal import Decimal
 from http import HTTPStatus
 from http.server import BaseHTTPRequestHandler, SimpleHTTPRequestHandler
 from typing import Any, Callable, Optional
+from urllib.parse import parse_qs, urlparse
 
 
 class Handler(SimpleHTTPRequestHandler):
@@ -175,3 +176,26 @@ def magic_number(request: BaseHTTPRequestHandler) -> None:
     request.send_header("Content-Type", "application/json")
     request.end_headers()
     request.wfile.write(f'{{"number": {MAGIC_NUMBER}}}'.encode("utf-8"))
+
+
+def companies_filter_by_sector(request: BaseHTTPRequestHandler) -> None:
+    """
+    Accepts a query parameter 'sector' and returns a list of companies in that sector.
+    """
+
+    items = [
+        {"name": "Apple", "sector": "Information Technology"},
+        {"name": "Berkshire Hathaway", "sector": "Financials"},
+        {"name": "Johnson & Johnson", "sector": "Health Care"},
+        {"name": "Chevron Corporation", "sector": "Energy"},
+        {"name": "Tesla", "sector": "Consumer Discretionary"},
+    ]
+
+    url = urlparse(request.path)
+    params = parse_qs(url.query)
+    sectors = params.get("sector")
+    filtered_items = [item for item in items if item["sector"] in sectors]
+    request.send_response(HTTPStatus.OK)
+    request.send_header("Content-Type", "application/json")
+    request.end_headers()
+    request.wfile.write(json.dumps(filtered_items).encode("utf-8"))

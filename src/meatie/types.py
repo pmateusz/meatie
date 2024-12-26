@@ -17,12 +17,12 @@ DAY = 86400
 INF = float("inf")
 
 
-@dataclass()  # TODO: change to an ordinary class
+@dataclass()
 class Request:
     method: Method
     path: str
-    params: dict[str, Union[str, int]]
-    headers: dict[str, Union[str, bytes]]
+    params: dict[str, Any]
+    headers: dict[str, Any]
     data: Optional[Union[str, bytes]] = None
     json: Any = None
 
