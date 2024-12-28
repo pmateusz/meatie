@@ -14,6 +14,11 @@ __all__ = ["cache"]
 
 class CacheOption:
     def __init__(self, ttl: Duration, shared: bool = False) -> None:
+        """
+        :param ttl: the time-to-live of the cache entry in seconds.
+        :param shared: if set to True, the cache will be shared among all instances of the class. Default is False.
+        """
+
         self.ttl = ttl
         self.shared = shared
 

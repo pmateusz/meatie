@@ -10,6 +10,10 @@ __all__ = ["private"]
 
 
 class PrivateOption:
+    """
+    Include additional information in the request, i.e., `Authorization` header, before calling the API endpoint.
+    """
+
     def __call__(
         self, descriptor: Union[EndpointDescriptor[PT, T], AsyncEndpointDescriptor[PT, T]]
     ) -> None:
