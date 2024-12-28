@@ -1,4 +1,4 @@
-from typing import Annotated
+from typing import Annotated, override
 
 import pytest
 from aiohttp import ClientSession
@@ -22,6 +22,7 @@ class JsonPlaceholderClient(Client):
     async def get_todos(self, user_id: Annotated[int, api_ref("userId")] = None) -> list[Todo]:
         ...
 
+    @override
     async def authenticate(self, request: Request) -> None:
         request.headers["Authorization"] = "Bearer bWVhdGll"
 
