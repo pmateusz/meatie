@@ -1,8 +1,8 @@
-from typing import Any, Annotated
+from typing import Annotated, Any
 
 import pytest
 from aiohttp import ClientSession
-from meatie import endpoint, api_ref
+from meatie import api_ref, endpoint
 from meatie_aiohttp import Client
 from pydantic import BaseModel, Field
 
@@ -29,7 +29,9 @@ class JsonPlaceholderClient(Client):
         super().__init__(ClientSession(base_url="https://jsonplaceholder.typicode.com"))
 
     @endpoint("/users/{user_id}/todos")
-    async def get_todos_by_user(self, user_id: int, completed: Annotated[bool, api_ref(fmt=Params.bool)]) -> list[Todo]:
+    async def get_todos_by_user(
+        self, user_id: int, completed: Annotated[bool, api_ref(fmt=Params.bool)]
+    ) -> list[Todo]:
         ...
 
     @endpoint("/todos")

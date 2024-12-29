@@ -1,11 +1,11 @@
+import json
 from typing import Annotated, Any
 
 import pytest
 from aiohttp import ClientSession
-from meatie import api_ref, endpoint, AsyncResponse, body
+from meatie import AsyncResponse, api_ref, body, endpoint
 from meatie_aiohttp import Client
 from pydantic import BaseModel, Field
-import json
 
 
 class Todo(BaseModel):
