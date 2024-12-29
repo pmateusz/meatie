@@ -1,18 +1,21 @@
 from dataclasses import dataclass
 from typing import Annotated, Optional
 
+import pytest
 import requests
 from http_test import HTTPTestServer
 from http_test.handlers import companies_filter_by_sector
 from meatie import api_ref, endpoint
 from meatie_requests import Client
 
+pytest.importorskip("pydantic")
+
 
 def test_send_array_query_params(http_server: HTTPTestServer) -> None:
     # GIVEN
     http_server.handler = companies_filter_by_sector
 
-    @dataclass(slots=True)
+    @dataclass
     class Company:
         name: str
         sector: str

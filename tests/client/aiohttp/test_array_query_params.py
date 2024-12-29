@@ -8,13 +8,15 @@ from http_test.handlers import companies_filter_by_sector
 from meatie import api_ref, endpoint
 from meatie_aiohttp import Client
 
+pytest.importorskip("pydantic")
+
 
 @pytest.mark.asyncio()
 async def test_handles_array_query_params(http_server: HTTPTestServer) -> None:
     # GIVEN
     http_server.handler = companies_filter_by_sector
 
-    @dataclass(slots=True)
+    @dataclass
     class Company:
         name: str
         sector: str

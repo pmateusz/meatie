@@ -10,7 +10,6 @@ from meatie import Duration, Time
 __all__ = ["Cache"]
 
 
-# TODO: implement limit on storage size to avoid memory leaks using OrderedDict
 class Cache:
     def __init__(self) -> None:
         self.__storage: dict[str, _Record] = {}
