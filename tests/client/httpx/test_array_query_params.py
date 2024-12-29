@@ -12,7 +12,7 @@ def test_handles_array_query_params(http_server: HTTPTestServer) -> None:
     # GIVEN
     http_server.handler = companies_filter_by_sector
 
-    @dataclass(slots=True)
+    @dataclass
     class Company:
         name: str
         sector: str
@@ -29,5 +29,7 @@ def test_handles_array_query_params(http_server: HTTPTestServer) -> None:
         companies = client.get_companies(sectors=["Information Technology", "Financials"])
 
     # THEN
-    assert len(companies) > 0
-    assert all(company.sector in ["Information Technology", "Financials"] for company in companies)
+    assert companies == [
+        Company(name="Apple", sector="Information Technology"),
+        Company(name="Berkshire Hathaway", sector="Financials"),
+    ]
