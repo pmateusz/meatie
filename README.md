@@ -176,7 +176,7 @@ class JsonPlaceholderClient(Client):
 ```
 
 Meatie comes with a built-in set of predefined functions for building retry strategies. See
-the [meatie.retry](./src/meatie/option/retry_option.py) for more details.
+the [meatie.retry](./src/meatie/option/retry_option.py) option for more details.
 
 ### Calling Private Endpoints
 
