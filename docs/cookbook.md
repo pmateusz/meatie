@@ -20,9 +20,9 @@ metaprogramming feature.
 There are a few requirements regarding the application of the `@endpoint` descriptor.
 
 The descriptor is available in a class that inherits from the abstract class [
-`meatie.BaseClient`](./src/meatie/client.py) or [`meatie.BaseAsyncClient`](./src/meatie/aio/client.py). Meatie provides implementations of these abstract classes for the
-most popular HTTP libraries: [`meatie_httpx.Client`](./src/meatie_httpx/client.py), [`meatie_requests.Client`](./src/meatie_requests/client.py), and [
-`meatie_aiohttp.Client`](./src/meatie_aiohttp/client.py).
+`meatie.BaseClient`](./src/meatie/client.py) or [`meatie.BaseAsyncClient`](../src/meatie/aio/client.py). Meatie provides implementations of these abstract classes for the
+most popular HTTP libraries: [`meatie_httpx.Client`](../src/meatie_httpx/client.py), [`meatie_requests.Client`](../src/meatie_requests/client.py), and [
+`meatie_aiohttp.Client`](../src/meatie_aiohttp/client.py).
 
 The methods should be empty. Meatie won't call the method code directly. Leaving any implementation besides a docstring
 is a deadcode.
