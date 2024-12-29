@@ -69,13 +69,13 @@ class JsonPlaceholderClient(Client):
     async def post_todo(self, todo: Annotated[Todo, api_ref("body")]) -> Todo: ...
 ```
 
-Do you use a different HTTP client library in your project? See the same example adapter for [
+Do you use a different HTTP client library in your project? See the example adapted for [
 `requests`](./tests/examples/requests/tutorial/test_basics.py) and [
 `httpx`](./tests/examples/httpx/tutorial/test_basics.py).
 
 ### Caching
 
-Cache result for given TTL.
+Cache result for a given TTL.
 
 ```python
 from typing import Annotated
@@ -176,7 +176,7 @@ class JsonPlaceholderClient(Client):
 ```
 
 Meatie comes with a built-in set of predefined functions for building retry strategies. See
-the [meatie.retry](./src/meatie/option/retry.py) for more details.
+the [meatie.retry](./src/meatie/option/retry_option.py) for more details.
 
 ### Calling Private Endpoints
 
