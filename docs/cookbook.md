@@ -1,11 +1,13 @@
 # Cookbook
 
-The cookbook provides solutions to most frequently asked questions by the community.
+The cookbook provides solutions to the most frequently asked questions by the community.
 
-The first section of the cookbook provides a brief overview of the `@endpoint` descriptor. The remaining sections illustrate practical
-recipes on how to customize Meatie behavior when dealing with HTTP query parameters, request/response body serialization, and error handling.
+The first section briefly describes how the `@endpoint` descriptor works. The remaining sections present practical
+recipes for customizing Meatie behavior when dealing with HTTP query parameters, request/response body serialization,
+and error handling.
 
 # Table of Contents
+
 1. [Endpoint Descriptor](#endpoint-descriptor)
 2. [Query Parameters](#query-parameters)
 3. [JSON Serialization](#json-serialization)
@@ -20,8 +22,10 @@ metaprogramming feature.
 There are a few requirements regarding the application of the `@endpoint` descriptor.
 
 The descriptor is available in a class that inherits from the abstract class [
-`meatie.BaseClient`](../src/meatie/client.py) or [`meatie.BaseAsyncClient`](../src/meatie/aio/client.py). Meatie provides implementations of these abstract classes for the
-most popular HTTP libraries: [`meatie_httpx.Client`](../src/meatie_httpx/client.py), [`meatie_requests.Client`](../src/meatie_requests/client.py), and [
+`meatie.BaseClient`](../src/meatie/client.py) or [`meatie.BaseAsyncClient`](../src/meatie/aio/client.py). Meatie
+provides implementations of these abstract classes for the
+most popular HTTP libraries: [`meatie_httpx.Client`](../src/meatie_httpx/client.py), [
+`meatie_requests.Client`](../src/meatie_requests/client.py), and [
 `meatie_aiohttp.Client`](../src/meatie_aiohttp/client.py).
 
 The methods should be empty. Meatie won't call the method code directly. Leaving any implementation besides a docstring
