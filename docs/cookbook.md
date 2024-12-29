@@ -1,7 +1,16 @@
 # Cookbook
 
+The cookbook provides solutions to most frequently asked questions by the community.
+
 The first section of the cookbook provides a brief overview of the `@endpoint` descriptor. The remaining sections illustrate practical
 recipes on how to customize Meatie behavior when dealing with HTTP query parameters, request/response body serialization, and error handling.
+
+# Table of Contents
+1. [Endpoint Descriptor](#endpoint-descriptor)
+2. [Query Parameters](#query-parameters)
+3. [JSON Serialization](#json-serialization)
+4. [Error Handling](#error-handling)
+
 ## Endpoint Descriptor
 
 Meatie generates code for calling REST APIs for method signatures marked with the `@endpoint`
@@ -11,9 +20,9 @@ metaprogramming feature.
 There are a few requirements regarding the application of the `@endpoint` descriptor.
 
 The descriptor is available in a class that inherits from the abstract class [
-`meatie.BaseClient`] or [`meatie.BaseAsyncClient`]. Meatie provides implementations of these abstract classes for the
-most popular HTTP libraries: [`httpx`](meatie_httpx.Client), [`requests`](meatie_requests.Client), and [
-`aiohttp`](meatie_aiohttp.Client).
+`meatie.BaseClient`](./src/meatie/client.py) or [`meatie.BaseAsyncClient`](./src/meatie/aio/client.py). Meatie provides implementations of these abstract classes for the
+most popular HTTP libraries: [`meatie_httpx.Client`](./src/meatie_httpx/client.py), [`meatie_requests.Client`](./src/meatie_requests/client.py), and [
+`meatie_aiohttp.Client`](./src/meatie_aiohttp/client.py).
 
 The methods should be empty. Meatie won't call the method code directly. Leaving any implementation besides a docstring
 is a deadcode.
@@ -48,7 +57,7 @@ class JsonPlaceholderClient(Client):
 
 Method arguments referenced in the URL path are required. Other arguments are optional and are sent as HTTP query
 parameters only if their values are not equal to `None`. Customization of HTTP query parameters deserves a separate
-section [Query Parameters](#query parameters) to discuss it in sufficient detail.
+section [Query Parameters](#query-parameters) to discuss it in sufficient detail.
 
 ### Return Type
 
@@ -207,7 +216,7 @@ class JsonPlaceholderClient(Client):
 
 The section demonstrates how to control JSON serialization of HTTP requests and deserialization of HTTP responses.
 
-## Request Body Serialization
+### Request Body Serialization
 
 Pass the serialization function using the `fmt` parameter of the `api_ref` function. If the function returns either
 `str` or `bytes`, then the result is sent directly to the external API. Conversely, if you return a `dict`, then the
@@ -244,7 +253,7 @@ class JsonPlaceholderClient(Client):
         ...
 ```
 
-## Response Body Deserialization
+### Response Body Deserialization
 
 Pass the deserialization function using the `json` parameter of the `body` function.
 
