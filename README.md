@@ -27,13 +27,12 @@
 
 [12]: https://opensource.org/license/bsd-3-clause "License"
 
-Meatie is a Python library that simplifies implementation of REST API clients. The library generates code for calling
-REST endpoints based on method signatures annotated with type hints. Meatie takes care of mechanics related to HTTP
-communication, such as building URLs, encoding query parameters, and serialization of request/response body. Rate
-limiting,
-retries, and caching are available with some modest extra setup.
+Meatie is a Python library that simplifies the implementation of REST API clients. The library generates code for
+calling REST endpoints based on method signatures annotated with type hints. Meatie takes care of mechanics related to
+HTTP communication, such as building URLs, encoding query parameters, and serializing the body in the HTTP requests and
+responses. Rate limiting, retries, and caching are available with some modest extra setup.
 
-Meatie works with all major HTTP client libraries (request, httpx, aiohttp) and provides seamless integration with
+Meatie works with all major HTTP client libraries (request, httpx, aiohttp) and offers seamless integration with
 Pydantic (v1 and v2). The minimum officially supported version is Python 3.9.
 
 ## TL;DR
@@ -70,7 +69,7 @@ class JsonPlaceholderClient(Client):
     async def post_todo(self, todo: Annotated[Todo, api_ref("body")]) -> Todo: ...
 ```
 
-Not using `aiohttp` in your project? See the same example for [
+Do you use a different HTTP client library in your project? See the same example adapter for [
 `requests`](./tests/examples/requests/tutorial/test_basics.py) and [
 `httpx`](./tests/examples/httpx/tutorial/test_basics.py).
 
@@ -98,10 +97,9 @@ class JsonPlaceholderClient(Client):
         ...
 ```
 
-A cache key is built based on the URL path and query parameters. It does not include the scheme and the network
-location. By default, every instance of the HTTP client uses an independent cache. The behavior can be changed in the
-endpoint
-definition to share cached results across all instances of the same HTTP client class.
+A cache key is built based on the URL path and query parameters. It does not include the scheme or the network location.
+By default, every HTTP client instance has an independent cache. The behavior can be changed in the endpoint definition
+to share cached results across all HTTP client class instances.
 
 ### Rate Limiting
 
@@ -134,10 +132,9 @@ class JsonPlaceholderClient(Client):
 
 ### Retries
 
-Meatie can retry failed HTTP requests following the strategy described in the endpoint definition. The retry strategy is
-defined using third-party functions that control if a retry should be attempted, how long to wait between consecutive
-attempts to call the endpoint, and
-when to abort further retries.
+Meatie can retry failed HTTP requests following the strategy set in the endpoint definition. The retry strategy is
+controlled using third-party functions that specify when a retry should be attempted, how long to wait between
+consecutive attempts to call the endpoint, and whether to abort further retries.
 
 ```python
 from typing import Annotated
@@ -178,14 +175,13 @@ class JsonPlaceholderClient(Client):
         ...
 ```
 
-Meatie provides a set of predefined functions for building retry strategies. See
+Meatie comes with a built-in set of predefined functions for building retry strategies. See
 the [meatie.retry](./src/meatie/option/retry.py) for more details.
 
 ### Calling Private Endpoints
 
-Meatie can include additional information in the HTTP request required to successfully call REST endpoints. Most common
-examples
-include adding `Authorization` header with a token or signing the request using API keys.
+Meatie can inject additional information into the HTTP request. A typical example is adding the `Authorization` header
+with a token or signing the request using API keys.
 
 ```python
 from typing import Annotated, override
@@ -213,7 +209,7 @@ class JsonPlaceholderClient(Client):
         request.headers["Authorization"] = "Bearer bWVhdGll"
 ```
 
-### Further Endpoint Customizations
+## More Examples
 
-Need more control over the way HTTP requests or responses are being processed? See
-the [Meatie Cook Book](./docs/cookbook.md) with answers to the most commonly asked questions.  
+Need more control over processing the HTTP requests or responses? See the [Meatie Cookbook](./docs/cookbook.md) with
+solutions to the most frequently asked questions by the community.

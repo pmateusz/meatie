@@ -1,23 +1,80 @@
-## Return Types
+# Cookbook
 
-Methods marked with the `@endpoint` decorator can declare one of the following return types:
+The first section of the cookbook provides a brief overview of the `@endpoint` descriptor. The remaining sections illustrate practical
+recipes on how to customize Meatie behavior when dealing with HTTP query parameters, request/response body serialization, and error handling.
+## Endpoint Descriptor
 
-- `bytes`
-- `str`
-- `dict` or `TypedDict`
-- a dataclass
-- a Pydantic model
-- a container type of any type mentioned above
-- `meatie.AsyncResponse` or `meatie.Response` - wrapper for a response returned by the underlying HTTP client library
+Meatie generates code for calling REST APIs for method signatures marked with the `@endpoint`
+descriptor. See [descriptors](https://docs.python.org/3/howto/descriptor.html) for more information about this Python
+metaprogramming feature.
 
-Using dataclasses, `TypedDict` or `Pydantic` models require the `Pydantic` library to be installed.
+There are a few requirements regarding the application of the `@endpoint` descriptor.
 
-## Rename HTTP Query Parameters
+The descriptor is available in a class that inherits from the abstract class [
+`meatie.BaseClient`] or [`meatie.BaseAsyncClient`]. Meatie provides implementations of these abstract classes for the
+most popular HTTP libraries: [`httpx`](meatie_httpx.Client), [`requests`](meatie_requests.Client), and [
+`aiohttp`](meatie_aiohttp.Client).
 
-Parameters that are not part of the URL path are sent as query parameters if their value is not `None`. By default, the
-name of the query parameter is derived
-from the name used in the method signature. Use the `api_ref` function to send the query parameter with a different
-name.
+The methods should be empty. Meatie won't call the method code directly. Leaving any implementation besides a docstring
+is a deadcode.
+
+The remaining sections focus on method names, input arguments, and return types.
+
+### Method Name
+
+It is common to prefix the method with the HTTP method name (i.e., `get_`, `post_`, etc.). Meatie will use the prefix to
+determine the desired HTTP method. However, this naming convention is optional, and you can use any naming scheme that
+suits your project. If you don't use HTTP methods as a prefix, define the desired HTTP method in the `@endpoint`
+descriptor.
+
+```python
+from typing import Annotated
+
+from aiohttp import ClientSession
+from meatie import api_ref, endpoint
+from meatie_aiohttp import Client
+
+
+class JsonPlaceholderClient(Client):
+    def __init__(self) -> None:
+        super().__init__(ClientSession(base_url="https://jsonplaceholder.typicode.com"))
+
+    @endpoint("/todos", method="GET")
+    async def list_todos(self, user_id: Annotated[int, api_ref("userId")] = None) -> list[dict]:
+        ...
+```
+
+### Method Arguments
+
+Method arguments referenced in the URL path are required. Other arguments are optional and are sent as HTTP query
+parameters only if their values are not equal to `None`. Customization of HTTP query parameters deserves a separate
+section [Query Parameters](#query parameters) to discuss it in sufficient detail.
+
+### Return Type
+
+Methods can return different Python types. Supporting it may require Meatie to process the response body. The table
+below contains supported return types and actions taken by Meatie.
+
+| Return Type                                 | Action on the HTTP response body |
+|---------------------------------------------|----------------------------------|
+| `None`                                      | No action                        |
+| `bytes`                                     | Read to bytes                    |
+| `str`                                       | Read and decode to text          |
+| `dict`                                      | Parse using JSON decoder         |
+| `TypedDict`                                 | Parse using Pydantic             |
+| dataclass                                   | Parse using Pydantic             |
+| Pydantic model                              | Parse using Pydantic             |
+| Container type of any type mentioned above  | Parse using Pydantic             |
+| `meatie.AsyncResponse` or `meatie.Response` | No action                        |
+
+## Query Parameters
+
+Processing of query parameters is customizable through the `api_ref` function.
+
+### Renaming Parameters
+
+By default, the query parameter name is the same as the argument name used in the method signature. Use the `api_ref`
+function to change the default value.
 
 ```python
 from typing import Annotated
@@ -36,7 +93,11 @@ class JsonPlaceholderClient(Client):
         ...
 ```
 
-## Query Parameter Serialization
+### Serialization
+
+Use the `api_ref` function to pass the serialization function. The function should return `str` or `bytes`.
+
+The example below shows how to send a query parameter as a string `true` or `false`.
 
 ```python
 from typing import Annotated
@@ -62,7 +123,39 @@ class JsonPlaceholderClient(Client):
 
 ```
 
-## Send Multiple Query Parameters for a Single Method Argument
+### Sending Multiple Parameters with the Same Name
+
+Declare the query parameter as a list and use the `api_ref` function to customize query parameter handling if needed.
+The serialization function should return a list of `str` or 'bytes`.
+
+```python
+from typing import Annotated
+
+from aiohttp import ClientSession
+from meatie import api_ref, endpoint
+from meatie_aiohttp import Client
+
+
+class JsonPlaceholderClient(Client):
+    def __init__(self) -> None:
+        super().__init__(ClientSession(base_url="https://jsonplaceholder.typicode.com"))
+
+    @endpoint("/todos")
+    async def get_todos(self, user_ids: Annotated[list[int], api_ref("userId")] = None) -> list[dict]:
+        ...
+
+```
+
+### Sending Multiple Parameters for a Single Input Argument
+
+Suppose you want to send multiple HTTP query parameters derived from an input argument. It is a common pattern to deal
+with endpoints that support large number of input parameters or endpoints with parameters that have complex
+dependencies.
+Then, instead of defining a function with large number of arguments, one could define a new data type that represents
+all input arguments of the endpoint.
+
+Use the `api_ref` function and pass a function that accepts the input model and returns a dictionary of query
+parameters.
 
 ```python
 from dataclasses import dataclass
@@ -110,27 +203,15 @@ class JsonPlaceholderClient(Client):
         ...
 ```
 
-## Send Multiple Query Parameters with the Same Name
+## JSON Serialization
 
-```python
-from typing import Annotated
+The section demonstrates how to control JSON serialization of HTTP requests and deserialization of HTTP responses.
 
-from aiohttp import ClientSession
-from meatie import api_ref, endpoint
-from meatie_aiohttp import Client
+## Request Body Serialization
 
-
-class JsonPlaceholderClient(Client):
-    def __init__(self) -> None:
-        super().__init__(ClientSession(base_url="https://jsonplaceholder.typicode.com"))
-
-    @endpoint("/todos")
-    async def get_todos(self, user_ids: Annotated[list[int], api_ref("userId")] = None) -> list[dict]:
-        ...
-
-```
-
-## Custom Request Body Serialization
+Pass the serialization function using the `fmt` parameter of the `api_ref` function. If the function returns either
+`str` or `bytes`, then the result is sent directly to the external API. Conversely, if you return a `dict`, then the
+HTTP client library will perform JSON serialization.
 
 ```python
 from typing import Any, Annotated
@@ -163,7 +244,9 @@ class JsonPlaceholderClient(Client):
         ...
 ```
 
-## Control Response Body Deserialization
+## Response Body Deserialization
+
+Pass the deserialization function using the `json` parameter of the `body` function.
 
 ```python
 from typing import Annotated, Any
@@ -199,15 +282,45 @@ class JsonPlaceholderClient(Client):
 
 ## Error Handling
 
+Some REST APIs report errors using a data model that doesn't meet the schema requirements of a successful response. To
+interact with such APIs, we suggest providing Meatie with a callback function that inspects the HTTP response before
+parsing its body using the Pydantic model. If the callback returns an exception, Meatie will abort processing the
+response and raise the exception. Then, depending on the error type, the operation could be retried after some delay, or
+aborted by raising the exception again to the application.
+
+Pass the callback that should check response errors using the `json` parameter of the `body` function.
+
 ```python
 from typing import Annotated
 
 from aiohttp import ClientSession
-from meatie import AsyncResponse, HttpStatusError, api_ref, body, endpoint
+from meatie import AsyncResponse, HttpStatusError, api_ref, body, endpoint, ResponseError
 from meatie_aiohttp import Client
+from pydantic import BaseModel, Field
+
+
+class Todo(BaseModel):
+    user_id: int = Field(alias="userId")
+    id: int
+    title: str
+    completed: bool
+
+
+class ApiError(ResponseError):
+
+    def __init__(self, response: AsyncResponse, error_code: str, error_msg: str) -> None:
+        super(self).__init__(response)
+        self.error_code = error_code
+        self.error_msg = error_msg
 
 
 async def get_error(response: AsyncResponse) -> Exception | None:
+    json = await response.json()
+    error_code = json.get("error_code")
+    if error_code is not None:
+        error_msg = json.get("error_msg")
+        return ApiError(response, error_code, error_msg)
+
     if 200 <= response.status < 300:
         return None
 
@@ -216,32 +329,9 @@ async def get_error(response: AsyncResponse) -> Exception | None:
 
 class JsonPlaceholderClient(Client):
     def __init__(self) -> None:
-        super().__init__(ClientSession(base_url="https://jsonplaceholder.typicode.com"))
+        super().__init__(ClientSession(base_url="https://jsonplaceholder.typicode.com", raise_for_status=True))
 
     @endpoint("/todos", body(error=get_error))
     async def get_todos(self, user_id: Annotated[int, api_ref("userId")] = None) -> list[dict]:
         ...
 ```
-
-## Define the HTTP Method
-
-Meatie infers the HTTP method from the method name defined in Python. Use the `method` argument to override the default
-behavior.
-
-```python
-from typing import Annotated
-
-from aiohttp import ClientSession
-from meatie import api_ref, endpoint
-from meatie_aiohttp import Client
-
-
-class JsonPlaceholderClient(Client):
-    def __init__(self) -> None:
-        super().__init__(ClientSession(base_url="https://jsonplaceholder.typicode.com"))
-
-    @endpoint("/todos", method="GET")
-    async def list_todos(self, user_id: Annotated[int, api_ref("userId")] = None) -> list[dict]:
-        ...
-```
-
