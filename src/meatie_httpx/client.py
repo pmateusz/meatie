@@ -27,6 +27,11 @@ class Client(BaseClient):
         limiter: Optional[Any] = None,
         prefix: Optional[str] = None,
     ) -> None:
+        if isinstance(client, httpx.AsyncClient):
+            raise NotImplementedError(
+                "Async HTTPX is not supported by the current version of Meatie."
+            )
+
         super().__init__(local_cache, limiter)
 
         self.client = client
