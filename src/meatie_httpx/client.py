@@ -34,23 +34,11 @@ class Client(BaseClient):
         self.prefix = prefix
 
     def send(self, request: Request) -> Response:
-        kwargs: dict[str, Any] = self.client_params.copy()
+        kwargs = build_kwargs(request, self.client_params)
 
         path = request.path
         if self.prefix is not None:
             path = self.prefix + path
-
-        if request.data is not None:
-            kwargs["content"] = request.data
-
-        if request.json is not None:
-            kwargs["json"] = request.json
-
-        if request.headers:
-            kwargs["headers"] = request.headers
-
-        if request.params:
-            kwargs["params"] = request.params
 
         try:
             response = self.client.request(request.method, path, **kwargs)
@@ -81,3 +69,21 @@ class Client(BaseClient):
 
     def close(self) -> None:
         self.client.close()
+
+
+def build_kwargs(request: Request, client_params: dict[str, Any]) -> dict[str, Any]:
+    kwargs = client_params.copy()
+
+    if request.data is not None:
+        kwargs["content"] = request.data
+
+    if request.json is not None:
+        kwargs["json"] = request.json
+
+    if request.headers:
+        kwargs["headers"] = request.headers
+
+    if request.params:
+        kwargs["params"] = request.params
+
+    return kwargs

@@ -39,7 +39,7 @@ class AsyncResponse(Protocol):
     async def text(self) -> str:
         ...
 
-    async def json(self) -> dict[str, Any]:
+    async def json(self) -> Any:
         ...
 
 
@@ -55,5 +55,5 @@ class Response(Protocol):
     def text(self) -> str:
         ...
 
-    def json(self) -> dict[str, Any]:
+    def json(self) -> Any:
         ...

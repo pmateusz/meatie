@@ -46,7 +46,7 @@ class AsyncResponse:
             raise ResponseError(self, exc) from exc
 
     @classmethod
-    async def get_json(cls, response: httpx.Response) -> dict[str, Any]:
+    async def get_json(cls, response: httpx.Response) -> Any:
         return response.json()
 
     @classmethod

@@ -115,7 +115,7 @@ class BoundEndpointDescriptor(Generic[PT, ResponseBodyType]):
         operators: Iterable[Operator[ResponseBodyType]],
         template: RequestTemplate[Any],
         response_decoder: TypeAdapter[ResponseBodyType],
-        get_json: Optional[Callable[[Any], dict[str, Any]]],
+        get_json: Optional[Callable[[Any], Any]],
         get_text: Optional[Callable[[Any], str]],
         get_error: Optional[Callable[[Response], Optional[Exception]]],
     ) -> None:

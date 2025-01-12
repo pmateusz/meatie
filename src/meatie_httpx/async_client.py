@@ -17,6 +17,7 @@ from meatie.types import Request
 from typing_extensions import Self
 
 from .async_response import AsyncResponse
+from .client import build_kwargs
 
 
 class AsyncClient(BaseAsyncClient):
@@ -35,23 +36,11 @@ class AsyncClient(BaseAsyncClient):
         self.prefix = prefix
 
     async def send(self, request: Request) -> AsyncResponse:
-        kwargs: dict[str, Any] = self.client_params.copy()
+        kwargs = build_kwargs(request, self.client_params)
 
         path = request.path
         if self.prefix is not None:
             path = self.prefix + path
-
-        if request.data is not None:
-            kwargs["content"] = request.data
-
-        if request.json is not None:
-            kwargs["json"] = request.json
-
-        if request.headers:
-            kwargs["headers"] = request.headers
-
-        if request.params:
-            kwargs["params"] = request.params
 
         try:
             response = await self.client.request(request.method, path, **kwargs)
