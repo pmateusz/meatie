@@ -1,10 +1,11 @@
-#  Copyright 2024 The Meatie Authors. All rights reserved.
+#  Copyright 2025 The Meatie Authors. All rights reserved.
 #  Use of this source code is governed by a BSD-style license that can be found in the LICENSE file.
 from typing import Any, Optional
 
 import httpx
-from meatie import BaseClient, Cache
-from meatie.error import (
+from meatie import (
+    BaseAsyncClient,
+    Cache,
     MeatieError,
     ProxyError,
     RequestError,
@@ -15,13 +16,14 @@ from meatie.error import (
 from meatie.types import Request
 from typing_extensions import Self
 
-from . import Response
+from .async_response import AsyncResponse
+from .client import build_kwargs
 
 
-class Client(BaseClient):
+class AsyncClient(BaseAsyncClient):
     def __init__(
         self,
-        client: httpx.Client,
+        client: httpx.AsyncClient,
         client_params: Optional[dict[str, Any]] = None,
         local_cache: Optional[Cache] = None,
         limiter: Optional[Any] = None,
@@ -33,7 +35,7 @@ class Client(BaseClient):
         self.client_params = client_params if client_params else {}
         self.prefix = prefix
 
-    def send(self, request: Request) -> Response:
+    async def send(self, request: Request) -> AsyncResponse:
         kwargs = build_kwargs(request, self.client_params)
 
         path = request.path
@@ -41,7 +43,7 @@ class Client(BaseClient):
             path = self.prefix + path
 
         try:
-            response = self.client.request(request.method, path, **kwargs)
+            response = await self.client.request(request.method, path, **kwargs)
         except (httpx.InvalidURL, httpx.UnsupportedProtocol) as exc:
             raise RequestError(exc) from exc
         except httpx.ProxyError as exc:
@@ -54,36 +56,18 @@ class Client(BaseClient):
             raise TransportError(exc) from exc
         except httpx.HTTPError as exc:
             raise MeatieError(exc) from exc
-        return Response(response)
+        return AsyncResponse(response)
 
-    def __enter__(self) -> Self:
+    async def __aenter__(self) -> Self:
         return self
 
-    def __exit__(
+    async def __aexit__(
         self,
         exc_type: Optional[type[BaseException]],
         exc_val: Optional[BaseException],
         exc_tb: Any,
     ) -> None:
-        self.client.close()
+        await self.close()
 
-    def close(self) -> None:
-        self.client.close()
-
-
-def build_kwargs(request: Request, client_params: dict[str, Any]) -> dict[str, Any]:
-    kwargs = client_params.copy()
-
-    if request.data is not None:
-        kwargs["content"] = request.data
-
-    if request.json is not None:
-        kwargs["json"] = request.json
-
-    if request.headers:
-        kwargs["headers"] = request.headers
-
-    if request.params:
-        kwargs["params"] = request.params
-
-    return kwargs
+    async def close(self) -> None:
+        await self.client.aclose()

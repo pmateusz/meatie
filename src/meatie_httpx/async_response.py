@@ -1,18 +1,18 @@
-#  Copyright 2024 The Meatie Authors. All rights reserved.
+#  Copyright 2025 The Meatie Authors. All rights reserved.
 #  Use of this source code is governed by a BSD-style license that can be found in the LICENSE file.
-from json import JSONDecodeError
-from typing import Any, Callable, Optional
+from json.decoder import JSONDecodeError
+from typing import Any, Awaitable, Callable, Optional
 
 import httpx
 from meatie.error import ParseResponseError, ResponseError
 
 
-class Response:
+class AsyncResponse:
     def __init__(
         self,
         response: httpx.Response,
-        get_json: Optional[Callable[[httpx.Response], Any]] = None,
-        get_text: Optional[Callable[[httpx.Response], str]] = None,
+        get_json: Optional[Callable[[httpx.Response], Awaitable[Any]]] = None,
+        get_text: Optional[Callable[[httpx.Response], Awaitable[str]]] = None,
     ) -> None:
         self.response = response
         if get_json is not None:
@@ -24,31 +24,31 @@ class Response:
     def status(self) -> int:
         return self.response.status_code
 
-    def read(self) -> bytes:
+    async def read(self) -> bytes:
         try:
             return self.response.content
         except Exception as exc:
             raise ResponseError(self, exc) from exc
 
-    def text(self) -> str:
+    async def text(self) -> str:
         try:
-            return self.get_text(self.response)
+            return await self.get_text(self.response)
         except Exception as exc:
             raise ResponseError(self, exc) from exc
 
-    def json(self) -> Any:
+    async def json(self) -> dict[str, Any]:
         try:
-            return self.get_json(self.response)
+            return await self.get_json(self.response)
         except JSONDecodeError as exc:
-            text = self.text()
+            text = await self.text()
             raise ParseResponseError(text, self, exc) from exc
         except Exception as exc:
             raise ResponseError(self, exc) from exc
 
     @classmethod
-    def get_json(cls, response: httpx.Response) -> Any:
+    async def get_json(cls, response: httpx.Response) -> Any:
         return response.json()
 
     @classmethod
-    def get_text(cls, response: httpx.Response) -> str:
+    async def get_text(cls, response: httpx.Response) -> str:
         return response.text

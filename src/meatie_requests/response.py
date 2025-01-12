@@ -10,7 +10,7 @@ class Response:
     def __init__(
         self,
         response: requests.Response,
-        get_json: Optional[Callable[[requests.Response], dict[str, Any]]] = None,
+        get_json: Optional[Callable[[requests.Response], Any]] = None,
         get_text: Optional[Callable[[requests.Response], str]] = None,
     ) -> None:
         self.response = response
@@ -35,7 +35,7 @@ class Response:
         except Exception as exc:
             raise ResponseError(self, exc) from exc
 
-    def json(self) -> dict[str, Any]:
+    def json(self) -> Any:
         try:
             return self.get_json(self.response)
         except requests.JSONDecodeError as exc:
@@ -45,7 +45,7 @@ class Response:
             raise ResponseError(self, exc) from exc
 
     @classmethod
-    def get_json(cls, response: requests.Response) -> dict[str, Any]:
+    def get_json(cls, response: requests.Response) -> Any:
         return response.json()
 
     @classmethod

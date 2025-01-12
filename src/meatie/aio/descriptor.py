@@ -57,7 +57,7 @@ class AsyncEndpointDescriptor(Generic[PT, ResponseBodyType]):
     ) -> None:
         self.template = template
         self.response_decoder = response_decoder
-        self.get_json: Optional[Callable[[Any], Awaitable[dict[str, Any]]]] = None
+        self.get_json: Optional[Callable[[Any], Awaitable[Any]]] = None
         self.get_text: Optional[Callable[[Any], Awaitable[str]]] = None
         self.get_error: Optional[Callable[[AsyncResponse], Awaitable[Optional[Exception]]]] = None
         self.__operator_by_priority: dict[int, AsyncOperator[ResponseBodyType]] = {}
