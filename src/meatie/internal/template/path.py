@@ -41,10 +41,10 @@ class PathTemplate:
     def __contains__(self, item: str) -> bool:
         return item in self.parameters or item in self.conditionals
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         return hash(self.template)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.template
 
     def format(self, **kwargs: dict[str, Any]) -> str:
