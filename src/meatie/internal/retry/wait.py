@@ -6,7 +6,6 @@ from abc import abstractmethod
 from typing import Callable
 
 from meatie import HOUR, Duration
-from typing_extensions import Union
 
 from . import RetryContext
 
@@ -55,17 +54,13 @@ class WaitExponential(BaseWait):
 
 
 class WaitFixed(BaseWait):
-    def __init__(self, delays: Union[Duration, tuple[Duration, ...]]) -> None:
-        if isinstance(delays, Duration):
-            self.__delays: tuple[Duration, ...] = (delays,)
-        else:
-            self.__delays = delays
+    def __init__(self, delay: Duration, *other_delays: Duration) -> None:
+        self.__delays: list[Duration] = [delay]
+        self.__delays.extend(other_delays)
 
     def __call__(self, ctx: RetryContext) -> Duration:
         step = min(ctx.attempt_number, len(self.__delays)) - 1
-        if step >= 0:
-            return self.__delays[step]
-        return 0.0
+        return self.__delays[step]
 
 
 class WaitUniform(BaseWait):
