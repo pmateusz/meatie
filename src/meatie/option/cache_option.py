@@ -61,16 +61,6 @@ def get_key(request: Request) -> str:
     return key
 
 
-class _Operator(Generic[T]):
-    def __init__(self, ttl: Duration, max_size: Optional[int] = None) -> None:
-        self.ttl = ttl
-        self.max_size = max_size
-
-    @abc.abstractmethod
-    def _storage(self, ctx: Context[T]) -> Cache:
-        ...
-
-
 class Operator(Generic[T]):
     def __init__(self, ttl: Duration, max_size: Optional[int] = None) -> None:
         self.ttl = ttl
