@@ -17,6 +17,7 @@ from meatie.internal.types import PT, RequestBodyType, T
 from typing_extensions import Callable, Self, Union, get_type_hints
 
 from . import Kind, Parameter, PathTemplate
+from .unwrap import Unwrappable
 
 
 class RequestTemplate(Generic[RequestBodyType]):
@@ -94,6 +95,13 @@ class RequestTemplate(Generic[RequestBodyType]):
 
                 if param.formatter is not None:
                     value = param.formatter(value)
+                    query_kwargs[param.api_ref] = value
+                    continue
+
+                if isinstance(value, Unwrappable):
+                    values = value.unwrap()
+                    query_kwargs.update(values)
+                    continue
 
                 query_kwargs[param.api_ref] = value
                 continue
