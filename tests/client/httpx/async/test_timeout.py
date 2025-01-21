@@ -17,6 +17,7 @@ class TestHttpxTimeoutSuite(TimeoutSuite):
         event_loop: asyncio.AbstractEventLoop,
     ) -> Generator[ClientAdapter, None, None]:
         with ClientAdapter(
-            event_loop, AsyncClient(httpx.AsyncClient(), client_params={"timeout": 0.005})
+            event_loop,
+            AsyncClient(httpx.AsyncClient(), client_params={"timeout": 0.005}),
         ) as client:
             yield client

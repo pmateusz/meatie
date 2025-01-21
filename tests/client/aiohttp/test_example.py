@@ -180,7 +180,10 @@ async def test_private_endpoint_example(dump_model: Callable[[Any], Any]) -> Non
         # THEN
         assert quote == quote_result
         session.request.assert_awaited_once_with(
-            "POST", "/api/v1/quote/request", json=dump_model(basket), headers={"api-key": "123"}
+            "POST",
+            "/api/v1/quote/request",
+            json=dump_model(basket),
+            headers={"api-key": "123"},
         )
 
 
@@ -271,7 +274,10 @@ async def test_rate_limit_example(mock_tools, dump_model: Callable[[Any], Any]) 
             super().__init__(
                 session,
                 limiter=Limiter(
-                    Rate(tokens_per_sec=1), capacity=60, init_tokens=0, init_time=current_time
+                    Rate(tokens_per_sec=1),
+                    capacity=60,
+                    init_tokens=0,
+                    init_time=current_time,
                 ),
             )
 

@@ -36,7 +36,8 @@ class BodyOption:
         self.error = error
 
     def __call__(
-        self, descriptor: Union[EndpointDescriptor[PT, T], AsyncEndpointDescriptor[PT, T]]
+        self,
+        descriptor: Union[EndpointDescriptor[PT, T], AsyncEndpointDescriptor[PT, T]],
     ) -> None:
         descriptor.get_text = self.text
         descriptor.get_json = self.json

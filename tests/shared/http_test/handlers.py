@@ -16,7 +16,8 @@ class Handler(SimpleHTTPRequestHandler):
                 json_data = json.dumps(message)
             except Exception as exc:
                 self.send_text(
-                    HTTPStatus.INTERNAL_SERVER_ERROR, "Failed to serialize response: " + str(exc)
+                    HTTPStatus.INTERNAL_SERVER_ERROR,
+                    "Failed to serialize response: " + str(exc),
                 )
                 return
 

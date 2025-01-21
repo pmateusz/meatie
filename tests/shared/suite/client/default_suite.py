@@ -132,7 +132,9 @@ class DefaultSuite:
         # GIVEN
         def malformed_text_handler(handler: Handler) -> None:
             handler.send_bytes(
-                HTTPStatus.OK, "text/plain; charset=ascii", bytes([0xF0, 0x9F, 0x9A, 0x80])
+                HTTPStatus.OK,
+                "text/plain; charset=ascii",
+                bytes([0xF0, 0x9F, 0x9A, 0x80]),
             )
 
         http_server.handler = malformed_text_handler
@@ -151,7 +153,9 @@ class DefaultSuite:
         # GIVEN
         def malformed_text_handler(handler: Handler) -> None:
             handler.send_bytes(
-                HTTPStatus.OK, "application/json; charset=utf-8", "{invalid-json}".encode("utf-8")
+                HTTPStatus.OK,
+                "application/json; charset=utf-8",
+                "{invalid-json}".encode("utf-8"),
             )
 
         http_server.handler = malformed_text_handler

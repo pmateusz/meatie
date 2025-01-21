@@ -19,6 +19,9 @@ class TestAiohttpProxyErrorSuite(ProxyErrorSuite):
     ) -> Generator[ClientAdapter, None, None]:
         with ClientAdapter(
             event_loop,
-            Client(create_client_session(), session_params={"proxy": "http://localhost:3128"}),
+            Client(
+                create_client_session(),
+                session_params={"proxy": "http://localhost:3128"},
+            ),
         ) as client:
             yield client

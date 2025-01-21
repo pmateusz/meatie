@@ -130,7 +130,9 @@ async def test_get_with_marshaller(mock_tools) -> None:
     # THEN
     assert PRODUCTS == result
     session.request.assert_awaited_once_with(
-        "GET", "/api/v1/transactions", params={"since": "2006-01-02", "until": "2006-01-03"}
+        "GET",
+        "/api/v1/transactions",
+        params={"since": "2006-01-02", "until": "2006-01-03"},
     )
 
 
@@ -207,7 +209,9 @@ async def test_handles_optional_parameters_with_default_name(mock_tools) -> None
 
     # THEN
     session.request.assert_awaited_once_with(
-        "GET", "/api/v1/orders", params={"begin": int_timestamp(begin), "end": int_timestamp(end)}
+        "GET",
+        "/api/v1/orders",
+        params={"begin": int_timestamp(begin), "end": int_timestamp(end)},
     )
 
 

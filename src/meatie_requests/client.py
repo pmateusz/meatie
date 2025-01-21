@@ -63,13 +63,19 @@ class Client(BaseClient):
             requests.exceptions.InvalidHeader,
         ) as exc:
             raise RequestError(exc) from exc
-        except (requests.exceptions.TooManyRedirects, requests.exceptions.HTTPError) as exc:
+        except (
+            requests.exceptions.TooManyRedirects,
+            requests.exceptions.HTTPError,
+        ) as exc:
             raise TransportError(exc) from exc
         except requests.exceptions.ProxyError as exc:
             raise ProxyError(exc) from exc
         except requests.exceptions.Timeout as exc:
             raise Timeout(exc) from exc
-        except (requests.exceptions.ConnectionError, requests.exceptions.SSLError) as exc:
+        except (
+            requests.exceptions.ConnectionError,
+            requests.exceptions.SSLError,
+        ) as exc:
             raise ServerError(exc) from exc
         except requests.exceptions.RequestException as exc:
             raise MeatieError(exc) from exc

@@ -3,7 +3,18 @@
 
 # isort:skip_file
 import importlib.metadata
-from .types import Request, Response, AsyncResponse, Method, Duration, Time, INF, MINUTE, HOUR, DAY
+from .types import (
+    Request,
+    Response,
+    AsyncResponse,
+    Method,
+    Duration,
+    Time,
+    INF,
+    MINUTE,
+    HOUR,
+    DAY,
+)
 from .api_reference import api_ref
 from .error import (
     MeatieError,

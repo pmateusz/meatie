@@ -77,7 +77,9 @@ class ResponseV2(BaseModel):
 
 
 @pytest.mark.asyncio()
-async def test_can_handle_corrupted_pydantic_model_with_enum(http_server: HTTPTestServer) -> None:
+async def test_can_handle_corrupted_pydantic_model_with_enum(
+    http_server: HTTPTestServer,
+) -> None:
     # GIVEN
     def handler(request: BaseHTTPRequestHandler) -> None:
         request.send_response(HTTPStatus.OK)

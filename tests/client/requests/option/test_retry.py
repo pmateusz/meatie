@@ -67,7 +67,8 @@ def test_can_retry(mock_tools) -> None:
     too_many_requests_response = mock_tools.json_response({}, HTTPStatus.TOO_MANY_REQUESTS)
     ok_response = mock_tools.json_response(json=PRODUCTS)
     session = Mock(
-        spec=Session, request=Mock(side_effect=[too_many_requests_response, ok_response])
+        spec=Session,
+        request=Mock(side_effect=[too_many_requests_response, ok_response]),
     )
 
     class Store(Client):

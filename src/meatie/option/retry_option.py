@@ -61,7 +61,8 @@ class RetryOption:
         self.__sleep_func = sleep_func
 
     def __call__(
-        self, descriptor: Union[EndpointDescriptor[PT, T], AsyncEndpointDescriptor[PT, T]]
+        self,
+        descriptor: Union[EndpointDescriptor[PT, T], AsyncEndpointDescriptor[PT, T]],
     ) -> None:
         if isinstance(descriptor, EndpointDescriptor):
             return self.__sync_descriptor(descriptor)
