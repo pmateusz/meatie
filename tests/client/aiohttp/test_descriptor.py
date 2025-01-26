@@ -137,6 +137,46 @@ async def test_get_with_marshaller(mock_tools) -> None:
 
 
 @pytest.mark.asyncio()
+async def test_get_with_auto_marshaller(mock_tools) -> None:
+    # GIVEN
+    session = mock_tools.session_with_json_response(json=PRODUCTS)
+    layout = "%Y-%m-%d"
+
+    @dataclass
+    class TimeRange:
+        start: datetime.datetime
+        end: datetime.datetime
+
+        def unwrap(self) -> dict:
+            return {
+                "since": self.start.strftime(layout),
+                "until": self.end.strftime(layout),
+            }
+
+    class Store(Client):
+        def __init__(self) -> None:
+            super().__init__(session)
+
+        @endpoint("/api/v1/transactions")
+        async def get_transactions(self, time_range: TimeRange) -> list[Any]:
+            ...
+
+    # WHEN
+    async with Store() as api:
+        result = await api.get_transactions(
+            time_range=TimeRange(
+                start=datetime.datetime(2006, 1, 2), end=datetime.datetime(2006, 1, 3)
+            )
+        )
+
+    # THEN
+    assert PRODUCTS == result
+    session.request.assert_awaited_once_with(
+        "GET", "/api/v1/transactions", params={"since": "2006-01-02", "until": "2006-01-03"}
+    )
+
+
+@pytest.mark.asyncio()
 async def test_post_with_body(mock_tools) -> None:
     # GIVEN
     session = mock_tools.session_with_json_response(json=None)
