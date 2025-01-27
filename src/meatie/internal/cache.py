@@ -50,11 +50,7 @@ class Cache:
         for key in expired:
             del self._storage[key]
 
-        # 2. Remove the oldest items if still exceeding max_size
-        # Currently just removing until the max_size is met again, not more...
-        # target_size = int(self._max_size * 0.8)  # Keep 80% capacity
-        # while len(self._storage) > target_size:
-
+        # 2. Remove the oldest items until max_size is met
         while len(self._storage) > self._max_size:
             # Remove first (oldest) item - OrderedDict maintains insertion order
             self._storage.popitem(last=False)

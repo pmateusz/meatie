@@ -80,7 +80,7 @@ Cache result for a given TTL.
 ```python
 from typing import Annotated
 
-from meatie import MINUTE, api_ref, cache, endpoint
+from meatie import MINUTE, api_ref, cache, endpoint, Cache
 from meatie_aiohttp import Client
 from pydantic import BaseModel
 
@@ -90,7 +90,11 @@ class Todo(BaseModel):
 
 
 class JsonPlaceholderClient(Client):
-    ...
+    def __init__(self) -> None:
+        super().__init__(
+            ClientSession(base_url="https://jsonplaceholder.typicode.com"),
+            local_cache=Cache(max_size=100),
+        )
 
     @endpoint("/todos", cache(ttl=MINUTE, shared=False))
     async def get_todos(self, user_id: Annotated[int, api_ref("userId")] = None) -> list[Todo]:
@@ -100,6 +104,9 @@ class JsonPlaceholderClient(Client):
 A cache key is built based on the URL path and query parameters. It does not include the scheme or the network location.
 By default, every HTTP client instance has an independent cache. The behavior can be changed in the endpoint definition
 to share cached results across all HTTP client class instances.
+
+You can pass your custom cache to the local_cache parameter. The built-in cache provides a max_size parameter to limit
+its size.
 
 ### Rate Limiting
 
