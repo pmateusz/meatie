@@ -1,13 +1,16 @@
+#  Copyright 2023 The Meatie Authors. All rights reserved.
+#  Use of this source code is governed by a BSD-style license that can be found in the LICENSE file.
+
 import pytest
 from meatie.internal.cache import Cache
 
 
 @pytest.fixture
-def cache(self) -> Cache:
+def cache() -> Cache:
     return Cache(max_size=3)
 
 
-def test_store_and_load(self, cache):
+def test_store_and_load(cache):
     # GIVEN a cache with no stored items
     # WHEN a value is stored with the key "key1"
     cache.store("key1", "value1", ttl=10)
@@ -15,14 +18,14 @@ def test_store_and_load(self, cache):
     assert cache.load("key1") == "value1"
 
 
-def test_load_nonexistent(self, cache):
+def test_load_nonexistent(cache):
     # GIVEN a cache with no stored items
     # WHEN trying to load a nonexistent key
     # THEN the result should be None
     assert cache.load("nonexistent") is None
 
 
-def test_expiration(self, cache):
+def test_expiration(cache):
     # GIVEN a cache where the current time is 100
     current_time = 100
     cache._time_provider = lambda: current_time
@@ -39,7 +42,7 @@ def test_expiration(self, cache):
     assert cache.load("key1") is None
 
 
-def test_max_size(self):
+def test_max_size():
     # GIVEN a cache with max size of 2
     cache = Cache(max_size=2)
 
@@ -54,7 +57,7 @@ def test_max_size(self):
     assert cache.load("key3") == "value3"
 
 
-def test_delete(self, cache):
+def test_delete(cache):
     # GIVEN a cache with one stored item
     cache.store("key1", "value1", ttl=10)
 
@@ -65,7 +68,7 @@ def test_delete(self, cache):
     assert cache.load("key1") is None
 
 
-def test_cleanup_expired_before_old(self):
+def test_cleanup_expired_before_old():
     # GIVEN a cache with a max size of 3 and current time as 100
     current_time = 100
     cache = Cache(max_size=3)
