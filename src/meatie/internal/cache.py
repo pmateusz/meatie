@@ -51,6 +51,9 @@ class Cache:
             del self._storage[key]
 
         # 2. Remove the oldest items until max_size is met
+        if self._max_size is None:
+            return
+
         while len(self._storage) > self._max_size:
             # Remove first (oldest) item - OrderedDict maintains insertion order
             self._storage.popitem(last=False)
