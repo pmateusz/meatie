@@ -58,7 +58,6 @@ def get_key(request: Request) -> str:
     key = request.path
     if request.params:
         key += "?" + urllib.parse.urlencode(request.params)
-    # TODO (HomerusJa): Consider adding the request body's hash to the key
     return key
 
 

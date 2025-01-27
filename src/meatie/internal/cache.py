@@ -1,7 +1,10 @@
+#  Copyright 2023 The Meatie Authors. All rights reserved.
+#  Use of this source code is governed by a BSD-style license that can be found in the LICENSE file.
+
 import time
 from collections import OrderedDict
 from dataclasses import dataclass
-from typing import Any, Optional
+from typing import Any
 
 
 @dataclass
@@ -11,7 +14,7 @@ class _Record:
 
 
 class Cache:
-    def __init__(self, max_size: Optional[int] = None) -> None:
+    def __init__(self, max_size: int = 100) -> None:
         self._storage: OrderedDict[str, _Record] = OrderedDict()
         self._max_size = max_size
         self._time_provider = time.monotonic
@@ -26,8 +29,7 @@ class Cache:
             del self._storage[key]
             return None
 
-        # Move to end to mark as recently used
-        self._storage.move_to_end(key)
+        self._storage.move_to_end(key)  # Mark as most recently used
         return record.value
 
     def store(self, key: str, value: Any, ttl: float) -> None:
@@ -51,9 +53,7 @@ class Cache:
             del self._storage[key]
 
         # 2. Remove the oldest items until max_size is met
-        if self._max_size is None:
-            return
-
-        while len(self._storage) > self._max_size:
+        to_remove = len(self._storage) - self._max_size
+        for _ in range(to_remove):
             # Remove first (oldest) item - OrderedDict maintains insertion order
             self._storage.popitem(last=False)
