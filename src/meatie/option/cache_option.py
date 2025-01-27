@@ -3,7 +3,7 @@
 
 import abc
 import urllib.parse
-from typing import Generic, Optional, Union
+from typing import Generic, Union
 
 from meatie import Cache, Context, Duration, EndpointDescriptor, Request
 from meatie.aio import AsyncContext, AsyncEndpointDescriptor
@@ -13,7 +13,7 @@ __all__ = ["cache"]
 
 
 class CacheOption:
-    def __init__(self, ttl: Duration, shared: bool = False, max_size: Optional[int] = None) -> None:
+    def __init__(self, ttl: Duration, shared: bool = False) -> None:
         """
         :param ttl: the time-to-live of the cache entry in seconds.
         :param shared: if set to True, the cache will be shared among all instances of the class. Default is False.
@@ -21,7 +21,6 @@ class CacheOption:
 
         self.ttl = ttl
         self.shared = shared
-        self.max_size = max_size
 
     def __call__(
         self,
@@ -38,17 +37,17 @@ class CacheOption:
     def __sync_descriptor(self, descriptor: EndpointDescriptor[PT, T]) -> None:
         operator: Operator[T]
         if self.shared:
-            operator = SharedOperator[T](self.ttl, self.max_size)
+            operator = SharedOperator[T](self.ttl)
         else:
-            operator = LocalOperator[T](self.ttl, self.max_size)
+            operator = LocalOperator[T](self.ttl)
         descriptor.register_operator(self.priority, operator)
 
     def __async_descriptor(self, descriptor: AsyncEndpointDescriptor[PT, T]) -> None:
         operator: AsyncOperator[T]
         if self.shared:
-            operator = SharedAsyncOperator[T](self.ttl, self.max_size)
+            operator = SharedAsyncOperator[T](self.ttl)
         else:
-            operator = LocalAsyncOperator[T](self.ttl, self.max_size)
+            operator = LocalAsyncOperator[T](self.ttl)
         descriptor.register_operator(self.priority, operator)
 
 
@@ -64,9 +63,8 @@ def get_key(request: Request) -> str:
 
 
 class Operator(Generic[T]):
-    def __init__(self, ttl: Duration, max_size: Optional[int] = None) -> None:
+    def __init__(self, ttl: Duration) -> None:
         self.ttl = ttl
-        self.max_size = max_size
 
     def __call__(self, ctx: Context[T]) -> T:
         storage = self._storage(ctx)
@@ -95,9 +93,8 @@ class SharedOperator(Operator[T]):
 
 
 class AsyncOperator(Generic[T]):
-    def __init__(self, ttl: Duration, max_size: Optional[int] = None) -> None:
+    def __init__(self, ttl: Duration) -> None:
         self.ttl = ttl
-        self.max_size = max_size
 
     async def __call__(self, ctx: AsyncContext[T]) -> T:
         storage = self._storage(ctx)
