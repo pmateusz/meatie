@@ -23,7 +23,8 @@ class CacheOption:
         self.shared = shared
 
     def __call__(
-        self, descriptor: Union[EndpointDescriptor[PT, T], AsyncEndpointDescriptor[PT, T]]
+        self,
+        descriptor: Union[EndpointDescriptor[PT, T], AsyncEndpointDescriptor[PT, T]],
     ) -> None:
         if isinstance(descriptor, EndpointDescriptor):
             return self.__sync_descriptor(descriptor)
@@ -58,15 +59,6 @@ def get_key(request: Request) -> str:
     if request.params:
         key += "?" + urllib.parse.urlencode(request.params)
     return key
-
-
-class _Operator(Generic[T]):
-    def __init__(self, ttl: Duration) -> None:
-        self.ttl = ttl
-
-    @abc.abstractmethod
-    def _storage(self, ctx: Context[T]) -> Cache:
-        ...
 
 
 class Operator(Generic[T]):

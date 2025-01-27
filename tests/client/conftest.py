@@ -60,7 +60,9 @@ def temp_dir_fixture() -> Generator[str, None, None]:
 
 @pytest.fixture(name="untrusted_context", scope="module")
 def untrusted_context_fixture(
-    temp_dir: str, private_key: Ed25519PrivateKey, self_signed_certificate: x509.Certificate
+    temp_dir: str,
+    private_key: Ed25519PrivateKey,
+    self_signed_certificate: x509.Certificate,
 ) -> ssl.SSLContext:
     key_file = temp_dir + "/key.pem"
     key_bytes = private_key.private_bytes(

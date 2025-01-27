@@ -56,7 +56,10 @@ class Client(BaseAsyncClient):
 
         try:
             response = await self.session.request(request.method, path, **kwargs)
-        except (aiohttp.ClientProxyConnectionError, aiohttp.ClientHttpProxyError) as exc:
+        except (
+            aiohttp.ClientProxyConnectionError,
+            aiohttp.ClientHttpProxyError,
+        ) as exc:
             raise ProxyError(exc) from exc
         except (
             aiohttp.ServerConnectionError,

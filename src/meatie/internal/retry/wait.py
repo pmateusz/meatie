@@ -38,7 +38,11 @@ class WaitZero(BaseWait):
 
 class WaitExponential(BaseWait):
     def __init__(
-        self, exp_base: float = 2.0, multiplier: float = 2.0, lb: float = 0.0, ub: float = HOUR
+        self,
+        exp_base: float = 2.0,
+        multiplier: float = 2.0,
+        lb: float = 0.0,
+        ub: float = HOUR,
     ) -> None:
         self.exp_base = exp_base
         self.multiplier = multiplier

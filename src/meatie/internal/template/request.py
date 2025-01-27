@@ -168,7 +168,12 @@ class RequestTemplate(Generic[RequestBodyType]):
                 default_value = sig_param.default
 
             parameter = Parameter(
-                kind, param_name, api_ref.name, default_value, api_ref.fmt, api_ref.unwrap
+                kind,
+                param_name,
+                api_ref.name,
+                default_value,
+                api_ref.fmt,
+                api_ref.unwrap,
             )
             parameters.append(parameter)
 

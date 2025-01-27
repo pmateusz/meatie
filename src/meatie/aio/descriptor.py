@@ -53,7 +53,9 @@ class AsyncContext(Generic[ResponseBodyType]):
 
 class AsyncEndpointDescriptor(Generic[PT, ResponseBodyType]):
     def __init__(
-        self, template: RequestTemplate[Any], response_decoder: TypeAdapter[ResponseBodyType]
+        self,
+        template: RequestTemplate[Any],
+        response_decoder: TypeAdapter[ResponseBodyType],
     ) -> None:
         self.template = template
         self.response_decoder = response_decoder

@@ -26,7 +26,8 @@ async def test_use_prefix(http_server: HTTPTestServer) -> None:
 
     # WHEN
     async with PrefixClient(
-        ClientSession(base_url=http_server.base_url, raise_for_status=True), prefix="/api/v1/"
+        ClientSession(base_url=http_server.base_url, raise_for_status=True),
+        prefix="/api/v1/",
     ) as client:
         status = await client.get_status()
 
