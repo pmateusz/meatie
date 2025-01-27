@@ -68,9 +68,7 @@ def test_all_parameters_must_be_present_in_signature() -> None:
         )
 
     # THEN
-    assert "Parameter 'order_ref' is not present in the method signature '...'" == str(
-        exc_info.value
-    )
+    assert "Parameter 'order_ref' is not present in the method signature '...'" == str(exc_info.value)
 
 
 def test_all_parameters_must_be_present_in_path() -> None:
@@ -89,9 +87,7 @@ def test_all_parameters_must_be_present_in_path() -> None:
         )
 
     # THEN
-    assert "Parameter 'position_ref' is not present in the method signature '...'" == str(
-        exc_info.value
-    )
+    assert "Parameter 'position_ref' is not present in the method signature '...'" == str(exc_info.value)
 
 
 def test_build_template() -> None:
@@ -137,15 +133,11 @@ def test_create_template_from_signature() -> None:
     # GIVEN
     path_template = PathTemplate.from_string("/api/v1/order/{order_id}/position")
 
-    async def get_positions_by_order_id(
-        order_id: int, sort_by: Annotated[str, api_ref("orderBy")]
-    ) -> list[Any]:
+    async def get_positions_by_order_id(order_id: int, sort_by: Annotated[str, api_ref("orderBy")]) -> list[Any]:
         return []
 
     # WHEN
-    request: RequestTemplate[None] = RequestTemplate.from_callable(
-        get_positions_by_order_id, path_template, "GET"
-    )
+    request: RequestTemplate[None] = RequestTemplate.from_callable(get_positions_by_order_id, path_template, "GET")
 
     # THEN
     assert "GET" == request.method

@@ -31,9 +31,7 @@ class RetryOption:
         on: Condition = has_status(HTTPStatus.TOO_MANY_REQUESTS),
         wait: WaitFunc = zero,
         stop: Condition = never,
-        sleep_func: Union[
-            Callable[[Duration], None], Callable[[Duration], Awaitable[None]], None
-        ] = None,
+        sleep_func: Union[Callable[[Duration], None], Callable[[Duration], Awaitable[None]], None] = None,
     ) -> None:
         """
         :param on: function that returns True if the operation should be retried. Default behaviour is to retry on the HTTP Too Many Requests (429) status code.

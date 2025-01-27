@@ -103,9 +103,7 @@ async def test_plain_example(dump_model: Callable[[Any], Any]) -> None:
             ...
 
         @endpoint("/api/v1/quote/request")
-        async def post_request_quote(
-            self, basket: Annotated[Basket, api_ref("body")]
-        ) -> BasketQuote:
+        async def post_request_quote(self, basket: Annotated[Basket, api_ref("body")]) -> BasketQuote:
             ...
 
         @endpoint("/api/v1/quote/{quote_id}/accept", method="POST")
@@ -135,9 +133,7 @@ async def test_plain_example(dump_model: Callable[[Any], Any]) -> None:
 
         # THEN
         assert quote == quote_result
-        session.request.assert_awaited_once_with(
-            "POST", "/api/v1/quote/request", json=dump_model(basket)
-        )
+        session.request.assert_awaited_once_with("POST", "/api/v1/quote/request", json=dump_model(basket))
 
         # GIVEN
         session.request = AsyncMock(return_value=AsyncMock())
@@ -157,9 +153,7 @@ async def test_private_endpoint_example(dump_model: Callable[[Any], Any]) -> Non
             super().__init__(session)
 
         @endpoint("/api/v1/quote/request", private)
-        async def post_request_quote(
-            self, basket: Annotated[Basket, api_ref("body")]
-        ) -> BasketQuote:
+        async def post_request_quote(self, basket: Annotated[Basket, api_ref("body")]) -> BasketQuote:
             ...
 
         async def authenticate(self, request: Request) -> None:

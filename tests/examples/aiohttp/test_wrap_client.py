@@ -1,3 +1,5 @@
+#  Copyright 2023 The Meatie Authors. All rights reserved.
+#  Use of this source code is governed by a BSD-style license that can be found in the LICENSE file.
 from http import HTTPStatus
 from unittest.mock import AsyncMock, Mock
 
@@ -58,9 +60,7 @@ async def test_handles_no_content() -> None:
 async def test_handles_other_status() -> None:
     # GIVEN
     client = Mock(spec=Client)
-    client.delete_multisig_transaction = AsyncMock(
-        return_value=Mock(status=HTTPStatus.INTERNAL_SERVER_ERROR)
-    )
+    client.delete_multisig_transaction = AsyncMock(return_value=Mock(status=HTTPStatus.INTERNAL_SERVER_ERROR))
     controller = Controller(client)
 
     # WHEN

@@ -19,9 +19,7 @@ class JsonPlaceholderClient(Client):
         super().__init__(ClientSession(base_url="https://jsonplaceholder.typicode.com"))
 
     @endpoint("/todos")
-    async def get_todos(
-        self, user_ids: Annotated[list[int], api_ref("userId")] = None
-    ) -> list[Todo]:
+    async def get_todos(self, user_ids: Annotated[list[int], api_ref("userId")] = None) -> list[Todo]:
         ...
 
 

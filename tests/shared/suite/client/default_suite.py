@@ -126,9 +126,7 @@ class DefaultSuite:
         assert HTTPStatus.INTERNAL_SERVER_ERROR == response.status
 
     @staticmethod
-    def test_can_handle_malformed_text_encoding(
-        http_server: HTTPTestServer, client: Client
-    ) -> None:
+    def test_can_handle_malformed_text_encoding(http_server: HTTPTestServer, client: Client) -> None:
         # GIVEN
         def malformed_text_handler(handler: Handler) -> None:
             handler.send_bytes(
@@ -189,9 +187,7 @@ class DefaultSuite:
         assert exc_info.value.__cause__ is not None
 
     @staticmethod
-    def test_rejects_untrusted_cert(
-        untrusted_https_server: HTTPSTestServer, client: Client
-    ) -> None:
+    def test_rejects_untrusted_cert(untrusted_https_server: HTTPSTestServer, client: Client) -> None:
         # GIVEN
         untrusted_https_server.handler = StatusHandler(HTTPStatus.OK)
         request = Request("GET", untrusted_https_server.base_url, params={}, headers={})
@@ -204,9 +200,7 @@ class DefaultSuite:
         assert exc_info.value.__cause__ is not None
 
     @staticmethod
-    def test_rejects_http_protocol_when_https_is_requested(
-        http_server: HTTPTestServer, client: Client
-    ) -> None:
+    def test_rejects_http_protocol_when_https_is_requested(http_server: HTTPTestServer, client: Client) -> None:
         # GIVEN
         request = Request("GET", f"https://localhost:{http_server.port}", params={}, headers={})
 

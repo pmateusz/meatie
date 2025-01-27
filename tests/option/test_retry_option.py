@@ -9,9 +9,7 @@ from meatie.option.retry_option import RetryOperator
 def test_exception_is_reset() -> None:
     # GIVEN
     successful_response = Mock()
-    operator = RetryOperator(
-        on=has_exception_type(RuntimeError), wait=zero, stop=never, sleep_func=Mock()
-    )
+    operator = RetryOperator(on=has_exception_type(RuntimeError), wait=zero, stop=never, sleep_func=Mock())
     ctx = Mock(spec=Context)
     call_count = 0
 

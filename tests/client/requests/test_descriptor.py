@@ -243,9 +243,7 @@ def test_get_with_send_optional_parameter(mock_tools) -> None:
         api.get_products(category="household")
 
     # THEN
-    session.request.assert_called_once_with(
-        "GET", "/api/v1/products", params={"category": "household"}
-    )
+    session.request.assert_called_once_with("GET", "/api/v1/products", params={"category": "household"})
 
 
 def test_falls_back_to_get_if_method_name_cannot_be_inferred() -> None:

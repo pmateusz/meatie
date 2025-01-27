@@ -47,6 +47,4 @@ class PydanticV1TypeAdapterFactory:
 
     @staticmethod
     def is_model_type(value: type[Any]) -> bool:
-        return isclass(value) and (
-            issubclass(value, pydantic.BaseModel) or is_dataclass(value) or is_typeddict(value)
-        )
+        return isclass(value) and (issubclass(value, pydantic.BaseModel) or is_dataclass(value) or is_typeddict(value))

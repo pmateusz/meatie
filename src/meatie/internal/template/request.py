@@ -126,9 +126,7 @@ class RequestTemplate(Generic[RequestBodyType]):
         )
 
     @classmethod
-    def from_callable(
-        cls, func: Callable[PT, T], template: PathTemplate, method: Optional[Method]
-    ) -> Self:
+    def from_callable(cls, func: Callable[PT, T], template: PathTemplate, method: Optional[Method]) -> Self:
         signature = inspect.signature(func)
         type_hints = get_type_hints(func)
         return cls.from_signature(signature, type_hints, template, method)
@@ -201,16 +199,12 @@ class RequestTemplate(Generic[RequestBodyType]):
                 raise ValueError(f"Multiple parameters have name '{param.api_ref}'")
 
             if param.kind == Kind.PATH and param.api_ref not in template:
-                raise ValueError(
-                    f"Parameter '{param.api_ref}' is not present in the path '{template}'"
-                )
+                raise ValueError(f"Parameter '{param.api_ref}' is not present in the path '{template}'")
 
             visited_api_refs.add(param.api_ref)
 
         missing_api_refs = set(template.parameters) - visited_api_refs
         for api_ref in missing_api_refs:
-            raise ValueError(
-                f"Parameter '{api_ref}' is not present in the method signature '{signature}'"
-            )
+            raise ValueError(f"Parameter '{api_ref}' is not present in the method signature '{signature}'")
 
         return cls(template, list(params), request_encoder, method)
