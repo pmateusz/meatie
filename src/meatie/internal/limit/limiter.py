@@ -11,9 +11,7 @@ from . import Rate, Reservation, Tokens
 
 
 class Limiter:
-    """
-    Leaky bucket rate limiter.
-    """
+    """Leaky bucket rate limiter."""
 
     __slots__ = ("rate", "capacity", "__last_tokens", "__last_time")
 
@@ -24,13 +22,11 @@ class Limiter:
         init_tokens: Optional[Tokens] = None,
         init_time: Optional[Time] = None,
     ) -> None:
-        """
-        :param rate: Replenishment rate of tokens
+        """:param rate: Replenishment rate of tokens
         :param capacity: Maximum number of tokens available at any time
         :param init_tokens: Initial number of tokens (i.e., burst size)
         :param init_time: Initial time when the burst size is available. If not provided, the current time is used.
         """
-
         self.rate = rate
         self.capacity = capacity
         self.__last_tokens = init_tokens if init_tokens is not None else capacity

@@ -33,13 +33,13 @@ class RetryOption:
         stop: Condition = never,
         sleep_func: Union[Callable[[Duration], None], Callable[[Duration], Awaitable[None]], None] = None,
     ) -> None:
-        """
-        :param on: function that returns True if the operation should be retried. Default behaviour is to retry on the HTTP Too Many Requests (429) status code.
+        """:param on: function that returns True if the operation should be retried. Default behaviour is to retry on the HTTP Too Many Requests (429) status code.
         :param wait: function that returns the duration to wait before the next retry attempt. Default behaviour is to don't wait.
         :param stop: function that returns True if the operation should be aborted. Default behaviour is never to stop.
         :param sleep_func: the sleep function to use. Default behaviour is to rely on the Python standard library functions: time.sleep and asyncio.sleep for async functions.
 
-        See also:
+        See Also:
+        --------
             meatie.has_status - retry on a specific status code
             meatie.has_exception_type - retry on a specific exception type
             meatie.has_exception_cause_type - retry if a specific exception type is present in the exception chain
@@ -52,7 +52,6 @@ class RetryOption:
             meatie.after - stop after deadline in seconds
             meatie.after_attempt - stop after a number of attempts
         """
-
         self.__on = on
         self.__wait = wait
         self.__stop = stop

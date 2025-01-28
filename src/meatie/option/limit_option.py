@@ -19,16 +19,15 @@ class LimitOption:
         tokens: Tokens,
         sleep_func: Union[Callable[[float], Union[None, Awaitable[None]]], None] = None,
     ) -> None:
-        """
-        :param tokens: number of tokens consumed by the API call
+        """:param tokens: number of tokens consumed by the API call
         :param sleep_func: the sleep function to use. Default behaviour is to rely on the Python standard library functions: time.sleep and asyncio.sleep for async functions.
 
         The number of available tokens, replenishment rate, and burst size are controlled by the rate limiter instance used by the client.
 
-        See also:
+        See Also:
+        --------
             meatie.Limiter: Leaky bucket rate limiter implementation.
         """
-
         self.tokens = tokens
         self.sleep_func = sleep_func
 

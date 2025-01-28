@@ -17,15 +17,13 @@ class ApiReference:
         fmt: Optional[Callable[[Any], Any]] = None,
         unwrap: Optional[Callable[[Any], dict[str, Any]]] = None,
     ) -> None:
-        """
-        Customize handling of a parameter in the HTTP request.
+        """Customize handling of a parameter in the HTTP request.
 
         :param name: name of the query parameter in the HTTP request, if not set the name of the Python parameter is
          used by default
         :param fmt: conversion function to apply on the parameter value before sending the HTTP request
         :param unwrap: conversion function to apply on the parameter value before sending the HTTP request. In contrast to the fmt function, which produces a single value, the unwrap function returns a dictionary of key value pairs.
         """
-
         self.name = name
         self.fmt = fmt
         self.unwrap = unwrap
