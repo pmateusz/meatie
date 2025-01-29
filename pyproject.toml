@@ -105,6 +105,23 @@ notice-rgx = "(?i)Copyright \\d{4} The Meatie Authors. All rights reserved.\\n# 
 min-file-size = 1024
 
 [tool.ruff.per-file-ignores]
+"src/meatie/aio/**" = ["D"]
+"src/meatie/api_reference.py" = ["D"]
+"src/meatie/client.py" = ["D"]
+"src/meatie/descriptor.py" = ["D"]
+"src/meatie/endpoint.py" = ["D"]
+"src/meatie/error.py" = ["D"]
+"src/meatie/types.py" = ["D"]
+"src/meatie/option/**" = ["D"]
+"src/meatie/internal/types.py" = ["D"]
+"src/meatie/internal/retry/**" = ["D"]
+"src/meatie/internal/limit/**" = ["D"]
+"src/meatie/internal/cache.py" = ["D"]
+"src/meatie/internal/adapter/**" = ["D"]
+"src/meatie/internal/error/**" = ["D"]
+"src/meatie_httpx/**" = ["D"]
+"src/meatie_requests/**" = ["D"]
+"src/meatie_aiohttp/**" = ["D"]
 "tests/**" = ["D"]
 "test_*.py" = ["D"]
 
