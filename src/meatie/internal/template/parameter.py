@@ -5,6 +5,8 @@ from typing import Any, Callable, Optional
 
 
 class Kind(Enum):
+    """Type of parameter in an HTTP request."""
+
     UNKNOWN = 0
     PATH = 1
     QUERY = 2
@@ -12,6 +14,8 @@ class Kind(Enum):
 
 
 class Parameter:
+    """Represents a parameter in an HTTP request. It could be either a path URL parameter, an HTTP query parameter, or the HTTP request body."""
+
     __slots__ = ("kind", "name", "api_ref", "default_value", "formatter", "marshaller")
 
     def __init__(
@@ -21,8 +25,18 @@ class Parameter:
         api_ref: str,
         default_value: Any = None,
         formatter: Optional[Callable[[Any], Any]] = None,
-        marshaller: Optional[Callable[[Any], dict[str, Any]]] = None,
+        marshaller: Optional[Callable[[Any], dict[str, Any]]] = None,  # TODO: replace marshaller by formatter
     ) -> None:
+        """Create a Parameter.
+
+        Args:
+            kind: type of parameter in an HTTP request
+            name: name used in the Python function
+            api_ref: name of the parameter used in the API
+            default_value: default value of the parameter
+            formatter: function to apply on the parameter value before sending the HTTP request
+            marshaller: function to apply on the parameter value before sending the HTTP request. In contrast to the formatter function, which produces a single value, the marshaller function returns a dictionary of key value pairs.
+        """
         self.kind = kind
         self.name = name
         self.api_ref = api_ref

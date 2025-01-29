@@ -21,6 +21,8 @@ from .unwrap import Unwrappable
 
 
 class RequestTemplate(Generic[RequestBodyType]):
+    """Represents a template for making HTTP requests."""
+
     __slots__ = (
         "method",
         "template",
@@ -36,6 +38,13 @@ class RequestTemplate(Generic[RequestBodyType]):
         request_encoder: TypeAdapter[RequestBodyType],
         method: Optional[Method],
     ) -> None:
+        """Create a RequestTemplate.
+
+        :param template: URL path template
+        :param params: parameters for the HTTP request, such as path, query, and body parameters
+        :param request_encoder: request body encoder
+        :param method: HTTP method
+        """
         self.method = method
         self.template = template
         self.params = params
@@ -46,6 +55,10 @@ class RequestTemplate(Generic[RequestBodyType]):
             self.__param_by_name[param.name] = param
 
     def build_request(self, *args: Any, **kwargs: Any) -> Request:
+        """Create Request given *args and **kwargs.
+
+        :return: Request instance
+        """
         if self.method is None:
             raise RuntimeError("'method' is None")
 
@@ -127,6 +140,19 @@ class RequestTemplate(Generic[RequestBodyType]):
 
     @classmethod
     def from_callable(cls, func: Callable[PT, T], template: PathTemplate, method: Optional[Method]) -> Self:
+        """Create RequestTemplate from a callable.
+
+        Args:
+            func: Callable
+            template: URL path template
+            method: HTTP method
+
+        Returns:
+            RequestTemplate instance
+
+        Raises:
+            ValueError: if arguments are found invalid.
+        """
         signature = inspect.signature(func)
         type_hints = get_type_hints(func)
         return cls.from_signature(signature, type_hints, template, method)
@@ -139,6 +165,20 @@ class RequestTemplate(Generic[RequestBodyType]):
         template: PathTemplate,
         method: Optional[Method],
     ) -> Self:
+        """Create RequestTemplate from a Python method signature.
+
+        Args:
+            signature: Python function signature
+            type_hints: type hints for Python method parameters
+            template: URL path template
+            method: HTTP method
+
+        Returns:
+            RequestTemplate instance
+
+        Raises:
+            ValueError: if arguments are found invalid
+        """
         parameters = []
         request_encoder: TypeAdapter[Any] = JsonAdapter
         for param_name in type_hints:
@@ -186,6 +226,21 @@ class RequestTemplate(Generic[RequestBodyType]):
         request_encoder: TypeAdapter[RequestBodyType],
         method: Optional[Method],
     ) -> Self:
+        """Create RequestTemplate given the URL path template, HTTP request parameters, Python function signature, request body encoder, and HTTP method.
+
+        Args:
+            template: URL path template
+            params: list of HTTP parameters
+            signature: Python function signature
+            request_encoder: request body encoder
+            method: HTTP method
+
+        Returns:
+            RequestTemplate instance
+
+        Raises:
+            ValueError: if arguments are found invalid, for instance, a parameter mentioned in the URL path template is not present in the method signature.
+        """
         template_str = str(template)
         if template_str == "":
             raise ValueError("'path' is empty")

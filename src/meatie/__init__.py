@@ -1,6 +1,8 @@
 #  Copyright 2024 The Meatie Authors. All rights reserved.
 #  Use of this source code is governed by a BSD-style license that can be found in the LICENSE file.
 
+"""Meatie is a metaprogramming library for building HTTP REST API clients based on methods annotated with type hints."""
+
 # isort:skip_file
 import importlib.metadata
 from .types import (
