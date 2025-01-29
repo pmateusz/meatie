@@ -17,7 +17,7 @@ async def get_error(response: AsyncResponse) -> Optional[Exception]:
     if isinstance(body, dict):
         error = body.get("error")
         if error is not None:
-            return exc_type(response, error)
+            return exc_type(response)
 
     if response.status >= 300:
         return exc_type(response)
