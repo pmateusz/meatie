@@ -10,14 +10,14 @@ class _StringAdapter:
         try:
             return response.text()
         except ValueError as exc:
-            raise ResponseError(response, exc) from exc
+            raise ResponseError(response) from exc
 
     @staticmethod
     async def from_async_response(response: AsyncResponse) -> str:
         try:
             return await response.text()
         except ValueError as exc:
-            raise ResponseError(response, exc) from exc
+            raise ResponseError(response) from exc
 
     @staticmethod
     def to_content(value: str) -> str:  # pragma: no cover

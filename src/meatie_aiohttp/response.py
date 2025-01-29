@@ -28,25 +28,25 @@ class Response:
         try:
             return await self.response.content.read()
         except Exception as exc:
-            raise ResponseError(self, exc) from exc
+            raise ResponseError(self) from exc
 
     async def text(self) -> str:
         try:
             return await self.get_text(self.response)
         except Exception as exc:
-            raise ResponseError(self, exc) from exc
+            raise ResponseError(self) from exc
 
     async def json(self) -> dict[str, Any]:
         try:
             return await self.get_json(self.response)
         except JSONDecodeError as exc:
             text = await self.text()
-            raise ParseResponseError(text, self, exc) from exc
+            raise ParseResponseError(text, self) from exc
         except ContentTypeError as exc:
             text = await self.text()
-            raise ParseResponseError(text, self, exc) from exc
+            raise ParseResponseError(text, self) from exc
         except ClientError as exc:
-            raise ResponseError(self, exc) from exc
+            raise ResponseError(self) from exc
 
     @classmethod
     def get_json(cls, response: ClientResponse) -> Awaitable[dict[str, Any]]:

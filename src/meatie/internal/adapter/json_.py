@@ -13,9 +13,9 @@ class _JsonAdapter:
             return response.json()
         except JSONDecodeError as exc:
             text = response.text()
-            raise ParseResponseError(text, response, exc) from exc
+            raise ParseResponseError(text, response) from exc
         except Exception as exc:
-            raise ResponseError(response, exc) from exc
+            raise ResponseError(response) from exc
 
     @staticmethod
     async def from_async_response(response: AsyncResponse) -> Any:
@@ -23,7 +23,7 @@ class _JsonAdapter:
             return await response.json()
         except JSONDecodeError as exc:
             text = await response.text()
-            raise ParseResponseError(text, response, exc) from exc
+            raise ParseResponseError(text, response) from exc
         except (ParseResponseError, ResponseError):
             raise
 

@@ -69,15 +69,15 @@ class Client(BaseAsyncClient):
             aiohttp.ClientConnectorSSLError,
             aiohttp.ClientConnectorCertificateError,
         ) as exc:
-            raise ServerError(exc) from exc
+            raise ServerError() from exc
         except (aiohttp.ServerTimeoutError, asyncio.TimeoutError) as exc:
-            raise Timeout(exc) from exc
+            raise Timeout() from exc
         except (aiohttp.InvalidURL, aiohttp.NonHttpUrlClientError) as exc:
-            raise RequestError(exc) from exc
+            raise RequestError() from exc
         except (aiohttp.TooManyRedirects, aiohttp.ClientError) as exc:
-            raise TransportError(exc) from exc
+            raise TransportError() from exc
         except Exception as exc:
-            raise MeatieError(exc) from exc
+            raise MeatieError() from exc
         return Response(response)
 
     async def __aexit__(

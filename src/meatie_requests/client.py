@@ -60,7 +60,6 @@ class Client(BaseClient):
             requests.exceptions.InvalidSchema,
             requests.exceptions.InvalidURL,
             requests.exceptions.InvalidHeader,
-            requests.exceptions.InvalidHeader,
         ) as exc:
             raise RequestError(exc) from exc
         except (

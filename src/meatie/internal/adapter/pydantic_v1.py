@@ -24,7 +24,7 @@ class PydanticV1TypeAdapter(Generic[T]):
             return pydantic.parse_obj_as(self.model_type, json_model)
         except pydantic.ValidationError as exc:
             text = response.text()
-            raise ParseResponseError(text, response, exc) from exc
+            raise ParseResponseError(text, response) from exc
 
     async def from_async_response(self, response: AsyncResponse) -> T:
         json_model = await JsonAdapter.from_async_response(response)
@@ -32,7 +32,7 @@ class PydanticV1TypeAdapter(Generic[T]):
             return pydantic.parse_obj_as(self.model_type, json_model)
         except pydantic.ValidationError as exc:
             text = await response.text()
-            raise ParseResponseError(text, response, exc) from exc
+            raise ParseResponseError(text, response) from exc
 
     @staticmethod
     def to_content(value: T) -> Any:

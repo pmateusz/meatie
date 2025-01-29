@@ -28,22 +28,22 @@ class Response:
         try:
             return self.response.content
         except Exception as exc:
-            raise ResponseError(self, exc) from exc
+            raise ResponseError(self) from exc
 
     def text(self) -> str:
         try:
             return self.get_text(self.response)
         except Exception as exc:
-            raise ResponseError(self, exc) from exc
+            raise ResponseError(self) from exc
 
     def json(self) -> Any:
         try:
             return self.get_json(self.response)
         except JSONDecodeError as exc:
             text = self.text()
-            raise ParseResponseError(text, self, exc) from exc
+            raise ParseResponseError(text, self) from exc
         except Exception as exc:
-            raise ResponseError(self, exc) from exc
+            raise ResponseError(self) from exc
 
     @classmethod
     def get_json(cls, response: httpx.Response) -> Any:
