@@ -27,14 +27,14 @@ class Parameter:
         formatter: Optional[Callable[[Any], Any]] = None,
         marshaller: Optional[Callable[[Any], dict[str, Any]]] = None,  # TODO: replace marshaller by formatter
     ) -> None:
-        """Create a Parameter.
+        """Creates a Parameter.
 
         Args:
-            kind: type of parameter in an HTTP request
-            name: name used in the Python function
-            api_ref: name of the parameter used in the API
-            default_value: default value of the parameter
-            formatter: function to apply on the parameter value before sending the HTTP request
+            kind: type of parameter in an HTTP request.
+            name: name used in the Python function.
+            api_ref: name of the parameter used in the API.
+            default_value: default value of the parameter.
+            formatter: function to apply on the parameter value before sending the HTTP request.
             marshaller: function to apply on the parameter value before sending the HTTP request. In contrast to the formatter function, which produces a single value, the marshaller function returns a dictionary of key value pairs.
         """
         self.kind = kind

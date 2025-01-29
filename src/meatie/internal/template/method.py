@@ -12,7 +12,11 @@ _method_pattern_pairs = [(method, re.compile("^" + method, re.IGNORECASE)) for m
 
 
 def get_method(name: str, default: Method = "GET") -> Method:
-    """Extracts the HTTP method from the suffix."""
+    """Extracts the HTTP method from the suffix.
+
+    Returns:
+        The HTTP method extracted from the suffix or the default method if the suffix does not match any known method.
+    """
     for method, pattern in _method_pattern_pairs:
         if re.match(pattern, name):
             return method

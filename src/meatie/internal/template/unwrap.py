@@ -8,6 +8,7 @@ class Unwrappable(Protocol):
     def unwrap(self) -> dict[str, Any]:
         """Meatie will call this method on an object passed as a query parameter.
 
-        :return: A dictionary of query parameters. Value types should be supported by the underlying HTTP client library
+        Returns:
+            A dictionary of query parameters. Value types should be supported by the underlying HTTP client library.
         """
         ...

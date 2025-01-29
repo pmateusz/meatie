@@ -43,10 +43,13 @@ class PathTemplate:
         return self.template
 
     def format(self, **kwargs: dict[str, Any]) -> str:
-        """Renders a URL path given the path parameters.
+        """Creates a URL path given the path parameters.
 
-        :param kwargs: Path parameters.
-        :return: Formatted URL path.
+        Args:
+            kwargs: Path parameters.
+
+        Returns:
+            URL path.
         """
         return self.template.format(**kwargs)
 
@@ -54,8 +57,11 @@ class PathTemplate:
     def from_string(cls, template: str) -> Self:
         """Parse a string into a PathTemplate.
 
-        :param template: Template string.
-        :return: a PathTemplate instance.
+        Args:
+            template: URL template string.
+
+        Returns:
+            PathTemplate instance.
         """
         parameters = [match.group("name") for match in _param_pattern.finditer(template)]
         return cls(template, parameters)
