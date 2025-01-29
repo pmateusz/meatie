@@ -117,21 +117,6 @@ exclude_also = [
     "\\.\\.\\."
 ]
 
-[tool.ruff]
-fix = true
-line-length = 120
-cache-dir = ".ruff"
-extend-select = ["I"]
-
-[tool.ruff.lint]
-preview = true
-extend-select = ["CPY001"]
-
-[tool.ruff.lint.flake8-copyright]
-notice-rgx = "(?i)Copyright \\d{4} The Meatie Authors. All rights reserved.\\n#  Use of this source code is governed by a BSD-style license that can be found in the LICENSE file.\\n"
-
-min-file-size = 1024
-
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
