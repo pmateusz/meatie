@@ -78,9 +78,7 @@ class AsyncEndpointDescriptor(Generic[PT, ResponseBodyType]):
         ...
 
     @overload
-    def __get__(
-        self, instance: BaseAsyncClient, owner: type[object]
-    ) -> Callable[PT, Awaitable[ResponseBodyType]]:
+    def __get__(self, instance: BaseAsyncClient, owner: type[object]) -> Callable[PT, Awaitable[ResponseBodyType]]:
         ...
 
     def __get__(

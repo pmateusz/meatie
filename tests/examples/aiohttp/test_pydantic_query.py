@@ -1,3 +1,5 @@
+#  Copyright 2023 The Meatie Authors. All rights reserved.
+#  Use of this source code is governed by a BSD-style license that can be found in the LICENSE file.
 from datetime import datetime
 from decimal import Decimal
 from http import HTTPStatus
@@ -37,9 +39,7 @@ def dump_model(model: BaseModel) -> dict[str, Any]:
 
 class MyClient(Client):
     @endpoint("/v1/search")
-    async def get_search(
-        self, query_params: Annotated[MySearchFilter, api_ref(unwrap=dump_model)]
-    ) -> MySearchResults:
+    async def get_search(self, query_params: Annotated[MySearchFilter, api_ref(unwrap=dump_model)]) -> MySearchResults:
         ...
 
 
@@ -48,11 +48,7 @@ async def test_send_search_query(http_server: HTTPTestServer) -> None:
     # GIVEN
     def handler(h: Handler) -> None:
         if h.path == "/v1/search?limit=5&address=0x1234":
-            data = [
-                MyTransaction.model_construct(
-                    time=datetime(2024, 10, 27), amount=Decimal("123"), symbol="BTC"
-                )
-            ]
+            data = [MyTransaction.model_construct(time=datetime(2024, 10, 27), amount=Decimal("123"), symbol="BTC")]
         else:
             data = []
 

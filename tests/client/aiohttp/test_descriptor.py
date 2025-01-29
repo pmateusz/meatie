@@ -51,9 +51,7 @@ async def test_get_with_formatter(mock_tools) -> None:
             super().__init__(session)
 
         @endpoint("/api/v1/transactions")
-        async def get_transactions(
-            self, since: Annotated[datetime.datetime, api_ref(fmt=format_date)]
-        ) -> list[Any]:
+        async def get_transactions(self, since: Annotated[datetime.datetime, api_ref(fmt=format_date)]) -> list[Any]:
             ...
 
     # WHEN
@@ -62,9 +60,7 @@ async def test_get_with_formatter(mock_tools) -> None:
 
     # THEN
     assert PRODUCTS == result
-    session.request.assert_awaited_once_with(
-        "GET", "/api/v1/transactions", params={"since": "2006-01-02"}
-    )
+    session.request.assert_awaited_once_with("GET", "/api/v1/transactions", params={"since": "2006-01-02"})
 
 
 @pytest.mark.asyncio()
@@ -122,9 +118,7 @@ async def test_get_with_marshaller(mock_tools) -> None:
     # WHEN
     async with Store() as api:
         result = await api.get_transactions(
-            time_range=TimeRange(
-                start=datetime.datetime(2006, 1, 2), end=datetime.datetime(2006, 1, 3)
-            )
+            time_range=TimeRange(start=datetime.datetime(2006, 1, 2), end=datetime.datetime(2006, 1, 3))
         )
 
     # THEN
@@ -164,9 +158,7 @@ async def test_get_with_auto_marshaller(mock_tools) -> None:
     # WHEN
     async with Store() as api:
         result = await api.get_transactions(
-            time_range=TimeRange(
-                start=datetime.datetime(2006, 1, 2), end=datetime.datetime(2006, 1, 3)
-            )
+            time_range=TimeRange(start=datetime.datetime(2006, 1, 2), end=datetime.datetime(2006, 1, 3))
         )
 
     # THEN
@@ -215,9 +207,7 @@ async def test_post_with_bytes_body(mock_tools) -> None:
         await api.post_order(json.dumps(PRODUCTS, separators=(",", ":")).encode())
 
     # THEN
-    session.request.assert_awaited_once_with(
-        "POST", "/api/v1/order", json=b'[{"name":"Pencil"},{"name":"Headphones"}]'
-    )
+    session.request.assert_awaited_once_with("POST", "/api/v1/order", json=b'[{"name":"Pencil"},{"name":"Headphones"}]')
 
 
 @pytest.mark.asyncio()
@@ -336,9 +326,7 @@ async def test_get_with_send_optional_parameter(mock_tools) -> None:
         await api.get_products(category="household")
 
     # THEN
-    session.request.assert_awaited_once_with(
-        "GET", "/api/v1/products", params={"category": "household"}
-    )
+    session.request.assert_awaited_once_with("GET", "/api/v1/products", params={"category": "household"})
 
 
 def test_falls_back_to_get_if_method_name_cannot_be_inferred() -> None:

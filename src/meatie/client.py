@@ -9,6 +9,7 @@ from meatie import INF, Cache, Limiter, Rate, Request
 
 
 class BaseClient:
+    SHARED_CACHE_MAX_SIZE: int = 1000
     shared_cache: Cache
 
     def __init__(
@@ -20,7 +21,7 @@ class BaseClient:
         self.limiter = limiter if limiter is not None else Limiter(Rate.max, INF)
 
     def __init_subclass__(cls, **kwargs: Any) -> None:
-        cls.shared_cache = Cache()
+        cls.shared_cache = Cache(max_size=cls.SHARED_CACHE_MAX_SIZE)
 
     def __enter__(self) -> Self:
         return self

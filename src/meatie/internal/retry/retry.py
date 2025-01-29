@@ -30,9 +30,7 @@ class RetryOnStatus(BaseCondition):
 
 
 class RetryOnExceptionType(BaseCondition):
-    def __init__(
-        self, exc_types: Union[type[BaseException], tuple[type[BaseException], ...]]
-    ) -> None:
+    def __init__(self, exc_types: Union[type[BaseException], tuple[type[BaseException], ...]]) -> None:
         self.exc_types = exc_types
 
     def __call__(self, ctx: RetryContext) -> bool:
@@ -40,9 +38,7 @@ class RetryOnExceptionType(BaseCondition):
 
 
 class RetryOnExceptionCauseType(BaseCondition):
-    def __init__(
-        self, exc_types: Union[type[BaseException], tuple[type[BaseException], ...]]
-    ) -> None:
+    def __init__(self, exc_types: Union[type[BaseException], tuple[type[BaseException], ...]]) -> None:
         self.exc_types = exc_types
 
     def __call__(self, ctx: RetryContext) -> bool:

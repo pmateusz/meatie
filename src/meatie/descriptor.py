@@ -48,9 +48,7 @@ class EndpointDescriptor(Generic[PT, ResponseBodyType]):
         ...
 
     @overload
-    def __get__(
-        self, instance: BaseClient, owner: type[object]
-    ) -> Callable[PT, Awaitable[ResponseBodyType]]:
+    def __get__(self, instance: BaseClient, owner: type[object]) -> Callable[PT, Awaitable[ResponseBodyType]]:
         ...
 
     def __get__(

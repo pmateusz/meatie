@@ -6,9 +6,7 @@ from typing import get_args
 
 from meatie import Method
 
-_method_pattern_pairs = [
-    (method, re.compile("^" + method, re.IGNORECASE)) for method in get_args(Method)
-]
+_method_pattern_pairs = [(method, re.compile("^" + method, re.IGNORECASE)) for method in get_args(Method)]
 
 
 def get_method(name: str, default: Method = "GET") -> Method:

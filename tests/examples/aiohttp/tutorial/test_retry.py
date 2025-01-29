@@ -1,3 +1,5 @@
+#  Copyright 2023 The Meatie Authors. All rights reserved.
+#  Use of this source code is governed by a BSD-style license that can be found in the LICENSE file.
 from typing import Annotated
 
 import pytest
@@ -31,9 +33,7 @@ def should_retry(ctx: RetryContext) -> bool:
 
 class JsonPlaceholderClient(Client):
     def __init__(self) -> None:
-        super().__init__(
-            ClientSession(base_url="https://jsonplaceholder.typicode.com", raise_for_status=True)
-        )
+        super().__init__(ClientSession(base_url="https://jsonplaceholder.typicode.com", raise_for_status=True))
 
     @endpoint("/todos", retry(on=should_retry, stop=after_attempt(3), wait=fixed(5) + jit(2)))
     async def get_todos(self, user_id: Annotated[int, api_ref("userId")] = None) -> list[Todo]:

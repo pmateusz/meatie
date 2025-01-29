@@ -11,14 +11,4 @@ repos:
     rev: v0.1.7
     hooks:
       - id: ruff
-        args:
-          [
-            --fix,
-            --cache-dir=./.ruff,
-            --extend-select=I
-          ]
       - id: ruff-format
-        args:
-          [
-            --line-length=100,
-          ]

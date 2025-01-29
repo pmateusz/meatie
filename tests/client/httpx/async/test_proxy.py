@@ -17,9 +17,7 @@ class TestAsyncHttpxProxyErrorSuite:
         self,
         event_loop: asyncio.AbstractEventLoop,
     ) -> Generator[ClientAdapter, None, None]:
-        with ClientAdapter(
-            event_loop, AsyncClient(httpx.AsyncClient(proxy="http://localhost:3128"))
-        ) as client:
+        with ClientAdapter(event_loop, AsyncClient(httpx.AsyncClient(proxy="http://localhost:3128"))) as client:
             yield client
 
     @staticmethod

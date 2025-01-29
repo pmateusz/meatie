@@ -41,9 +41,7 @@ class Limiter:
 
     def reserve_at(self, time: Time, tokens: Tokens) -> Reservation:
         if tokens > self.capacity:
-            raise ValueError(
-                f"amount of requested tokens ({tokens}) exceed the limit ({self.capacity})"
-            )
+            raise ValueError(f"amount of requested tokens ({tokens}) exceed the limit ({self.capacity})")
 
         available = self.__advance_until(time)
         remaining = available - tokens

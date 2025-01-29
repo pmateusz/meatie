@@ -42,9 +42,7 @@ class PydanticTypeAdapterFactory(Protocol):
         ...
 
 
-def _resolve_pydantic_type_adapter_factory() -> (
-    Optional[PydanticTypeAdapterFactory]
-):  # pragma: no cover
+def _resolve_pydantic_type_adapter_factory() -> Optional[PydanticTypeAdapterFactory]:  # pragma: no cover
     module_spec = importlib.util.find_spec("pydantic")
 
     if module_spec is None:
@@ -60,9 +58,7 @@ def _resolve_pydantic_type_adapter_factory() -> (
         return PydanticV1TypeAdapterFactory()
 
 
-_PydanticTypeAdapterFactory: Optional[
-    PydanticTypeAdapterFactory
-] = _resolve_pydantic_type_adapter_factory()
+_PydanticTypeAdapterFactory: Optional[PydanticTypeAdapterFactory] = _resolve_pydantic_type_adapter_factory()
 
 
 def _resolve_is_model_type() -> Callable[[type[Any]], bool]:

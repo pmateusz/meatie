@@ -1,3 +1,5 @@
+#  Copyright 2023 The Meatie Authors. All rights reserved.
+#  Use of this source code is governed by a BSD-style license that can be found in the LICENSE file.
 from dataclasses import dataclass
 from typing import Annotated, Any, Self
 
@@ -38,9 +40,7 @@ class JsonPlaceholderClient(Client):
         super().__init__(ClientSession(base_url="https://jsonplaceholder.typicode.com"))
 
     @endpoint("/todos")
-    async def get_todos(
-        self, params: Annotated[TodoParams, api_ref(unwrap=TodoParams.unwrap)] = None
-    ) -> list[Todo]:
+    async def get_todos(self, params: Annotated[TodoParams, api_ref(unwrap=TodoParams.unwrap)] = None) -> list[Todo]:
         ...
 
 

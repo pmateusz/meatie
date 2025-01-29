@@ -39,9 +39,7 @@ async def test_post_request_body_with_fmt(http_server: HTTPTestServer) -> None:
 
     class TestClient(Client):
         @endpoint("/")
-        async def post_request(
-            self, body: Annotated[Request, api_ref(fmt=dump_body)]
-        ) -> AsyncResponse:
+        async def post_request(self, body: Annotated[Request, api_ref(fmt=dump_body)]) -> AsyncResponse:
             ...
 
     # WHEN
