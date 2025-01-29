@@ -40,10 +40,11 @@ class RequestTemplate(Generic[RequestBodyType]):
     ) -> None:
         """Creates a RequestTemplate.
 
-        :param template: URL path template.
-        :param params: parameters for the HTTP request, such as path, query, and body parameters.
-        :param request_encoder: request body encoder.
-        :param method: HTTP method.
+        Args:
+            template: URL path template.
+            params: parameters for the HTTP request, such as path, query, and body parameters.
+            request_encoder: request body encoder.
+            method: HTTP method.
         """
         self.method = method
         self.template = template
