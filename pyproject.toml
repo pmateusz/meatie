@@ -111,7 +111,6 @@ min-file-size = 1024
 "src/meatie/descriptor.py" = ["D"]
 "src/meatie/endpoint.py" = ["D"]
 "src/meatie/error.py" = ["D"]
-"src/meatie/types.py" = ["D"]
 "src/meatie/option/**" = ["D"]
 "src/meatie/internal/types.py" = ["D"]
 "src/meatie/internal/retry/**" = ["D"]
