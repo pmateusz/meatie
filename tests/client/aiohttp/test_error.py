@@ -11,18 +11,11 @@ from meatie_aiohttp import Client
 
 
 async def get_error(response: AsyncResponse) -> Optional[Exception]:
+    if response.status < 400:
+        return None
+
     exc_type = HttpStatusError if response.status >= 300 else ResponseError
-
-    body = await response.json()
-    if isinstance(body, dict):
-        error = body.get("error")
-        if error is not None:
-            return exc_type(response)
-
-    if response.status >= 300:
-        return exc_type(response)
-
-    return None
+    return exc_type(response)
 
 
 @pytest.mark.asyncio()
@@ -36,9 +29,10 @@ async def test_raises_error(http_server: HTTPTestServer) -> None:
             ...
 
     # WHEN
-    with pytest.raises(HttpStatusError) as exc_info:
-        async with TestClient(ClientSession(http_server.base_url)) as client:
+    async with TestClient(ClientSession(http_server.base_url)) as client:
+        with pytest.raises(HttpStatusError) as exc_info:
             await client.get_response()
 
-    # THEN
-    assert exc_info.value.args == ("deployment in progress",)
+        # THEN
+        response = await exc_info.value.response.json()
+        assert response == {"error": "deployment in progress"}

@@ -24,12 +24,21 @@ AsyncOperator = Callable[["AsyncContext[ResponseBodyType]"], Awaitable[ResponseB
 
 
 class AsyncContext(Generic[ResponseBodyType]):
+    """Stores context for processing an asynchronous HTTP request."""
+
     def __init__(
         self,
         client: BaseAsyncClient,
         operators: list[AsyncOperator[ResponseBodyType]],
         request: Request,
     ) -> None:
+        """Initializes the context.
+
+        Args:
+            client: HTTP client instance used for sending the HTTP request.
+            operators: list of operators that should be applied on the HTTP request and its response.
+            request: the HTTP request to be sent.
+        """
         self.client = client
         self.__operators = operators
         self.__next_step = 0
@@ -38,6 +47,10 @@ class AsyncContext(Generic[ResponseBodyType]):
         self.response: Optional[AsyncResponse] = None
 
     async def proceed(self) -> ResponseBodyType:
+        """One method call will apply one operator on the HTTP request.
+
+        Operators are applied on HTTP requests according to order defined in the context object. HTTP responses are processed in the opposite order.
+        """
         if self.__next_step >= len(self.__operators):
             raise RuntimeError("No more step to process request")
 
@@ -45,18 +58,25 @@ class AsyncContext(Generic[ResponseBodyType]):
         self.__next_step += 1
         current_operator = self.__operators[current_step]
         try:
-            result = await current_operator(self)
-            return result
+            return await current_operator(self)
         finally:
             self.__next_step = current_step
 
 
 class AsyncEndpointDescriptor(Generic[PT, ResponseBodyType]):
+    """Class descriptor for calling HTTP endpoints asynchronously."""
+
     def __init__(
         self,
         template: RequestTemplate[Any],
         response_decoder: TypeAdapter[ResponseBodyType],
     ) -> None:
+        """Creates an asynchronous endpoint descriptor.
+
+        Args:
+            template: the template for building HTTP requests to send to the given endpoint.
+            response_decoder: the adapter for decoding the HTTP responses returned from the endpoint.
+        """
         self.template = template
         self.response_decoder = response_decoder
         self.get_json: Optional[Callable[[Any], Awaitable[Any]]] = None
@@ -71,6 +91,18 @@ class AsyncEndpointDescriptor(Generic[PT, ResponseBodyType]):
         self.template.method = get_method(name)
 
     def register_operator(self, priority: int, operator: AsyncOperator[ResponseBodyType]) -> None:
+        """Registers an operator to apply on an HTTP request or response.
+
+        Meatie uses the following priorities for the built-in operators:
+         * 20 - caching
+         * 40 - retry
+         * 60 - rate limiting
+         * 80 - authentication
+
+        Args:
+            priority: the priority of the operator, operators are applied in ascending order of priority.
+            operator: the operator to apply.
+        """
         self.__operator_by_priority[priority] = operator
 
     @overload
@@ -103,6 +135,8 @@ class AsyncEndpointDescriptor(Generic[PT, ResponseBodyType]):
 
 
 class BoundAsyncEndpointDescriptor(Generic[PT, ResponseBodyType]):
+    """Class descriptor for calling HTTP endpoints asynchronously bound to the HTTP client instance."""
+
     def __init__(
         self,
         instance: BaseAsyncClient,
@@ -113,6 +147,17 @@ class BoundAsyncEndpointDescriptor(Generic[PT, ResponseBodyType]):
         get_text: Optional[Callable[[Any], Awaitable[str]]],
         get_error: Optional[Callable[[AsyncResponse], Awaitable[Optional[Exception]]]],
     ) -> None:
+        """Initializes the bound descriptor.
+
+        Args:
+            instance: HTTP client instance.
+            operators: the list of operators to apply on HTTP requests and responses.
+            template: the template for building HTTP requests to call the endpoint.
+            response_decoder: the adapter for decoding the HTTP responses returned from the endpoint.
+            get_json: the function to get JSON from the HTTP response.
+            get_text: the function to get text from the HTTP response.
+            get_error: the function to get an error from the HTTP response.
+        """
         self.__instance = instance
         self.__operators = list(operators)
         self.__operators.append(self.__send_request)
@@ -123,6 +168,15 @@ class BoundAsyncEndpointDescriptor(Generic[PT, ResponseBodyType]):
         self.__get_error = get_error
 
     async def __call__(self, *args: PT.args, **kwargs: PT.kwargs) -> ResponseBodyType:
+        """Sends an HTTP request.
+
+        Args:
+            *args: positional arguments for the endpoint.
+            **kwargs: keyword arguments for the endpoint.
+
+        Returns:
+            HTTP response body parsed to the expected Python return type used in the method signature.
+        """
         request = self.__template.build_request(*args, **kwargs)
         context = AsyncContext[ResponseBodyType](self.__instance, self.__operators, request)
         return await context.proceed()

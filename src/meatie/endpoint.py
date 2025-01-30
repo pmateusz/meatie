@@ -20,6 +20,19 @@ def endpoint(
     *args: Any,
     method: Optional[Method] = None,
 ) -> Callable[[Callable[..., T]], Callable[..., T]]:
+    """Class descriptor for decorating methods whose signature represents an API endpoint.
+
+    Inspects the method signature to create an endpoint descriptor that can be used to make HTTP requests.
+
+    Args:
+        path: URL path template, it should start with `/` and path parameters should be surrounded by parentheses.
+        args: optional parameters to customize the behavior of the endpoint, such as caching, rate limiting, retries, and authentication.
+        method: HTTP method to use when making the request, if not set the method is inferred from the method name.
+
+    Returns:
+        Endpoint class descriptor.
+    """
+
     def class_descriptor(func: Callable[PT, T]) -> Callable[PT, T]:
         path_template = PathTemplate.from_string(path)
 

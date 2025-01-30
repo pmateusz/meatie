@@ -9,6 +9,8 @@ from meatie import INF, Cache, Limiter, Rate, Request
 
 
 class BaseClient:
+    """Base class for the integration with HTTP client libraries."""
+
     SHARED_CACHE_MAX_SIZE: int = 1000
     shared_cache: Cache
 
@@ -17,6 +19,12 @@ class BaseClient:
         local_cache: Optional[Cache] = None,
         limiter: Optional[Limiter] = None,
     ):
+        """Creates a BaseAsyncClient.
+
+        Args:
+            local_cache: Cache implementation for storing the HTTP responses.
+            limiter: Rate limiter used for throttling the rate of sending the HTTP requests.
+        """
         self.local_cache = local_cache if local_cache is not None else Cache()
         self.limiter = limiter if limiter is not None else Limiter(Rate.max, INF)
 
@@ -35,10 +43,22 @@ class BaseClient:
         return None
 
     def authenticate(self, request: Request) -> None:
+        """Method called by the Meatie before sending an HTTP request for an endpoint marked as private.
+
+        The method could be used to set the Authorization header or sign the HTTP request and using API keys.
+
+        Args:
+            request: HTTP request object.
+        """
         pass
 
     @abstractmethod
     def send(self, request: Request) -> Any:
+        """Sends an HTTP request using the underlying HTTP client library.
+
+        Returns:
+            HTTP response object from the underlying HTTP client library.
+        """
         ...
 
 

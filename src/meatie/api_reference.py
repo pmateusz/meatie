@@ -9,6 +9,8 @@ __all__ = ["api_ref", "ApiReference"]
 
 
 class ApiReference:
+    """ApiReference stores additional settings that customize handling of a parameter in the HTTP request."""
+
     __slots__ = ("name", "fmt", "unwrap")
 
     def __init__(
@@ -17,12 +19,12 @@ class ApiReference:
         fmt: Optional[Callable[[Any], Any]] = None,
         unwrap: Optional[Callable[[Any], dict[str, Any]]] = None,
     ) -> None:
-        """Customize handling of a parameter in the HTTP request.
+        """Create an ApiReference.
 
-        :param name: name of the query parameter in the HTTP request, if not set the name of the Python parameter is
-         used by default
-        :param fmt: conversion function to apply on the parameter value before sending the HTTP request
-        :param unwrap: conversion function to apply on the parameter value before sending the HTTP request. In contrast to the fmt function, which produces a single value, the unwrap function returns a dictionary of key value pairs.
+        Args:
+            name: the name of the query parameter in the HTTP request, the name of the Python parameter is used as default.
+            fmt: conversion function to apply on the parameter value before sending the HTTP request
+            unwrap: conversion function to apply on the parameter value before sending the HTTP request. In contrast to the fmt function, which produces a single value, the unwrap function returns a dictionary of key value pairs.
         """
         self.name = name
         self.fmt = fmt
@@ -39,6 +41,7 @@ class ApiReference:
 
     @classmethod
     def from_signature(cls, parameter: inspect.Parameter) -> Self:
+        """Create an ApiReference from the Python method parameter."""
         for arg in get_args(parameter.annotation):
             if isinstance(arg, cls):
                 if arg.name is None:

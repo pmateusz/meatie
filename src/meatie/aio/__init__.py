@@ -3,6 +3,8 @@
 
 # isort:skip_file
 
+"""Meatie API for asynchronous clients."""
+
 from .client import BaseAsyncClient
 from .descriptor import AsyncEndpointDescriptor, AsyncContext
 
