@@ -22,11 +22,19 @@ Operator = Callable[["Context[ResponseBodyType]"], ResponseBodyType]
 
 
 class EndpointDescriptor(Generic[PT, ResponseBodyType]):
+    """Class descriptor for calling HTTP endpoints."""
+
     def __init__(
         self,
         template: RequestTemplate[Any],
         response_decoder: TypeAdapter[ResponseBodyType],
     ) -> None:
+        """Creates an endpoint descriptor.
+
+        Args:
+            template: the template for building HTTP requests to send to the given endpoint.
+            response_decoder: the adapter for decoding the HTTP responses returned from the endpoint.
+        """
         self.template = template
         self.response_decoder = response_decoder
         self.get_json: Optional[Callable[[Any], Any]] = None
@@ -41,6 +49,18 @@ class EndpointDescriptor(Generic[PT, ResponseBodyType]):
         self.template.method = get_method(name)
 
     def register_operator(self, priority: int, operator: Operator[ResponseBodyType]) -> None:
+        """Registers an operator to apply on an HTTP request or response.
+
+        Meatie uses the following priorities for the built-in operators:
+         * 20 - caching
+         * 40 - retry
+         * 60 - rate limiting
+         * 80 - authentication
+
+        Args:
+            priority: the priority of the operator, operators are applied in ascending order of priority.
+            operator: the operator to apply.
+        """
         self.__operator_by_priority[priority] = operator
 
     @overload
@@ -73,28 +93,33 @@ class EndpointDescriptor(Generic[PT, ResponseBodyType]):
 
 
 class Context(Generic[ResponseBodyType]):
+    """Stores context for processing an HTTP request."""
+
     def __init__(
         self,
         client: BaseClient,
         operators: list[Operator[ResponseBodyType]],
         request: Request,
     ) -> None:
-        self.__client = client
+        """Initializes the context.
+
+        Args:
+            client: HTTP client instance used for sending the HTTP request.
+            operators: list of operators that should be applied on the HTTP request and its response.
+            request: the HTTP request to be sent.
+        """
+        self.client = client
         self.__operators = operators
         self.__next_step = 0
 
-        self.__request = request
+        self.request = request
         self.response: Optional[Response] = None
 
-    @property
-    def client(self) -> BaseClient:
-        return self.__client
-
-    @property
-    def request(self) -> Request:
-        return self.__request
-
     def proceed(self) -> ResponseBodyType:
+        """One method call will apply one operator on the HTTP request.
+
+        Operators are applied on HTTP requests according to order defined in the context object. HTTP responses are processed in the opposite order.
+        """
         if self.__next_step >= len(self.__operators):
             raise RuntimeError("No more step to process request")
 
@@ -109,6 +134,8 @@ class Context(Generic[ResponseBodyType]):
 
 
 class BoundEndpointDescriptor(Generic[PT, ResponseBodyType]):
+    """Class descriptor for calling HTTP endpoints  bound to the HTTP client instance."""
+
     def __init__(
         self,
         instance: BaseClient,
@@ -119,6 +146,17 @@ class BoundEndpointDescriptor(Generic[PT, ResponseBodyType]):
         get_text: Optional[Callable[[Any], str]],
         get_error: Optional[Callable[[Response], Optional[Exception]]],
     ) -> None:
+        """Initializes the bound descriptor.
+
+        Args:
+            instance: HTTP client instance.
+            operators: the list of operators to apply on HTTP requests and responses.
+            template: the template for building HTTP requests to call the endpoint.
+            response_decoder: the adapter for decoding the HTTP responses returned from the endpoint.
+            get_json: the function to get JSON from the HTTP response.
+            get_text: the function to get text from the HTTP response.
+            get_error: the function to get an error from the HTTP response.
+        """
         self.__instance = instance
         self.__operators = list(operators)
         self.__operators.append(self.__send_request)
@@ -129,6 +167,15 @@ class BoundEndpointDescriptor(Generic[PT, ResponseBodyType]):
         self.__get_error = get_error
 
     def __call__(self, *args: PT.args, **kwargs: PT.kwargs) -> ResponseBodyType:
+        """Sends an HTTP request.
+
+        Args:
+            *args: positional arguments for the endpoint.
+            **kwargs: keyword arguments for the endpoint.
+
+        Returns:
+            HTTP response body parsed to the expected Python return type used in the method signature.
+        """
         request = self.__template.build_request(*args, **kwargs)
         context = Context[ResponseBodyType](self.__instance, self.__operators, request)
         return context.proceed()

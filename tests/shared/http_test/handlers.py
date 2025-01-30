@@ -182,10 +182,7 @@ def magic_number(request: BaseHTTPRequestHandler) -> None:
 
 
 def companies_filter_by_sector(request: BaseHTTPRequestHandler) -> None:
-    """
-    Accepts a query parameter 'sector' and returns a list of companies in that sector.
-    """
-
+    """Accepts a query parameter 'sector' and returns a list of companies in that sector."""
     items = [
         {"name": "Apple", "sector": "Information Technology"},
         {"name": "Berkshire Hathaway", "sector": "Financials"},

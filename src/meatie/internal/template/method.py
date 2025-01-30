@@ -6,10 +6,17 @@ from typing import get_args
 
 from meatie import Method
 
+__all__ = ["get_method"]
+
 _method_pattern_pairs = [(method, re.compile("^" + method, re.IGNORECASE)) for method in get_args(Method)]
 
 
 def get_method(name: str, default: Method = "GET") -> Method:
+    """Extracts the HTTP method from the suffix.
+
+    Returns:
+        The HTTP method extracted from the suffix or the default method if the suffix does not match any known method.
+    """
     for method, pattern in _method_pattern_pairs:
         if re.match(pattern, name):
             return method

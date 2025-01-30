@@ -28,22 +28,22 @@ class AsyncResponse:
         try:
             return self.response.content
         except Exception as exc:
-            raise ResponseError(self, exc) from exc
+            raise ResponseError(self) from exc
 
     async def text(self) -> str:
         try:
             return await self.get_text(self.response)
         except Exception as exc:
-            raise ResponseError(self, exc) from exc
+            raise ResponseError(self) from exc
 
     async def json(self) -> dict[str, Any]:
         try:
             return await self.get_json(self.response)
         except JSONDecodeError as exc:
             text = await self.text()
-            raise ParseResponseError(text, self, exc) from exc
+            raise ParseResponseError(text, self) from exc
         except Exception as exc:
-            raise ResponseError(self, exc) from exc
+            raise ResponseError(self) from exc
 
     @classmethod
     async def get_json(cls, response: httpx.Response) -> Any:

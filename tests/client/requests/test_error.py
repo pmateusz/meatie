@@ -11,18 +11,11 @@ from meatie_requests import Client
 
 
 def get_error(response: Response) -> Optional[Exception]:
+    if response.status < 400:
+        return None
+
     exc_type = HttpStatusError if response.status >= 300 else ResponseError
-
-    body = response.json()
-    if isinstance(body, dict):
-        error = body.get("error")
-        if error is not None:
-            return exc_type(response, error)
-
-    if response.status >= 300:
-        return exc_type(response)
-
-    return None
+    return exc_type(response)
 
 
 def test_raises_error(http_server: HTTPTestServer) -> None:
@@ -35,9 +28,10 @@ def test_raises_error(http_server: HTTPTestServer) -> None:
             ...
 
     # WHEN
-    with pytest.raises(HttpStatusError) as exc_info:
-        with TestClient(requests.Session()) as client:
+    with TestClient(requests.Session()) as client:
+        with pytest.raises(HttpStatusError) as exc_info:
             client.get_response()
 
-    # THEN
-    assert exc_info.value.args == ("deployment in progress",)
+        # THEN
+        response = exc_info.value.response.json()
+        assert response == {"error": "deployment in progress"}

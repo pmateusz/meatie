@@ -45,17 +45,17 @@ class AsyncClient(BaseAsyncClient):
         try:
             response = await self.client.request(request.method, path, **kwargs)
         except (httpx.InvalidURL, httpx.UnsupportedProtocol) as exc:
-            raise RequestError(exc) from exc
+            raise RequestError() from exc
         except httpx.ProxyError as exc:
-            raise ProxyError(exc) from exc
+            raise ProxyError() from exc
         except httpx.TimeoutException as exc:
-            raise Timeout(exc) from exc
+            raise Timeout() from exc
         except (httpx.NetworkError, httpx.RemoteProtocolError) as exc:
-            raise ServerError(exc) from exc
+            raise ServerError() from exc
         except (httpx.TooManyRedirects, httpx.ProtocolError) as exc:
-            raise TransportError(exc) from exc
+            raise TransportError() from exc
         except httpx.HTTPError as exc:
-            raise MeatieError(exc) from exc
+            raise MeatieError() from exc
         return AsyncResponse(response)
 
     async def __aenter__(self) -> Self:

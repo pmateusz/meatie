@@ -46,7 +46,6 @@ class Cache:
 
     def _cleanup(self) -> None:
         """First remove the expired items, then remove the oldest items until max_size is met."""
-
         # remove expired items
         now = self._now()
         expired = [key for key, record in self._storage.items() if record.expires_at < now]

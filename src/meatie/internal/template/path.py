@@ -12,9 +12,17 @@ _param_pattern = re.compile(r"{(?P<name>[a-zA-Z_]\w*?)}")
 
 
 class PathTemplate:
+    """Represents a template for constructing URL paths."""
+
     __slots__ = ("template", "parameters")
 
     def __init__(self, template: str, parameters: list[str]) -> None:
+        """Creates a PathTemplate.
+
+        Args:
+            template: URL path template string.
+            parameters: Names of the parameters in present the template string.
+        """
         self.template = template
         self.parameters = parameters
 
@@ -35,9 +43,25 @@ class PathTemplate:
         return self.template
 
     def format(self, **kwargs: dict[str, Any]) -> str:
+        """Creates a URL path given the path parameters.
+
+        Args:
+            kwargs: Path parameters.
+
+        Returns:
+            URL path.
+        """
         return self.template.format(**kwargs)
 
     @classmethod
     def from_string(cls, template: str) -> Self:
+        """Parse a string into a PathTemplate.
+
+        Args:
+            template: URL template string.
+
+        Returns:
+            PathTemplate instance.
+        """
         parameters = [match.group("name") for match in _param_pattern.finditer(template)]
         return cls(template, parameters)

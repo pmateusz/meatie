@@ -68,7 +68,7 @@ def test_todos_get_by_user() -> None:
     assert len(todos) == 20
 
 
-async def test_post_todo() -> None:
+def test_post_todo() -> None:
     # GIVEN
     new_todo = Todo.model_construct(user_id=1, id=201, title="test post todo", completed=False)
 

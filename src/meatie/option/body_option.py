@@ -23,14 +23,12 @@ class BodyOption:
             ]
         ] = None,
     ) -> None:
-        """
-        Customize handling of HTTP response body.
+        """Customize handling of HTTP response body.
 
         :param json: function to apply on the HTTP response to extract json. The default is to rely on the behaviour of the HTTP client library.
         :param text: function to apply on the HTTP response to extract text. The default is to rely on the behaviour of the HTTP client library.
         :param error: function to apply on the HTTP response to extract an error. The default behaviour is to rely on the behaviour of the HTTP client library.
         """
-
         self.json = json
         self.text = text
         self.error = error
