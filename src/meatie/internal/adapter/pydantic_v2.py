@@ -2,26 +2,25 @@
 #  Use of this source code is governed by a BSD-style license that can be found in the LICENSE file.
 from dataclasses import is_dataclass
 from inspect import isclass
-from typing import Any, Generic
+from typing import Any, Generic, get_origin, get_args
 
 from meatie import AsyncResponse, ParseResponseError, Response
 from meatie.internal.types import T
-from pydantic import BaseModel, ValidationError
-from pydantic import TypeAdapter as pydantic_TypeAdapter
-from typing_extensions import is_typeddict
+import pydantic
+from typing_extensions import is_typeddict, Union
 
 from . import JsonAdapter, TypeAdapter
 
 
 class PydanticV2TypeAdapter(Generic[T]):
-    def __init__(self, model_type: type[T]) -> None:
-        self.adapter = pydantic_TypeAdapter(model_type)
+    def __init__(self, adapter: pydantic.TypeAdapter[T]) -> None:
+        self.adapter = adapter
 
     def from_response(self, response: Response) -> T:
         json_model = JsonAdapter.from_response(response)
         try:
             return self.adapter.validate_python(json_model)
-        except ValidationError as exc:
+        except pydantic.ValidationError as exc:
             text = response.text()
             raise ParseResponseError(text, response) from exc
 
@@ -29,7 +28,7 @@ class PydanticV2TypeAdapter(Generic[T]):
         json_model = await JsonAdapter.from_async_response(response)
         try:
             return self.adapter.validate_python(json_model)
-        except ValidationError as exc:
+        except pydantic.ValidationError as exc:
             text = await response.text()
             raise ParseResponseError(text, response) from exc
 
@@ -39,9 +38,22 @@ class PydanticV2TypeAdapter(Generic[T]):
 
 class PydanticV2TypeAdapterFactory:
     @staticmethod
-    def __call__(model_cls: type[T]) -> TypeAdapter[T]:
-        return PydanticV2TypeAdapter(model_cls)
+    def __call__(model_cls: Union[type[T], pydantic.TypeAdapter[T]]) -> TypeAdapter[T]:
+        if isinstance(model_cls, pydantic.TypeAdapter):
+            return PydanticV2TypeAdapter(model_cls)
+        adapter = pydantic.TypeAdapter(model_cls)
+        return PydanticV2TypeAdapter(adapter)
 
-    @staticmethod
-    def is_model_type(value: type[Any]) -> bool:
-        return isclass(value) and (issubclass(value, BaseModel) or is_dataclass(value) or is_typeddict(value))
+    @classmethod
+    def is_model_type(cls, value: Any) -> bool:
+        if isclass(value):
+            return issubclass(value, pydantic.BaseModel) or is_dataclass(value) or is_typeddict(value)
+
+        origin = get_origin(value)
+        if origin is Union:
+            for arg in get_args(value):
+                if not cls.is_model_type(arg):
+                    return False
+            return True
+
+        return isinstance(value, pydantic.TypeAdapter)
