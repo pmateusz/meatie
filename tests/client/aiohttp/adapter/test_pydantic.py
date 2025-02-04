@@ -118,7 +118,7 @@ async def test_can_handle_union_return_type(http_server: HTTPTestServer) -> None
 
     class TodoClient(Client):
         @endpoint("/")
-        async def get_todo(self) -> Union[TodoV1, TodoV2]:
+        async def get_todo(self) -> Union[TodoV2, TodoV1]:
             ...
 
     # WHEN
