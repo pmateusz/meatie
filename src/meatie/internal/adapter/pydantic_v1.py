@@ -3,7 +3,7 @@
 import json
 from dataclasses import is_dataclass
 from inspect import isclass
-from typing import Any, Generic
+from typing import Any, Generic, get_origin, Union, get_args
 
 import pydantic
 import pydantic.json
@@ -45,6 +45,16 @@ class PydanticV1TypeAdapterFactory:
     def __call__(model_cls: type[T]) -> TypeAdapter[T]:
         return PydanticV1TypeAdapter(model_cls)
 
-    @staticmethod
-    def is_model_type(value: type[Any]) -> bool:
-        return isclass(value) and (issubclass(value, pydantic.BaseModel) or is_dataclass(value) or is_typeddict(value))
+    @classmethod
+    def is_model_type(cls, value: Any) -> bool:
+        if isclass(value):
+            return issubclass(value, pydantic.BaseModel) or is_dataclass(value) or is_typeddict(value)
+
+        origin = get_origin(value)
+        if origin is Union:
+            for arg in get_args(value):
+                if not cls.is_model_type(arg):
+                    return False
+            return True
+
+        return False
