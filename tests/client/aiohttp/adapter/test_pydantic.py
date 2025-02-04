@@ -2,11 +2,11 @@
 #  Use of this source code is governed by a BSD-style license that can be found in the LICENSE file.
 from enum import Enum
 from http import HTTPStatus
-from http.server import BaseHTTPRequestHandler
+from typing import Union
 
 import pytest
 from aiohttp import ClientSession
-from http_test import HTTPTestServer
+from http_test import HTTPTestServer, Handler
 from meatie import ParseResponseError, endpoint
 from meatie_aiohttp import Client
 
@@ -21,11 +21,8 @@ class ResponseV1(BaseModel):
 @pytest.mark.asyncio()
 async def test_can_parse_pydantic_model(http_server: HTTPTestServer) -> None:
     # GIVEN
-    def handler(request: BaseHTTPRequestHandler) -> None:
-        request.send_response(HTTPStatus.OK)
-        request.send_header("Content-Type", "application/json")
-        request.end_headers()
-        request.wfile.write('{"status": "ok"}'.encode("utf-8"))
+    def handler(request: Handler) -> None:
+        request.send_json(HTTPStatus.OK, {"status": "ok"})
 
     http_server.handler = handler
 
@@ -45,11 +42,8 @@ async def test_can_parse_pydantic_model(http_server: HTTPTestServer) -> None:
 @pytest.mark.asyncio()
 async def test_can_handle_corrupted_pydantic_model(http_server: HTTPTestServer) -> None:
     # GIVEN
-    def handler(request: BaseHTTPRequestHandler) -> None:
-        request.send_response(HTTPStatus.OK)
-        request.send_header("Content-Type", "application/json")
-        request.end_headers()
-        request.wfile.write('{"code": "ok"}'.encode("utf-8"))
+    def handler(request: Handler) -> None:
+        request.send_json(HTTPStatus.OK, {"code": "ok"})
 
     http_server.handler = handler
 
@@ -81,11 +75,8 @@ async def test_can_handle_corrupted_pydantic_model_with_enum(
     http_server: HTTPTestServer,
 ) -> None:
     # GIVEN
-    def handler(request: BaseHTTPRequestHandler) -> None:
-        request.send_response(HTTPStatus.OK)
-        request.send_header("Content-Type", "application/json")
-        request.end_headers()
-        request.wfile.write('{"status": "ok"}'.encode("utf-8"))
+    def handler(request: Handler) -> None:
+        request.send_json(HTTPStatus.OK, {"status": "ok"})
 
     http_server.handler = handler
 
@@ -102,3 +93,41 @@ async def test_can_handle_corrupted_pydantic_model_with_enum(
     # THEN
     exc = exc_info.value
     assert HTTPStatus.OK == exc.response.status
+
+
+class TodoV1(pydantic.BaseModel):
+    user_id: int = pydantic.Field(alias="userId")
+    id: int
+    title: str
+
+
+class TodoV2(pydantic.BaseModel):
+    user_id: int = pydantic.Field(alias="userId")
+    id: int
+    title: str
+    completed: bool
+
+
+@pytest.mark.asyncio()
+async def test_can_handle_union_return_type(http_server: HTTPTestServer) -> None:
+    # GIVEN
+    def handler(request: Handler) -> None:
+        request.send_json(HTTPStatus.OK, {"userId": 1, "id": 1, "title": "Task v2", "completed": False})
+
+    http_server.handler = handler
+
+    class TodoClient(Client):
+        @endpoint("/")
+        async def get_todo(self) -> Union[TodoV2, TodoV1]:
+            ...
+
+    # WHEN
+    async with TodoClient(ClientSession(http_server.base_url)) as client:
+        task = await client.get_todo()
+
+    # THEN
+    assert isinstance(task, TodoV2)
+    assert task.user_id == 1
+    assert task.id == 1
+    assert task.title == "Task v2"
+    assert task.completed is False
