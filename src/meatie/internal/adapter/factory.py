@@ -1,6 +1,6 @@
 #  Copyright 2024 The Meatie Authors. All rights reserved.
 #  Use of this source code is governed by a BSD-style license that can be found in the LICENSE file.
-
+from importlib.metadata import version, PackageNotFoundError
 from inspect import isclass
 from types import GenericAlias
 from typing import (
@@ -43,11 +43,10 @@ class PydanticTypeAdapterFactory(Protocol):
 
 def _resolve_pydantic_type_adapter_factory() -> Optional[PydanticTypeAdapterFactory]:  # pragma: no cover
     try:
-        import pydantic
-    except ImportError:
+        pydantic_version = version("pydantic")
+    except PackageNotFoundError:
         return None
 
-    pydantic_version = pydantic.version.version_short()
     if pydantic_version.startswith("2."):
         from .pydantic_v2 import PydanticV2TypeAdapterFactory
 
