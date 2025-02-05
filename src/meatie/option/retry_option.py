@@ -24,7 +24,7 @@ __all__ = ["retry"]
 
 
 class RetryOption:
-    __PRIORITY = 40
+    """Configure the strategy for retrying the endpoint calls that failed."""
 
     def __init__(
         self,
@@ -33,17 +33,19 @@ class RetryOption:
         stop: Condition = never,
         sleep_func: Union[Callable[[Duration], None], Callable[[Duration], Awaitable[None]], None] = None,
     ) -> None:
-        """:param on: function that returns True if the operation should be retried. Default behaviour is to retry on the HTTP Too Many Requests (429) status code.
-        :param wait: function that returns the duration to wait before the next retry attempt. Default behaviour is to don't wait.
-        :param stop: function that returns True if the operation should be aborted. Default behaviour is never to stop.
-        :param sleep_func: the sleep function to use. Default behaviour is to rely on the Python standard library functions: time.sleep and asyncio.sleep for async functions.
+        """Creates a new retry option.
+
+        Args:
+            on: function that returns True if the operation should be retried. Default behaviour is to retry on the HTTP Too Many Requests (429) status code.
+            wait: function that returns the duration to wait before the next retry attempt. Default behaviour is no to wait.
+            stop: function that returns True if the operation should be aborted. Default behaviour is never to stop.
+            sleep_func: the sleep function to use. Default behaviour is to rely on the Python standard library functions: time.sleep and asyncio.sleep for async functions.
 
         See Also:
-        --------
-            meatie.has_status - retry on a specific status code
+            meatie.has_status - retry on a specific HTTP status code
             meatie.has_exception_type - retry on a specific exception type
             meatie.has_exception_cause_type - retry if a specific exception type is present in the exception chain
-            meatie.zero - don't wait
+            meatie.zero - do not wait
             meatie.fixed - wait a fixed amount of seconds
             meatie.uniform - wait a random amount of seconds in the given time range
             meatie.exponential - keep increasing the wait time exponentially
@@ -65,13 +67,18 @@ class RetryOption:
             return self.__sync_descriptor(descriptor)
         return self.__async_descriptor(descriptor)
 
+    @property
+    def priority(self) -> int:
+        """Returns: the priority of the retry operator."""
+        return 40
+
     def __sync_descriptor(self, descriptor: EndpointDescriptor[PT, T]) -> None:
         sleep_func: Union[Callable[[float], None], None] = self.__sleep_func  # type: ignore[assignment]
         if sleep_func is None:
             sleep_func = time.sleep
 
         operator = RetryOperator(self.__on, self.__wait, self.__stop, sleep_func)
-        descriptor.register_operator(RetryOption.__PRIORITY, operator)
+        descriptor.register_operator(self.priority, operator)
 
     def __async_descriptor(self, descriptor: AsyncEndpointDescriptor[PT, T]) -> None:
         sleep_func: Union[Callable[[float], Awaitable[None]], None] = self.__sleep_func  # type: ignore[assignment]
@@ -79,13 +86,15 @@ class RetryOption:
             sleep_func = asyncio.sleep
 
         operator = AsyncRetryOperator(self.__on, self.__wait, self.__stop, sleep_func)
-        descriptor.register_operator(RetryOption.__PRIORITY, operator)
+        descriptor.register_operator(self.priority, operator)
 
 
 retry = RetryOption
 
 
 class RetryOperator:
+    """Executes the retry strategy for synchronous endpoint calls."""
+
     def __init__(
         self,
         on: Condition,
@@ -93,6 +102,14 @@ class RetryOperator:
         stop: Condition,
         sleep_func: Callable[[Duration], None],
     ) -> None:
+        """Creates a new retry operator.
+
+        Args:
+            on: function that returns True if the operation should be retried.
+            wait: function that returns the duration to wait before the next retry attempt.
+            stop: function that returns True if the operation should be aborted.
+            sleep_func: the sleep function to use.
+        """
         self.__condition = on
         self.__wait = wait
         self.__stop = stop
@@ -131,6 +148,8 @@ class RetryOperator:
 
 
 class AsyncRetryOperator:
+    """Executes the retry strategy for asynchronous endpoint calls."""
+
     def __init__(
         self,
         on: Condition,
@@ -138,6 +157,14 @@ class AsyncRetryOperator:
         stop: Condition,
         sleep_func: Callable[[Duration], Awaitable[None]],
     ) -> None:
+        """Creates a new retry operator.
+
+        Args:
+            on: function that returns True if the operation should be retried.
+            wait: function that returns the duration to wait before the next retry attempt.
+            stop: function that returns True if the operation should be aborted.
+            sleep_func: the sleep function to use.
+        """
         self.__condition = on
         self.__wait = wait
         self.__stop = stop

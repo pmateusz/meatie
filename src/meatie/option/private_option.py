@@ -10,7 +10,12 @@ __all__ = ["private"]
 
 
 class PrivateOption:
-    """Include additional information in the request, i.e., `Authorization` header, before calling the API endpoint."""
+    """Include additional information in the HTTP request before calling the API endpoint.
+
+    Instructs Meatie library to call the `authenticate` method of the client instance with the HTTP request as the argument.
+
+    Popular use cases are to set the `Authorization` header or sign the HTTP request using API keys before calling the API endpoint.
+    """
 
     def __call__(
         self,
@@ -22,21 +27,22 @@ class PrivateOption:
 
     @property
     def priority(self) -> int:
+        """Returns: the priority of the private operator."""
         return 80
 
     def __sync_descriptor(self, descriptor: EndpointDescriptor[PT, T]) -> None:
-        descriptor.register_operator(self.priority, operator)
+        descriptor.register_operator(self.priority, _operator)
 
     def __async_descriptor(self, descriptor: AsyncEndpointDescriptor[PT, T]) -> None:
-        descriptor.register_operator(self.priority, async_operator)
+        descriptor.register_operator(self.priority, _async_operator)
 
 
-def operator(ctx: Context[T]) -> T:
+def _operator(ctx: Context[T]) -> T:
     ctx.client.authenticate(ctx.request)
     return ctx.proceed()
 
 
-async def async_operator(ctx: AsyncContext[T]) -> T:
+async def _async_operator(ctx: AsyncContext[T]) -> T:
     await ctx.client.authenticate(ctx.request)
     return await ctx.proceed()
 
