@@ -6,4 +6,9 @@ plugins:
       handlers:
         python:
           options:
-            show_submodules: true
+            allow_inspection: true
+            find_stubs_package: true
+            show_source: true
+            show_source_type: true
+            show_source_link: true
+            show_source_full_path: true
