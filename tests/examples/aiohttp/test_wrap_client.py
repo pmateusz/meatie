@@ -4,13 +4,13 @@ from http import HTTPStatus
 from unittest.mock import AsyncMock, Mock
 
 import pytest
+
 from meatie import AsyncResponse, HttpStatusError, endpoint
 
 
 class Client:
     @endpoint("/v1/multisig-transactions/{tx_hash}")
-    async def delete_multisig_transaction(self, tx_hash: str) -> AsyncResponse:
-        ...
+    async def delete_multisig_transaction(self, tx_hash: str) -> AsyncResponse: ...
 
 
 class Controller:

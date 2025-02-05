@@ -3,6 +3,8 @@
 from typing import Any, Optional
 
 import httpx
+from typing_extensions import Self
+
 from meatie import BaseClient, Cache
 from meatie.error import (
     MeatieError,
@@ -13,7 +15,6 @@ from meatie.error import (
     TransportError,
 )
 from meatie.types import Request
-from typing_extensions import Self
 
 from . import Response
 

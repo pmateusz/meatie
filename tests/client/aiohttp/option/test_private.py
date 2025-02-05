@@ -6,6 +6,7 @@ from unittest.mock import patch
 
 import pytest
 from aiohttp import ClientSession
+
 from meatie import endpoint, private
 from meatie_aiohttp import Client
 
@@ -21,8 +22,7 @@ async def test_calls_authenticate_on_private_endpoint(mock_tools) -> None:
             super().__init__(cast(ClientSession, session))
 
         @endpoint("/api/v1/products", private)
-        async def get_products(self) -> list[Any]:
-            ...
+        async def get_products(self) -> list[Any]: ...
 
     # WHEN
     async with Store() as api:

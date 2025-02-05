@@ -10,6 +10,8 @@ __all__ = ["body"]
 
 
 class BodyOption:
+    """Customize handling of HTTP response body, such as text decoding, parsing JSON and detecting errors."""
+
     __slots__ = ("json", "text", "error")
 
     def __init__(
@@ -23,11 +25,12 @@ class BodyOption:
             ]
         ] = None,
     ) -> None:
-        """Customize handling of HTTP response body.
+        """Creates a new body option.
 
-        :param json: function to apply on the HTTP response to extract json. The default is to rely on the behaviour of the HTTP client library.
-        :param text: function to apply on the HTTP response to extract text. The default is to rely on the behaviour of the HTTP client library.
-        :param error: function to apply on the HTTP response to extract an error. The default behaviour is to rely on the behaviour of the HTTP client library.
+        Args:
+            json: function to parse JSON from the HTTP response body. The default is to rely on the behaviour of the HTTP client library.
+            text: function to decode text from the HTTP response body. The default is to rely on the behaviour of the HTTP client library.
+            error: function to detect an error in the HTTP response. The default is to do nothing.
         """
         self.json = json
         self.text = text

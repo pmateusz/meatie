@@ -3,6 +3,7 @@
 
 import pytest
 from http_test import HTTPTestServer
+
 from meatie import ProxyError, Request
 from meatie.internal.types import Client
 

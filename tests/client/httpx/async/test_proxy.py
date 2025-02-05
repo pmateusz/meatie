@@ -7,6 +7,7 @@ from typing import Generator
 import httpx
 import pytest
 from http_test import ClientAdapter, HTTPTestServer
+
 from meatie import Request, ServerError
 from meatie_httpx import AsyncClient, Client
 

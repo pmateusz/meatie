@@ -16,6 +16,7 @@ from http_test.handlers import (
     status_ok_as_text,
     truncated_json,
 )
+
 from meatie import ParseResponseError, body, endpoint
 from meatie_aiohttp import Client
 
@@ -27,8 +28,7 @@ async def test_can_parse_json(http_server: HTTPTestServer) -> None:
 
     class TestClient(Client):
         @endpoint("/")
-        async def get_response(self) -> dict[str, str]:
-            ...
+        async def get_response(self) -> dict[str, str]: ...
 
     # WHEN
     async with TestClient(ClientSession(http_server.base_url)) as client:
@@ -45,8 +45,7 @@ async def test_can_handle_invalid_content_type(http_server: HTTPTestServer) -> N
 
     class TestClient(Client):
         @endpoint("/")
-        async def get_response(self) -> dict[str, str]:
-            ...
+        async def get_response(self) -> dict[str, str]: ...
 
     # WHEN
     with pytest.raises(ParseResponseError) as exc_info:
@@ -66,8 +65,7 @@ async def test_can_handle_html_response(http_server: HTTPTestServer) -> None:
 
     class TestClient(Client):
         @endpoint("/")
-        async def get_response(self) -> dict[str, str]:
-            ...
+        async def get_response(self) -> dict[str, str]: ...
 
     # WHEN
     with pytest.raises(ParseResponseError) as exc_info:
@@ -87,8 +85,7 @@ async def test_can_handle_corrupted_json(http_server: HTTPTestServer) -> None:
 
     class TestClient(Client):
         @endpoint("/")
-        async def get_response(self) -> dict[str, str]:
-            ...
+        async def get_response(self) -> dict[str, str]: ...
 
     # WHEN
     with pytest.raises(ParseResponseError) as exc_info:
@@ -110,8 +107,7 @@ async def test_use_custom_decoder(http_server: HTTPTestServer) -> None:
 
     class TestClient(Client):
         @endpoint("/", body(json=custom_json))
-        async def get_response(self) -> dict[str, Decimal]:
-            ...
+        async def get_response(self) -> dict[str, Decimal]: ...
 
     # WHEN
     async with TestClient(ClientSession(http_server.base_url)) as client:

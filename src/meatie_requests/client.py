@@ -3,6 +3,9 @@
 from typing import Any, Optional
 
 import requests.exceptions
+from requests import Session
+from typing_extensions import Self
+
 from meatie import BaseClient, Cache, Request
 from meatie.error import (
     MeatieError,
@@ -12,8 +15,6 @@ from meatie.error import (
     Timeout,
     TransportError,
 )
-from requests import Session
-from typing_extensions import Self
 
 from . import Response
 

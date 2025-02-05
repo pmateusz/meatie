@@ -4,6 +4,7 @@ import asyncio
 from typing import Any, Optional
 
 import aiohttp
+
 from meatie import (
     AsyncResponse,
     BaseAsyncClient,

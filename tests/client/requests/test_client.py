@@ -1,9 +1,10 @@
 from http import HTTPStatus
 
 from http_test import Handler, HTTPTestServer
+from requests import Session
+
 from meatie import endpoint
 from meatie_requests import Client
-from requests import Session
 
 
 def test_use_prefix(http_server: HTTPTestServer) -> None:
@@ -19,8 +20,7 @@ def test_use_prefix(http_server: HTTPTestServer) -> None:
 
     class PrefixClient(Client):
         @endpoint("status")
-        def get_status(self) -> str:
-            ...
+        def get_status(self) -> str: ...
 
     # WHEN
     with PrefixClient(Session(), prefix=http_server.base_url + "/api/v1/") as client:

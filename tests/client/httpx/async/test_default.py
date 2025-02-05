@@ -6,8 +6,9 @@ from typing import Generator
 import httpx
 import pytest
 from http_test import ClientAdapter
-from meatie_httpx import AsyncClient
 from suite.client import DefaultSuite
+
+from meatie_httpx import AsyncClient
 
 
 class TestAsyncHttpxDefaultSuite(DefaultSuite):

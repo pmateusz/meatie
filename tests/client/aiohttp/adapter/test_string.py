@@ -5,6 +5,7 @@ import pytest
 from aiohttp import ClientSession
 from http_test import HTTPTestServer
 from http_test.handlers import ascii_emoji, emoji
+
 from meatie import endpoint
 from meatie_aiohttp import Client
 
@@ -16,8 +17,7 @@ async def test_can_parse_string(http_server: HTTPTestServer) -> None:
 
     class TestClient(Client):
         @endpoint("/")
-        async def get_response(self) -> str:
-            ...
+        async def get_response(self) -> str: ...
 
     # WHEN
     async with TestClient(ClientSession(http_server.base_url)) as client:
@@ -34,8 +34,7 @@ async def test_can_handle_invalid_encoding(http_server: HTTPTestServer) -> None:
 
     class TestClient(Client):
         @endpoint("/")
-        async def get_response(self) -> str:
-            ...
+        async def get_response(self) -> str: ...
 
     # WHEN
     async with TestClient(ClientSession(http_server.base_url)) as client:

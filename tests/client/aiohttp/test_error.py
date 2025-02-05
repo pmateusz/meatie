@@ -6,6 +6,7 @@ import pytest
 from aiohttp import ClientSession
 from http_test import HTTPTestServer
 from http_test.handlers import service_unavailable
+
 from meatie import AsyncResponse, HttpStatusError, ResponseError, body, endpoint
 from meatie_aiohttp import Client
 
@@ -25,8 +26,7 @@ async def test_raises_error(http_server: HTTPTestServer) -> None:
 
     class TestClient(Client):
         @endpoint("/", body(error=get_error))
-        async def get_response(self) -> dict[str, str]:
-            ...
+        async def get_response(self) -> dict[str, str]: ...
 
     # WHEN
     async with TestClient(ClientSession(http_server.base_url)) as client:

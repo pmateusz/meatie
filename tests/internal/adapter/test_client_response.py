@@ -3,6 +3,7 @@
 from unittest.mock import Mock
 
 import pytest
+
 from meatie import Response
 from meatie.internal.adapter import ClientResponseAdapter
 

@@ -3,6 +3,7 @@ from http import HTTPStatus
 import pytest
 from aiohttp import ClientSession
 from http_test import Handler, HTTPTestServer
+
 from meatie import endpoint
 from meatie_aiohttp import Client
 
@@ -21,8 +22,7 @@ async def test_use_prefix(http_server: HTTPTestServer) -> None:
 
     class PrefixClient(Client):
         @endpoint("status")
-        async def get_status(self) -> str:
-            ...
+        async def get_status(self) -> str: ...
 
     # WHEN
     async with PrefixClient(

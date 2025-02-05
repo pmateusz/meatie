@@ -14,19 +14,21 @@ __all__ = ["limit"]
 
 
 class LimitOption:
+    """Configure the rate limit for the endpoint calls."""
+
     def __init__(
         self,
         tokens: Tokens,
         sleep_func: Union[Callable[[float], Union[None, Awaitable[None]]], None] = None,
     ) -> None:
-        """:param tokens: number of tokens consumed by the API call
-        :param sleep_func: the sleep function to use. Default behaviour is to rely on the Python standard library functions: time.sleep and asyncio.sleep for async functions.
+        """Creates a new rate limit option.
 
-        The number of available tokens, replenishment rate, and burst size are controlled by the rate limiter instance used by the client.
+        The number of available tokens at a given time are controlled by the rate limiter instance used by the client.
+        Meatie provides leaky bucket rate limiter implementation with constant replenishment rate and burst size. See meatie.Limiter.
 
-        See Also:
-        --------
-            meatie.Limiter: Leaky bucket rate limiter implementation.
+        Args:
+            tokens: number of tokens consumed by the endpoint call
+            sleep_func: the sleep function to use. Default behaviour is to rely on the Python standard library functions: time.sleep and asyncio.sleep for async functions.
         """
         self.tokens = tokens
         self.sleep_func = sleep_func
@@ -41,6 +43,7 @@ class LimitOption:
 
     @property
     def priority(self) -> int:
+        """Returns: the priority of the limit operator."""
         return 60
 
     def __sync_descriptor(self, descriptor: EndpointDescriptor[PT, T]) -> None:
@@ -68,7 +71,15 @@ limit = LimitOption
 
 
 class LimitOperator:
+    """Delays the endpoint calls that exceed the rate limit."""
+
     def __init__(self, tokens: Tokens, sleep_func: Callable[[Duration], None]) -> None:
+        """Creates a new limit operator.
+
+        Args:
+            tokens: number of tokens consumed by the endpoint call
+            sleep_func: the sleep function to use (default: time.sleep).
+        """
         self.tokens = tokens
         self.sleep_func = sleep_func
 
@@ -83,7 +94,15 @@ class LimitOperator:
 
 
 class AsyncLimitOperator:
+    """Delays the endpoint calls that exceed the rate limit."""
+
     def __init__(self, tokens: Tokens, sleep_func: Callable[[Duration], Awaitable[None]]) -> None:
+        """Creates a new limit operator.
+
+        Args:
+            tokens: number of tokens consumed by the endpoint call
+            sleep_func: the sleep function to use (default: asyncio.sleep).
+        """
         self.tokens = tokens
         self.sleep_func = sleep_func
 

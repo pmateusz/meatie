@@ -5,9 +5,10 @@ from typing import Annotated, Any
 
 import pytest
 from aiohttp import ClientSession
+from pydantic import BaseModel, Field
+
 from meatie import AsyncResponse, api_ref, body, endpoint
 from meatie_aiohttp import Client
-from pydantic import BaseModel, Field
 
 
 class Todo(BaseModel):
@@ -27,8 +28,7 @@ class JsonPlaceholderClient(Client):
         super().__init__(ClientSession(base_url="https://jsonplaceholder.typicode.com"))
 
     @endpoint("/todos", body(json=get_json))
-    async def post_todo(self, todo: Annotated[Todo, api_ref("body")]) -> Todo:
-        ...
+    async def post_todo(self, todo: Annotated[Todo, api_ref("body")]) -> Todo: ...
 
 
 @pytest.mark.asyncio()

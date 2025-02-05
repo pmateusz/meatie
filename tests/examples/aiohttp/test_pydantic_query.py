@@ -8,9 +8,10 @@ from typing import Annotated, Any, Optional
 import pytest
 from aiohttp import ClientSession
 from http_test import Handler, HTTPTestServer
+from pydantic import BaseModel, Field, field_serializer
+
 from meatie import api_ref, endpoint
 from meatie_aiohttp import Client
-from pydantic import BaseModel, Field, field_serializer
 
 
 class MySearchFilter(BaseModel):
@@ -39,8 +40,9 @@ def dump_model(model: BaseModel) -> dict[str, Any]:
 
 class MyClient(Client):
     @endpoint("/v1/search")
-    async def get_search(self, query_params: Annotated[MySearchFilter, api_ref(unwrap=dump_model)]) -> MySearchResults:
-        ...
+    async def get_search(
+        self, query_params: Annotated[MySearchFilter, api_ref(unwrap=dump_model)]
+    ) -> MySearchResults: ...
 
 
 @pytest.mark.asyncio()

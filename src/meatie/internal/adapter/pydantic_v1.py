@@ -3,13 +3,14 @@
 import json
 from dataclasses import is_dataclass
 from inspect import isclass
-from typing import Any, Generic, get_origin, Union, get_args
+from typing import Any, Generic, Union, get_args, get_origin
 
 import pydantic
 import pydantic.json
+from typing_extensions import is_typeddict
+
 from meatie import AsyncResponse, ParseResponseError, Response
 from meatie.internal.types import T
-from typing_extensions import is_typeddict
 
 from . import JsonAdapter, TypeAdapter
 

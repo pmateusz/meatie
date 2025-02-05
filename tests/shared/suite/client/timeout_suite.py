@@ -8,6 +8,7 @@ from http_test import (
     Handler,
     HTTPTestServer,
 )
+
 from meatie import (
     Request,
     Timeout,

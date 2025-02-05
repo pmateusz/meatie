@@ -18,8 +18,7 @@ def test_calls_authenticate_on_private_endpoint(mock_tools) -> None:
             super().__init__(client)
 
         @endpoint("/api/v1/products", private)
-        def get_products(self) -> list[Any]:
-            ...
+        def get_products(self) -> list[Any]: ...
 
     # WHEN
     with Store() as api:

@@ -7,6 +7,7 @@ import pytest
 from aiohttp import ClientSession
 from http_test import HTTPTestServer
 from http_test.handlers import companies_filter_by_sector
+
 from meatie import api_ref, endpoint
 from meatie_aiohttp import Client
 
@@ -27,8 +28,7 @@ async def test_handles_array_query_params(http_server: HTTPTestServer) -> None:
         @endpoint("/")
         async def get_companies(
             self, sectors: Annotated[Optional[list[str]], api_ref(name="sector")] = None
-        ) -> list[Company]:
-            ...
+        ) -> list[Company]: ...
 
     # WHEN
     async with TestClient(ClientSession(base_url=http_server.base_url)) as client:

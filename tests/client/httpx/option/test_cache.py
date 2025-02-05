@@ -18,8 +18,7 @@ def test_local_cache_is_isolated(mock_tools) -> None:
             super().__init__(client)
 
         @endpoint("/api/v1/products", cache(ttl=INF, shared=False))
-        def get_products(self) -> list[Any]:
-            ...
+        def get_products(self) -> list[Any]: ...
 
     # WHEN
     with Store() as api:
@@ -48,8 +47,7 @@ def test_global_cache_is_shared(mock_tools) -> None:
             super().__init__(client)
 
         @endpoint("/api/v1/products", cache(ttl=INF, shared=True))
-        def get_products(self) -> list[Any]:
-            ...
+        def get_products(self) -> list[Any]: ...
 
     # WHEN
     with Store() as api:

@@ -4,8 +4,9 @@ from typing import Generator
 
 import pytest
 import requests
-from meatie_requests.client import Client
 from suite.client import TimeoutSuite
+
+from meatie_requests.client import Client
 
 
 class TestRequestsTimeoutSuite(TimeoutSuite):

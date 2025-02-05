@@ -6,6 +6,7 @@ import pytest
 import requests
 from http_test import HTTPTestServer
 from http_test.handlers import service_unavailable
+
 from meatie import HttpStatusError, Response, ResponseError, body, endpoint
 from meatie_requests import Client
 
@@ -24,8 +25,7 @@ def test_raises_error(http_server: HTTPTestServer) -> None:
 
     class TestClient(Client):
         @endpoint(http_server.base_url + "/", body(error=get_error))
-        def get_response(self) -> dict[str, str]:
-            ...
+        def get_response(self) -> dict[str, str]: ...
 
     # WHEN
     with TestClient(requests.Session()) as client:

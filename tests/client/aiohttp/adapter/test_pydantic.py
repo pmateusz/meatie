@@ -6,7 +6,8 @@ from typing import Union
 
 import pytest
 from aiohttp import ClientSession
-from http_test import HTTPTestServer, Handler
+from http_test import Handler, HTTPTestServer
+
 from meatie import ParseResponseError, endpoint
 from meatie_aiohttp import Client
 
@@ -28,8 +29,7 @@ async def test_can_parse_pydantic_model(http_server: HTTPTestServer) -> None:
 
     class TestClient(Client):
         @endpoint("/")
-        async def get_response(self) -> ResponseV1:
-            ...
+        async def get_response(self) -> ResponseV1: ...
 
     # WHEN
     async with TestClient(ClientSession(http_server.base_url)) as client:
@@ -49,8 +49,7 @@ async def test_can_handle_corrupted_pydantic_model(http_server: HTTPTestServer) 
 
     class TestClient(Client):
         @endpoint("/")
-        async def get_response(self) -> ResponseV1:
-            ...
+        async def get_response(self) -> ResponseV1: ...
 
     # WHEN
     with pytest.raises(ParseResponseError) as exc_info:
@@ -82,8 +81,7 @@ async def test_can_handle_corrupted_pydantic_model_with_enum(
 
     class TestClient(Client):
         @endpoint("/")
-        async def get_response(self) -> ResponseV2:
-            ...
+        async def get_response(self) -> ResponseV2: ...
 
     # WHEN
     with pytest.raises(ParseResponseError) as exc_info:
@@ -118,8 +116,7 @@ async def test_can_handle_union_return_type(http_server: HTTPTestServer) -> None
 
     class TodoClient(Client):
         @endpoint("/")
-        async def get_todo(self) -> Union[TodoV2, TodoV1]:
-            ...
+        async def get_todo(self) -> Union[TodoV2, TodoV1]: ...
 
     # WHEN
     async with TodoClient(ClientSession(http_server.base_url)) as client:
