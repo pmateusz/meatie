@@ -21,7 +21,7 @@ class CacheOption:
         Args:
             ttl: the time-to-live of the cache entry in seconds
             shared: if set to False (default) the cache entry will be stored in the local cache owned by the client instance. Records cached by another client instance will not be visible.
-            Otherwise, if set to True, all client that are instances of the same Python class will share the same cache.
+                Otherwise, if set to True, all client that are instances of the same Python class will share the same cache.
         """
         self.ttl = ttl
         self.shared = shared
