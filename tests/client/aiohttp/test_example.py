@@ -10,6 +10,7 @@ from unittest.mock import AsyncMock, Mock, call, patch
 
 import pytest
 from aiohttp import ClientSession
+
 from meatie import (
     MINUTE,
     Limiter,
@@ -79,16 +80,13 @@ class OnlineStore(Client):
         super().__init__(session)
 
     @endpoint("/api/v1/products")
-    async def get_products(self) -> list[Product]:
-        ...
+    async def get_products(self) -> list[Product]: ...
 
     @endpoint("/api/v1/quote/request")
-    async def post_request_quote(self, basket: Annotated[Basket, api_ref("body")]) -> BasketQuote:
-        ...
+    async def post_request_quote(self, basket: Annotated[Basket, api_ref("body")]) -> BasketQuote: ...
 
     @endpoint("/api/v1/quote/{quote_id}/accept", method="POST")
-    async def accept_quote(self, quote_id: int) -> None:
-        ...
+    async def accept_quote(self, quote_id: int) -> None: ...
 
 
 @pytest.mark.asyncio()
@@ -99,16 +97,13 @@ async def test_plain_example(dump_model: Callable[[Any], Any]) -> None:
             super().__init__(session)
 
         @endpoint("/api/v1/products")
-        async def get_products(self) -> list[Product]:
-            ...
+        async def get_products(self) -> list[Product]: ...
 
         @endpoint("/api/v1/quote/request")
-        async def post_request_quote(self, basket: Annotated[Basket, api_ref("body")]) -> BasketQuote:
-            ...
+        async def post_request_quote(self, basket: Annotated[Basket, api_ref("body")]) -> BasketQuote: ...
 
         @endpoint("/api/v1/quote/{quote_id}/accept", method="POST")
-        async def accept_quote(self, quote_id: int) -> None:
-            ...
+        async def accept_quote(self, quote_id: int) -> None: ...
 
     # GIVEN
     products = [Product(id=1, name="Headphones"), Product(id=2, name="Keyboard")]
@@ -153,8 +148,7 @@ async def test_private_endpoint_example(dump_model: Callable[[Any], Any]) -> Non
             super().__init__(session)
 
         @endpoint("/api/v1/quote/request", private)
-        async def post_request_quote(self, basket: Annotated[Basket, api_ref("body")]) -> BasketQuote:
-            ...
+        async def post_request_quote(self, basket: Annotated[Basket, api_ref("body")]) -> BasketQuote: ...
 
         async def authenticate(self, request: Request) -> None:
             request.headers["api-key"] = "123"
@@ -189,8 +183,7 @@ async def test_cache_endpoint_example() -> None:
             super().__init__(session)
 
         @endpoint("/api/v1/products", cache(ttl=5 * MINUTE))
-        async def get_products(self) -> list[Product]:
-            ...
+        async def get_products(self) -> list[Product]: ...
 
     # GIVEN
     products = [Product(id=1, name="Headphones"), Product(id=2, name="Keyboard")]
@@ -233,8 +226,7 @@ async def test_retry_example(mock_tools, dump_model: Callable[[Any], Any]) -> No
                 sleep_func=AsyncMock(),
             ),
         )
-        async def get_products(self) -> list[Product]:
-            ...
+        async def get_products(self) -> list[Product]: ...
 
     # GIVEN
     products = [Product(id=1, name="Headphones"), Product(id=2, name="Keyboard")]
@@ -276,8 +268,7 @@ async def test_rate_limit_example(mock_tools, dump_model: Callable[[Any], Any]) 
             )
 
         @endpoint("/api/v1/products", limit(tokens=5, sleep_func=sleep_func))
-        async def get_products(self) -> list[Product]:
-            ...
+        async def get_products(self) -> list[Product]: ...
 
     # GIVEN
     products = [Product(id=1, name="Headphones"), Product(id=2, name="Keyboard")]

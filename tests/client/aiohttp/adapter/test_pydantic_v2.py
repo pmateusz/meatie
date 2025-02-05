@@ -4,12 +4,12 @@ import json
 from http import HTTPStatus
 from http.server import BaseHTTPRequestHandler
 from typing import Annotated, Any, Optional, Union
-from typing_extensions import Literal
 
 import pytest
-
 from aiohttp import ClientSession
-from http_test import HTTPTestServer, Handler
+from http_test import Handler, HTTPTestServer
+from typing_extensions import Literal
+
 from meatie import AsyncResponse, api_ref, endpoint
 from meatie_aiohttp import Client
 
@@ -40,8 +40,7 @@ async def test_post_request_body_with_fmt(http_server: HTTPTestServer) -> None:
 
     class TestClient(Client):
         @endpoint("/")
-        async def post_request(self, body: Annotated[Request, api_ref(fmt=dump_body)]) -> AsyncResponse:
-            ...
+        async def post_request(self, body: Annotated[Request, api_ref(fmt=dump_body)]) -> AsyncResponse: ...
 
     # WHEN
     async with TestClient(ClientSession(http_server.base_url)) as client:
@@ -74,8 +73,7 @@ async def test_can_handle_union_return_type(http_server: HTTPTestServer) -> None
 
     class TodoClient(Client):
         @endpoint("/")
-        async def get_todo(self) -> Union[TodoV1, TodoV2]:
-            ...
+        async def get_todo(self) -> Union[TodoV1, TodoV2]: ...
 
     # WHEN
     async with TodoClient(ClientSession(http_server.base_url)) as client:
@@ -99,8 +97,7 @@ async def test_can_handle_type_adapter_return_type(http_server: HTTPTestServer) 
 
     class TodoClient(Client):
         @endpoint("/")
-        async def get_todo(self) -> pydantic.TypeAdapter(Union[TodoV1, TodoV2]):
-            ...
+        async def get_todo(self) -> pydantic.TypeAdapter(Union[TodoV1, TodoV2]): ...
 
     # WHEN
     async with TodoClient(ClientSession(http_server.base_url)) as client:
@@ -148,8 +145,7 @@ async def test_can_handle_type_adapter_with_discriminated_column(http_server: HT
 
     class ExchangeClient(Client):
         @endpoint("/")
-        async def get_instrument(self) -> Instrument:
-            ...
+        async def get_instrument(self) -> Instrument: ...
 
     # WHEN
     async with ExchangeClient(ClientSession(http_server.base_url)) as client:

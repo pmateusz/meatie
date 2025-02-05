@@ -6,6 +6,7 @@ from typing import Annotated, Any, Optional
 from unittest.mock import Mock
 
 import pytest
+
 from meatie import api_ref
 from meatie.internal.adapter import JsonAdapter, NoneAdapter
 from meatie.internal.template import (

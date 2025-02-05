@@ -75,8 +75,7 @@ class Operator(Generic[T]):
         return value
 
     @abc.abstractmethod
-    def _storage(self, ctx: Context[T]) -> Cache:
-        ...
+    def _storage(self, ctx: Context[T]) -> Cache: ...
 
 
 class LocalOperator(Operator[T]):
@@ -105,8 +104,7 @@ class AsyncOperator(Generic[T]):
         return value
 
     @abc.abstractmethod
-    def _storage(self, ctx: AsyncContext[T]) -> Cache:
-        ...
+    def _storage(self, ctx: AsyncContext[T]) -> Cache: ...
 
 
 class LocalAsyncOperator(AsyncOperator[T]):

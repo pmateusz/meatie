@@ -7,6 +7,7 @@ from typing import Annotated, Any, Optional
 from unittest.mock import ANY, Mock
 
 import pytest
+
 from meatie import AsyncResponse, Request, api_ref, endpoint
 from meatie.aio import AsyncContext, AsyncEndpointDescriptor
 from meatie.internal.template import RequestTemplate
@@ -26,8 +27,7 @@ async def test_get_without_parameters(mock_tools) -> None:
             super().__init__(session)
 
         @endpoint("/api/v1/products")
-        async def get_products(self) -> list[Any]:
-            ...
+        async def get_products(self) -> list[Any]: ...
 
     # WHEN
     async with Store() as api:
@@ -51,8 +51,9 @@ async def test_get_with_formatter(mock_tools) -> None:
             super().__init__(session)
 
         @endpoint("/api/v1/transactions")
-        async def get_transactions(self, since: Annotated[datetime.datetime, api_ref(fmt=format_date)]) -> list[Any]:
-            ...
+        async def get_transactions(
+            self, since: Annotated[datetime.datetime, api_ref(fmt=format_date)]
+        ) -> list[Any]: ...
 
     # WHEN
     async with Store() as api:
@@ -73,8 +74,7 @@ async def test_get_response(mock_tools) -> None:
             super().__init__(session)
 
         @endpoint("/api/v1/products")
-        async def get_products(self) -> AsyncResponse:
-            ...
+        async def get_products(self) -> AsyncResponse: ...
 
     # WHEN
     async with Store() as api:
@@ -112,8 +112,7 @@ async def test_get_with_marshaller(mock_tools) -> None:
         @endpoint("/api/v1/transactions")
         async def get_transactions(
             self, time_range: Annotated[TimeRange, api_ref(unwrap=format_time_range)]
-        ) -> list[Any]:
-            ...
+        ) -> list[Any]: ...
 
     # WHEN
     async with Store() as api:
@@ -152,8 +151,7 @@ async def test_get_with_auto_marshaller(mock_tools) -> None:
             super().__init__(session)
 
         @endpoint("/api/v1/transactions")
-        async def get_transactions(self, time_range: TimeRange) -> list[Any]:
-            ...
+        async def get_transactions(self, time_range: TimeRange) -> list[Any]: ...
 
     # WHEN
     async with Store() as api:
@@ -178,8 +176,7 @@ async def test_post_with_body(mock_tools) -> None:
             super().__init__(session)
 
         @endpoint("/api/v1/order")
-        async def post_order(self, body: Any) -> None:
-            ...
+        async def post_order(self, body: Any) -> None: ...
 
     # WHEN
     async with Store() as api:
@@ -199,8 +196,7 @@ async def test_post_with_bytes_body(mock_tools) -> None:
             super().__init__(session)
 
         @endpoint("/api/v1/order")
-        async def post_order(self, body: bytes) -> None:
-            ...
+        async def post_order(self, body: bytes) -> None: ...
 
     # WHEN
     async with Store() as api:
@@ -227,8 +223,7 @@ async def test_handles_optional_parameters_with_default_name(mock_tools) -> None
             self,
             begin: Annotated[datetime.datetime, api_ref(fmt=int_timestamp)] = None,
             end: Annotated[datetime.datetime, api_ref(fmt=int_timestamp)] = None,
-        ) -> list[Any]:
-            ...
+        ) -> list[Any]: ...
 
     begin = datetime.datetime(2024, 8, 1)
     end = datetime.datetime(2024, 8, 3)
@@ -255,8 +250,7 @@ async def test_get_with_default_parameter(mock_tools) -> None:
             super().__init__(session)
 
         @endpoint("/api/v1/products")
-        async def get_products(self, limit: int = 100) -> list[Any]:
-            ...
+        async def get_products(self, limit: int = 100) -> list[Any]: ...
 
     # WHEN
     async with Store() as api:
@@ -276,8 +270,7 @@ async def test_get_with_skip_unset_optional_parameter(mock_tools) -> None:
             super().__init__(session)
 
         @endpoint("/api/v1/products")
-        async def get_products(self, category: Optional[str] = None) -> list[Any]:
-            ...
+        async def get_products(self, category: Optional[str] = None) -> list[Any]: ...
 
     # WHEN
     async with Store() as api:
@@ -297,8 +290,7 @@ async def test_get_with_skip_optional_parameter_set_to_none(mock_tools) -> None:
             super().__init__(session)
 
         @endpoint("/api/v1/products")
-        async def get_products(self, category: Optional[str] = None) -> list[Any]:
-            ...
+        async def get_products(self, category: Optional[str] = None) -> list[Any]: ...
 
     # WHEN
     async with Store() as api:
@@ -318,8 +310,7 @@ async def test_get_with_send_optional_parameter(mock_tools) -> None:
             super().__init__(session)
 
         @endpoint("/api/v1/products")
-        async def get_products(self, category: Optional[str] = None) -> list[Any]:
-            ...
+        async def get_products(self, category: Optional[str] = None) -> list[Any]: ...
 
     # WHEN
     async with Store() as api:

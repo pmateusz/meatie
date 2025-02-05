@@ -5,6 +5,7 @@ from typing import Any, cast
 
 import pytest
 from aiohttp import ClientSession
+
 from meatie import INF, cache, endpoint
 from meatie_aiohttp import Client
 
@@ -21,8 +22,7 @@ async def test_local_cache_is_isolated(mock_tools) -> None:
             super().__init__(cast(ClientSession, session))
 
         @endpoint("/api/v1/products", cache(ttl=INF, shared=False))
-        async def get_products(self) -> list[Any]:
-            ...
+        async def get_products(self) -> list[Any]: ...
 
     # WHEN
     async with Store() as api:
@@ -52,8 +52,7 @@ async def test_global_cache_is_shared(mock_tools) -> None:
             super().__init__(session)
 
         @endpoint("/api/v1/products", cache(ttl=INF, shared=True))
-        async def get_products(self) -> list[Any]:
-            ...
+        async def get_products(self) -> list[Any]: ...
 
     # WHEN
     async with Store() as api:

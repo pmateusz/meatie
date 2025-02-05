@@ -3,6 +3,7 @@
 from typing import Any, Callable, Optional
 
 import requests
+
 from meatie.error import ParseResponseError, ResponseError
 
 

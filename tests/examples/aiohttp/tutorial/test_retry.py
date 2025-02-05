@@ -4,6 +4,8 @@ from typing import Annotated
 
 import pytest
 from aiohttp import ClientSession
+from pydantic import BaseModel, Field
+
 from meatie import (
     HttpStatusError,
     RetryContext,
@@ -15,7 +17,6 @@ from meatie import (
     retry,
 )
 from meatie_aiohttp import Client
-from pydantic import BaseModel, Field
 
 
 class Todo(BaseModel):
@@ -36,8 +37,7 @@ class JsonPlaceholderClient(Client):
         super().__init__(ClientSession(base_url="https://jsonplaceholder.typicode.com", raise_for_status=True))
 
     @endpoint("/todos", retry(on=should_retry, stop=after_attempt(3), wait=fixed(5) + jit(2)))
-    async def get_todos(self, user_id: Annotated[int, api_ref("userId")] = None) -> list[Todo]:
-        ...
+    async def get_todos(self, user_id: Annotated[int, api_ref("userId")] = None) -> list[Todo]: ...
 
 
 @pytest.mark.asyncio()

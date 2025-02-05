@@ -1,7 +1,8 @@
 #  Copyright 2023 The Meatie Authors. All rights reserved.
 #  Use of this source code is governed by a BSD-style license that can be found in the LICENSE file.
-from meatie.internal.cache import Cache
 from typing_extensions import override
+
+from meatie.internal.cache import Cache
 
 
 class TimedCache(Cache):

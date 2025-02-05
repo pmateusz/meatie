@@ -5,6 +5,7 @@ from decimal import Decimal
 import requests
 from http_test import HTTPTestServer
 from http_test.handlers import MAGIC_NUMBER, magic_number
+
 from meatie import body, endpoint
 from meatie_requests import Client
 
@@ -18,8 +19,7 @@ def test_use_custom_decoder(http_server: HTTPTestServer) -> None:
 
     class TestClient(Client):
         @endpoint(http_server.base_url + "/", body(json=custom_json))
-        def get_response(self) -> dict[str, Decimal]:
-            ...
+        def get_response(self) -> dict[str, Decimal]: ...
 
     # WHEN
     with TestClient(requests.Session()) as client:

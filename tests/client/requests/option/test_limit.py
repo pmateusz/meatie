@@ -4,9 +4,10 @@
 from typing import Any, cast
 from unittest.mock import patch
 
+from requests import Session
+
 from meatie import Limiter, Rate, endpoint, limit
 from meatie_requests import Client
-from requests import Session
 
 
 def test_waits_until_tokens_are_available(mock_tools) -> None:
@@ -27,8 +28,7 @@ def test_waits_until_tokens_are_available(mock_tools) -> None:
                 )
 
             @endpoint("/api/v1/products", limit(tokens=2))
-            def get_products(self) -> list[Any]:
-                ...
+            def get_products(self) -> list[Any]: ...
 
         # WHEN
         with Store() as api:

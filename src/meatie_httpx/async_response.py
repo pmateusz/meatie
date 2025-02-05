@@ -4,6 +4,7 @@ from json.decoder import JSONDecodeError
 from typing import Any, Awaitable, Callable, Optional
 
 import httpx
+
 from meatie.error import ParseResponseError, ResponseError
 
 

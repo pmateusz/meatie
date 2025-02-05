@@ -2,12 +2,13 @@
 #  Use of this source code is governed by a BSD-style license that can be found in the LICENSE file.
 from dataclasses import is_dataclass
 from inspect import isclass
-from typing import Any, Generic, get_origin, get_args
+from typing import Any, Generic, get_args, get_origin
+
+import pydantic
+from typing_extensions import Union, is_typeddict
 
 from meatie import AsyncResponse, ParseResponseError, Response
 from meatie.internal.types import T
-import pydantic
-from typing_extensions import is_typeddict, Union
 
 from . import JsonAdapter, TypeAdapter
 

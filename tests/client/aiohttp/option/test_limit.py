@@ -6,6 +6,7 @@ from unittest.mock import AsyncMock, patch
 
 import pytest
 from aiohttp import ClientSession
+
 from meatie import Limiter, Rate, endpoint, limit
 from meatie_aiohttp import Client
 
@@ -30,8 +31,7 @@ async def test_waits_until_tokens_are_available(mock_tools) -> None:
                 )
 
             @endpoint("/api/v1/products", limit(sleep_func=sleep_func, tokens=2))
-            async def get_products(self) -> list[Any]:
-                ...
+            async def get_products(self) -> list[Any]: ...
 
         # WHEN
         async with Store() as api:

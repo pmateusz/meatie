@@ -6,8 +6,9 @@ from typing import Callable, Generator
 import aiohttp
 import pytest
 from http_test import ClientAdapter
-from meatie_aiohttp import Client as AiohttpClient
 from suite.client import DefaultSuite
+
+from meatie_aiohttp import Client as AiohttpClient
 
 
 class TestAiohttpDefaultSuite(DefaultSuite):

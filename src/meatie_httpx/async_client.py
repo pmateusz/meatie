@@ -3,6 +3,8 @@
 from typing import Any, Optional
 
 import httpx
+from typing_extensions import Self
+
 from meatie import (
     BaseAsyncClient,
     Cache,
@@ -14,7 +16,6 @@ from meatie import (
     TransportError,
 )
 from meatie.types import Request
-from typing_extensions import Self
 
 from .async_response import AsyncResponse
 from .client import build_kwargs

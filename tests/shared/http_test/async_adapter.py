@@ -3,9 +3,10 @@
 from asyncio import AbstractEventLoop
 from typing import Any, Optional
 
+from typing_extensions import Self
+
 from meatie import AsyncResponse, Request
 from meatie.internal.types import AsyncClient, Client
-from typing_extensions import Self
 
 
 class ResponseAdapter:

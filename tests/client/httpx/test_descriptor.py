@@ -5,6 +5,7 @@ from typing import Any, Optional
 from unittest.mock import ANY, Mock
 
 import pytest
+
 from meatie import Context, EndpointDescriptor, Request, Response, endpoint
 from meatie.internal.template import RequestTemplate
 from meatie_httpx import Client
@@ -21,8 +22,7 @@ def test_get_without_parameters(mock_tools) -> None:
             super().__init__(client)
 
         @endpoint("/api/v1/products")
-        def get_products(self) -> list[Any]:
-            ...
+        def get_products(self) -> list[Any]: ...
 
     # WHEN
     with Store() as api:
@@ -42,8 +42,7 @@ def test_get_response(mock_tools) -> None:
             super().__init__(session)
 
         @endpoint("/api/v1/products")
-        def get_products(self) -> Response:
-            ...
+        def get_products(self) -> Response: ...
 
     # WHEN
     with Store() as api:
@@ -65,8 +64,7 @@ def test_post_with_body(mock_tools) -> None:
             super().__init__(client)
 
         @endpoint("/api/v1/order")
-        def post_order(self, body: Any) -> None:
-            ...
+        def post_order(self, body: Any) -> None: ...
 
     # WHEN
     with Store() as api:
@@ -85,8 +83,7 @@ def test_get_with_default_parameter(mock_tools) -> None:
             super().__init__(client)
 
         @endpoint("/api/v1/products")
-        def get_products(self, limit: int = 100) -> list[Any]:
-            ...
+        def get_products(self, limit: int = 100) -> list[Any]: ...
 
     # WHEN
     with Store() as api:
@@ -105,8 +102,7 @@ def test_get_with_skip_unset_optional_parameter(mock_tools) -> None:
             super().__init__(client)
 
         @endpoint("/api/v1/products")
-        def get_products(self, category: Optional[str] = None) -> list[Any]:
-            ...
+        def get_products(self, category: Optional[str] = None) -> list[Any]: ...
 
     # WHEN
     with Store() as api:
@@ -125,8 +121,7 @@ def test_get_with_skip_optional_parameter_set_to_none(mock_tools) -> None:
             super().__init__(client)
 
         @endpoint("/api/v1/products")
-        def get_products(self, category: Optional[str] = None) -> list[Any]:
-            ...
+        def get_products(self, category: Optional[str] = None) -> list[Any]: ...
 
     # WHEN
     with Store() as api:
@@ -145,8 +140,7 @@ def test_get_with_send_optional_parameter(mock_tools) -> None:
             super().__init__(client)
 
         @endpoint("/api/v1/products")
-        def get_products(self, category: Optional[str] = None) -> list[Any]:
-            ...
+        def get_products(self, category: Optional[str] = None) -> list[Any]: ...
 
     # WHEN
     with Store() as api:

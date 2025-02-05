@@ -7,6 +7,7 @@ import pytest
 import requests
 from http_test import HTTPTestServer
 from http_test.handlers import companies_filter_by_sector
+
 from meatie import api_ref, endpoint
 from meatie_requests import Client
 
@@ -26,8 +27,7 @@ def test_send_array_query_params(http_server: HTTPTestServer) -> None:
         @endpoint(http_server.base_url + "/")
         def get_companies(
             self, sectors: Annotated[Optional[list[str]], api_ref(name="sector")] = None
-        ) -> list[Company]:
-            ...
+        ) -> list[Company]: ...
 
     # WHEN
     with TestClient(requests.Session()) as client:

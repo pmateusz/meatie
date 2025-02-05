@@ -4,9 +4,10 @@
 from typing import Any, cast
 from unittest.mock import patch
 
+from requests import Session
+
 from meatie import endpoint, private
 from meatie_requests import Client
-from requests import Session
 
 
 def test_calls_authenticate_on_private_endpoint(mock_tools) -> None:
@@ -19,8 +20,7 @@ def test_calls_authenticate_on_private_endpoint(mock_tools) -> None:
             super().__init__(cast(Session, session))
 
         @endpoint("/api/v1/products", private)
-        def get_products(self) -> list[Any]:
-            ...
+        def get_products(self) -> list[Any]: ...
 
     # WHEN
     with Store() as api:

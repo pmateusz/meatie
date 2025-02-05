@@ -6,8 +6,9 @@ from typing import Callable, Generator
 import aiohttp
 import pytest
 from http_test import ClientAdapter
-from meatie_aiohttp import Client
 from suite.client import TimeoutSuite
+
+from meatie_aiohttp import Client
 
 
 class TestAiohttpTimeoutSuite(TimeoutSuite):

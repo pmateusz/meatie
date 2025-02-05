@@ -90,11 +90,10 @@ warn_unused_configs = true
 fix = true
 line-length = 120
 cache-dir = ".ruff"
-extend-select = ["I"]
 
 [tool.ruff.lint]
 preview = true
-extend-select = ["CPY001", "D"]
+extend-select = ["CPY001", "D", "I"]
 ignore = ["D100","D105"]
 
 [tool.ruff.lint.pydocstyle]
@@ -104,7 +103,7 @@ convention = "google"
 notice-rgx = "(?i)Copyright \\d{4} The Meatie Authors. All rights reserved.\\n#  Use of this source code is governed by a BSD-style license that can be found in the LICENSE file.\\n"
 min-file-size = 1024
 
-[tool.ruff.per-file-ignores]
+[tool.ruff.lint.per-file-ignores]
 "src/meatie/option/**" = ["D"]
 "src/meatie/internal/types.py" = ["D"]
 "src/meatie/internal/retry/**" = ["D"]

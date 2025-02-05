@@ -3,6 +3,7 @@
 from typing import Callable
 
 import pytest
+
 from meatie import Duration, exponential, fixed, jit, uniform, zero
 from meatie.internal.retry import RetryContext
 

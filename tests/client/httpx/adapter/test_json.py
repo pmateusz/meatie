@@ -6,6 +6,7 @@ import httpx
 from http_test import HTTPTestServer
 from http_test.handlers import MAGIC_NUMBER, magic_number
 from httpx import Response
+
 from meatie import body, endpoint
 from meatie_httpx import Client
 
@@ -19,8 +20,7 @@ def test_use_custom_decoder(http_server: HTTPTestServer) -> None:
 
     class TestClient(Client):
         @endpoint("/", body(json=custom_json))
-        def get_response(self) -> dict[str, Decimal]:
-            ...
+        def get_response(self) -> dict[str, Decimal]: ...
 
     # WHEN
     with TestClient(httpx.Client(base_url=http_server.base_url)) as client:

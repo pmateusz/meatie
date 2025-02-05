@@ -2,9 +2,10 @@ from typing import Annotated
 
 import pytest
 from aiohttp import ClientSession
+from pydantic import BaseModel, Field
+
 from meatie import Limiter, Rate, api_ref, endpoint, limit
 from meatie_aiohttp import Client
-from pydantic import BaseModel, Field
 
 
 class Todo(BaseModel):
@@ -22,8 +23,7 @@ class JsonPlaceholderClient(Client):
         )
 
     @endpoint("/todos", limit(tokens=2))
-    async def get_todos(self, user_id: Annotated[int, api_ref("userId")] = None) -> list[Todo]:
-        ...
+    async def get_todos(self, user_id: Annotated[int, api_ref("userId")] = None) -> list[Todo]: ...
 
 
 @pytest.mark.asyncio()

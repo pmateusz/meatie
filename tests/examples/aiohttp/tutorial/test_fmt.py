@@ -4,9 +4,10 @@ from typing import Annotated, Any
 
 import pytest
 from aiohttp import ClientSession
+from pydantic import BaseModel, Field
+
 from meatie import api_ref, endpoint
 from meatie_aiohttp import Client
-from pydantic import BaseModel, Field
 
 
 class Todo(BaseModel):
@@ -31,12 +32,12 @@ class JsonPlaceholderClient(Client):
         super().__init__(ClientSession(base_url="https://jsonplaceholder.typicode.com"))
 
     @endpoint("/users/{user_id}/todos")
-    async def get_todos_by_user(self, user_id: int, completed: Annotated[bool, api_ref(fmt=Params.bool)]) -> list[Todo]:
-        ...
+    async def get_todos_by_user(
+        self, user_id: int, completed: Annotated[bool, api_ref(fmt=Params.bool)]
+    ) -> list[Todo]: ...
 
     @endpoint("/todos")
-    async def post_todo(self, todo: Annotated[Todo, api_ref("body", fmt=Params.todo)]) -> Todo:
-        ...
+    async def post_todo(self, todo: Annotated[Todo, api_ref("body", fmt=Params.todo)]) -> Todo: ...
 
 
 @pytest.mark.asyncio()

@@ -2,8 +2,9 @@
 #  Use of this source code is governed by a BSD-style license that can be found in the LICENSE file.
 from typing import Any, TypeVar
 
-from meatie import AsyncResponse, Request, Response
 from typing_extensions import Optional, ParamSpec, Protocol, Self
+
+from meatie import AsyncResponse, Request, Response
 
 __all__ = [
     "VT",
@@ -31,19 +32,16 @@ ResponseBodyType = TypeVar("ResponseBodyType", covariant=True)
 
 
 class Client(Protocol):
-    def send(self, request: Request) -> Response:
-        ...
+    def send(self, request: Request) -> Response: ...
 
-    def __enter__(self) -> Self:
-        ...
+    def __enter__(self) -> Self: ...
 
     def __exit__(
         self,
         exc_type: Optional[type[BaseException]],
         exc_val: Optional[BaseException],
         exc_tb: Any,
-    ) -> None:
-        ...
+    ) -> None: ...
 
 
 ClientType = TypeVar("ClientType", bound=Client, covariant=True)
@@ -51,35 +49,28 @@ ClientType = TypeVar("ClientType", bound=Client, covariant=True)
 
 class Context(Protocol[ClientType, ResponseBodyType]):
     @property
-    def client(self) -> ClientType:
-        ...
+    def client(self) -> ClientType: ...
 
     @property
-    def request(self) -> Request:
-        ...
+    def request(self) -> Request: ...
 
     @property
-    def response(self) -> Optional[Response]:
-        ...
+    def response(self) -> Optional[Response]: ...
 
-    def proceed(self) -> ResponseBodyType:
-        ...
+    def proceed(self) -> ResponseBodyType: ...
 
 
 class AsyncClient(Protocol):
-    async def send(self, request: Request) -> AsyncResponse:
-        ...
+    async def send(self, request: Request) -> AsyncResponse: ...
 
-    async def __aenter__(self) -> Self:
-        ...
+    async def __aenter__(self) -> Self: ...
 
     async def __aexit__(
         self,
         exc_type: Optional[type[BaseException]],
         exc_val: Optional[BaseException],
         exc_tb: Any,
-    ) -> None:
-        ...
+    ) -> None: ...
 
 
 AsyncClientType = TypeVar("AsyncClientType", bound=AsyncClient, covariant=True)
@@ -87,16 +78,12 @@ AsyncClientType = TypeVar("AsyncClientType", bound=AsyncClient, covariant=True)
 
 class AsyncContext(Protocol[AsyncClientType, ResponseBodyType]):
     @property
-    def client(self) -> AsyncClientType:
-        ...
+    def client(self) -> AsyncClientType: ...
 
     @property
-    def request(self) -> Request:
-        ...
+    def request(self) -> Request: ...
 
     @property
-    def response(self) -> Optional[AsyncResponse]:
-        ...
+    def response(self) -> Optional[AsyncResponse]: ...
 
-    async def proceed(self) -> ResponseBodyType:
-        ...
+    async def proceed(self) -> ResponseBodyType: ...

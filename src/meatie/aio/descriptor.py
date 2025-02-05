@@ -106,12 +106,10 @@ class AsyncEndpointDescriptor(Generic[PT, ResponseBodyType]):
         self.__operator_by_priority[priority] = operator
 
     @overload
-    def __get__(self, instance: None, owner: None) -> Self:
-        ...
+    def __get__(self, instance: None, owner: None) -> Self: ...
 
     @overload
-    def __get__(self, instance: BaseAsyncClient, owner: type[object]) -> Callable[PT, Awaitable[ResponseBodyType]]:
-        ...
+    def __get__(self, instance: BaseAsyncClient, owner: type[object]) -> Callable[PT, Awaitable[ResponseBodyType]]: ...
 
     def __get__(
         self, instance: Optional[BaseAsyncClient], owner: Optional[type[object]] = None

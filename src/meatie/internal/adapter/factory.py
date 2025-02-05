@@ -1,6 +1,6 @@
 #  Copyright 2024 The Meatie Authors. All rights reserved.
 #  Use of this source code is governed by a BSD-style license that can be found in the LICENSE file.
-from importlib.metadata import version, PackageNotFoundError
+from importlib.metadata import PackageNotFoundError, version
 from inspect import isclass
 from types import GenericAlias
 from typing import (
@@ -33,12 +33,10 @@ def _is_model_type_no_pydantic(value: type[Any]) -> bool:  # pragma: no cover
 
 
 class PydanticTypeAdapterFactory(Protocol):
-    def __call__(self, model_cls: type[T]) -> TypeAdapter[T]:
-        ...
+    def __call__(self, model_cls: type[T]) -> TypeAdapter[T]: ...
 
     @staticmethod
-    def is_model_type(model_cls: type[Any]) -> bool:
-        ...
+    def is_model_type(model_cls: type[Any]) -> bool: ...
 
 
 def _resolve_pydantic_type_adapter_factory() -> Optional[PydanticTypeAdapterFactory]:  # pragma: no cover
