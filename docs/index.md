@@ -1,3 +1,33 @@
+<img src="https://repository-images.githubusercontent.com/735134836/df6752b8-38fa-4550-968e-cd2eda4adb37" alt="meatie">
+
+[![GitHub Test Badge][1]][2] [![codecov.io][3]][4] [![pypi.org][5]][6] [![versions][7]][8]
+[![downloads][9]][10] [![License][11]][12]
+
+[1]: https://github.com/pmateusz/meatie/actions/workflows/ci.yaml/badge.svg "GitHub CI Badge"
+
+[2]: https://github.com/pmateusz/meatie/actions/workflows/ci.yaml "GitHub Actions Page"
+
+[3]: https://codecov.io/gh/pmateusz/meatie/branch/master/graph/badge.svg?branch=master "Coverage Badge"
+
+[4]: https://codecov.io/gh/pmateusz/meatie?branch=master "Codecov site"
+
+[5]: https://img.shields.io/pypi/v/meatie.svg "Pypi Latest Version Badge"
+
+[6]: https://pypi.python.org/pypi/meatie "Pypi site"
+
+[7]:https://img.shields.io/pypi/pyversions/meatie.svg
+
+[8]: https://github.com/pmateusz/meatie
+
+[9]: https://static.pepy.tech/badge/meatie
+
+[10]: https://pepy.tech/project/meatie
+
+[11]: https://img.shields.io/github/license/pmateusz/meatie "License Badge"
+
+[12]: https://opensource.org/license/bsd-3-clause "License"
+
+
 Meatie is a Python library that simplifies the implementation of REST API clients. The library generates code for
 calling REST endpoints based on method signatures annotated with type hints. Meatie takes care of mechanics related to
 HTTP communication, such as building URLs, encoding query parameters, and serializing the body in the HTTP requests and
@@ -41,8 +71,8 @@ class JsonPlaceholderClient(Client):
 ```
 
 Do you use a different HTTP client library in your project? See the example adapted for [
-`requests`](../tests/examples/requests/tutorial/test_basics.py) and [
-`httpx`](../tests/examples/httpx/tutorial/test_basics.py).
+`requests`]({{ repo_url }}/master/tree/tests/examples/requests/tutorial/test_basics.py) and [
+`httpx`]({{ repo_url }}/master/tree/tests/examples/httpx/tutorial/test_basics.py).
 
 ### Caching
 
@@ -154,7 +184,7 @@ class JsonPlaceholderClient(Client):
 ```
 
 Meatie comes with a built-in set of predefined functions for building retry strategies. See
-the [meatie.retry](../src/meatie/option/retry_option.py) option for more details.
+the [meatie.retry]({{ repo_url }}/master/tree/src/meatie/option/retry_option.py) option for more details.
 
 ### Calling Private Endpoints
 
@@ -189,5 +219,5 @@ class JsonPlaceholderClient(Client):
 
 ## More Examples
 
-Need more control over processing the HTTP requests or responses? See the [Meatie Cookbook](./docs/cookbook.md) with
+Need more control over processing the HTTP requests or responses? See the [Meatie Cookbook](./cookbook.md) with
 solutions to the most frequently asked questions by the community.

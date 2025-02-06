@@ -1,7 +1,18 @@
 site_name: Meatie
+repo_url: https://github.com/pmateusz/meatie
+repo_name: GitHub
 theme: readthedocs
+
+nav:
+  - Home: index.md
+  - Cookbook: cookbook.md
+
+extra:
+  repo_url: https://github.com/pmateusz/meatie/tree/master/
+
 plugins:
   - search
+  - macros
   - mkdocstrings:
       handlers:
         python:
