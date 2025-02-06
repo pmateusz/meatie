@@ -1,12 +1,11 @@
 #  Copyright 2024 The Meatie Authors. All rights reserved.
 #  Use of this source code is governed by a BSD-style license that can be found in the LICENSE file.
+
 from typing import Any, Awaitable, Callable, Optional, Union
 
 from meatie import AsyncResponse, EndpointDescriptor, Response
 from meatie.aio import AsyncEndpointDescriptor
 from meatie.internal.types import PT, T
-
-__all__ = ["body"]
 
 
 class BodyOption:
@@ -27,7 +26,7 @@ class BodyOption:
     ) -> None:
         """Creates a new body option.
 
-        Args:
+        Parameters:
             json: function to parse JSON from the HTTP response body. The default is to rely on the behaviour of the HTTP client library.
             text: function to decode text from the HTTP response body. The default is to rely on the behaviour of the HTTP client library.
             error: function to detect an error in the HTTP response. The default is to do nothing.
@@ -40,9 +39,7 @@ class BodyOption:
         self,
         descriptor: Union[EndpointDescriptor[PT, T], AsyncEndpointDescriptor[PT, T]],
     ) -> None:
+        """Apply the body option to the endpoint descriptor."""
         descriptor.get_text = self.text
         descriptor.get_json = self.json
         descriptor.get_error = self.error
-
-
-body = BodyOption

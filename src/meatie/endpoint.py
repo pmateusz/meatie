@@ -20,17 +20,36 @@ def endpoint(
     *args: Any,
     method: Optional[Method] = None,
 ) -> Callable[[Callable[..., T]], Callable[..., T]]:
-    """Class descriptor for decorating methods whose signature represents an API endpoint.
+    """Class descriptor for decorating methods that represent API endpoints.
 
     Inspects the method signature to create an endpoint descriptor that can be used to make HTTP requests.
 
-    Args:
-        path: URL path template, it should start with `/` and path parameters should be surrounded by parentheses.
-        args: optional parameters to customize the behavior of the endpoint, such as caching, rate limiting, retries, and authentication.
-        method: HTTP method to use when making the request, if not set the method is inferred from the method name.
+    Parameters:
+        path: URL path template. It should start with `/`. Path parameters should be surrounded by parentheses.
+        args: options to customize the endpoint behaviour, such as caching, rate limiting, retries, and authentication.
+        method: HTTP method for making the request. Inferred from the method name by default.
 
     Returns:
-        Endpoint class descriptor.
+        A class descriptor.
+
+    Examples:
+
+        from typing import Annotated
+
+        from aiohttp import ClientSession
+        from meatie import api_ref, endpoint
+        from meatie_aiohttp import Client
+
+        class JsonPlaceholderClient(Client):
+            def __init__(self) -> None:
+                super().__init__(ClientSession(base_url="https://jsonplaceholder.typicode.com"))
+
+            @endpoint("/todos")
+            async def get_todos(self, user_id: Annotated[int, api_ref("userId")] = None) -> list[dict]: ...
+
+            @endpoint("/users/{user_id}/todos")
+            async def get_todos_by_user(self, user_id: int) -> list[dict]: ...
+
     """
 
     def class_descriptor(func: Callable[PT, T]) -> Callable[PT, T]:

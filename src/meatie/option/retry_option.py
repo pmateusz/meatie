@@ -20,8 +20,11 @@ from meatie.aio import AsyncContext, AsyncEndpointDescriptor
 from meatie.internal.retry import WaitFunc
 from meatie.internal.types import PT, T
 
-__all__ = ["retry"]
+__all__ = ["RetryOption"]
 
+"""
+
+"""
 
 class RetryOption:
     """Configure the strategy for retrying the endpoint calls that failed."""
@@ -35,24 +38,24 @@ class RetryOption:
     ) -> None:
         """Creates a new retry option.
 
-        Args:
+        Parameters:
             on: function that returns True if the operation should be retried. Default behaviour is to retry on the HTTP Too Many Requests (429) status code.
             wait: function that returns the duration to wait before the next retry attempt. Default behaviour is no to wait.
             stop: function that returns True if the operation should be aborted. Default behaviour is never to stop.
             sleep_func: the sleep function to use. Default behaviour is to rely on the Python standard library functions: time.sleep and asyncio.sleep for async functions.
 
         See Also:
-            meatie.has_status - retry on a specific HTTP status code
-            meatie.has_exception_type - retry on a specific exception type
-            meatie.has_exception_cause_type - retry if a specific exception type is present in the exception chain
-            meatie.zero - do not wait
-            meatie.fixed - wait a fixed amount of seconds
-            meatie.uniform - wait a random amount of seconds in the given time range
-            meatie.exponential - keep increasing the wait time exponentially
-            meatie.jitter - add a random jitter to the wait time
-            meatie.never - never stop
-            meatie.after - stop after deadline in seconds
-            meatie.after_attempt - stop after a number of attempts
+            meatie.has_status: retry on a specific HTTP status code
+            meatie.has_exception_type: retry on a specific exception type
+            meatie.has_exception_cause_type: retry if a specific exception type is present in the exception chain
+            meatie.zero: do not wait
+            meatie.fixed: wait a fixed amount of seconds
+            meatie.uniform: wait a random amount of seconds in the given time range
+            meatie.exponential: keep increasing the wait time exponentially
+            meatie.jitter: add a random jitter to the wait time
+            meatie.never: never stop
+            meatie.after: stop after deadline in seconds
+            meatie.after_attempt: stop after a number of attempts
         """
         self.__on = on
         self.__wait = wait
@@ -63,6 +66,7 @@ class RetryOption:
         self,
         descriptor: Union[EndpointDescriptor[PT, T], AsyncEndpointDescriptor[PT, T]],
     ) -> None:
+        """Apply the retry option to the endpoint descriptor."""
         if isinstance(descriptor, EndpointDescriptor):
             return self.__sync_descriptor(descriptor)
         return self.__async_descriptor(descriptor)
@@ -87,9 +91,6 @@ class RetryOption:
 
         operator = AsyncRetryOperator(self.__on, self.__wait, self.__stop, sleep_func)
         descriptor.register_operator(self.priority, operator)
-
-
-retry = RetryOption
 
 
 class RetryOperator:

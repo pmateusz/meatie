@@ -6,7 +6,7 @@ from meatie import Context, EndpointDescriptor
 from meatie.aio import AsyncContext, AsyncEndpointDescriptor
 from meatie.internal.types import PT, T
 
-__all__ = ["private"]
+__all__ = ["PrivateOption"]
 
 
 class PrivateOption:
@@ -21,6 +21,7 @@ class PrivateOption:
         self,
         descriptor: Union[EndpointDescriptor[PT, T], AsyncEndpointDescriptor[PT, T]],
     ) -> None:
+        """Apply the private option to the endpoint descriptor."""
         if isinstance(descriptor, EndpointDescriptor):
             return self.__sync_descriptor(descriptor)
         return self.__async_descriptor(descriptor)
@@ -45,6 +46,3 @@ def _operator(ctx: Context[T]) -> T:
 async def _async_operator(ctx: AsyncContext[T]) -> T:
     await ctx.client.authenticate(ctx.request)
     return await ctx.proceed()
-
-
-private = PrivateOption()

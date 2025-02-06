@@ -9,7 +9,7 @@ from meatie import Cache, Context, Duration, EndpointDescriptor, Request
 from meatie.aio import AsyncContext, AsyncEndpointDescriptor
 from meatie.internal.types import PT, T
 
-__all__ = ["cache"]
+__all__ = ["CacheOption"]
 
 
 class CacheOption:
@@ -18,7 +18,7 @@ class CacheOption:
     def __init__(self, ttl: Duration, shared: bool = False) -> None:
         """Creates a new cache option.
 
-        Args:
+        Parameters:
             ttl: the time-to-live of the cache entry in seconds
             shared: if set to False (default) the cache entry will be stored in the local cache owned by the client instance. Records cached by another client instance will not be visible.
                 Otherwise, if set to True, all client that are instances of the same Python class will share the same cache.
@@ -30,6 +30,7 @@ class CacheOption:
         self,
         descriptor: Union[EndpointDescriptor[PT, T], AsyncEndpointDescriptor[PT, T]],
     ) -> None:
+        """Apply the cache option to the endpoint descriptor."""
         if isinstance(descriptor, EndpointDescriptor):
             return self.__sync_descriptor(descriptor)
         return self.__async_descriptor(descriptor)
@@ -54,9 +55,6 @@ class CacheOption:
         else:
             operator = LocalAsyncOperator[T](self.ttl)
         descriptor.register_operator(self.priority, operator)
-
-
-cache = CacheOption
 
 
 def get_key(request: Request) -> str:

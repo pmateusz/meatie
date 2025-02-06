@@ -6,6 +6,7 @@ theme: readthedocs
 nav:
   - Home: index.md
   - Cookbook: cookbook.md
+  - Reference: references.md
 
 extra:
   repo_url: https://github.com/pmateusz/meatie/tree/master/
@@ -14,12 +15,16 @@ plugins:
   - search
   - macros
   - mkdocstrings:
+      default_handler: python
       handlers:
         python:
           options:
-            allow_inspection: true
-            find_stubs_package: true
-            show_source: true
-            show_source_type: true
-            show_source_link: true
-            show_source_full_path: true
+            docstring_style: google
+            show_root_heading: true
+            members_order: source
+            annotations_path: brief
+            separate_signature: true
+            modernize_annotations: true
+            show_signature: true
+            show_signature_annotations: true
+            line_length: 60

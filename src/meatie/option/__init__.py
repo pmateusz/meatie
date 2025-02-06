@@ -5,8 +5,8 @@
 
 __all__ = ["cache", "limit", "private", "retry", "body"]
 
-from .body_option import body
-from .cache_option import cache
-from .limit_option import limit
-from .private_option import private
-from .retry_option import retry
+from .body_option import BodyOption as body
+from .cache_option import CacheOption as cache
+from .limit_option import LimitOption as limit
+from .private_option import PrivateOption as private
+from .retry_option import RetryOption as retry
