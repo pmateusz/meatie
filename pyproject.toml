@@ -56,6 +56,15 @@ optional = true
 [tool.poetry.group.pydantic.dependencies]
 pydantic = ">=1.10.0"
 
+[tool.poetry.group.docs]
+optional = true
+
+[tool.poetry.group.docs.dependencies]
+mkdocs = ">=1.2.0"
+mkdocstrings = ">=0.28.0"
+mkdocstrings-python = ">=1.14.5"
+mkdocs-material = ">=7.1.0"
+
 [tool.pytest.ini_options]
 log_cli = true
 asyncio_default_fixture_loop_scope = "session"
@@ -94,7 +103,7 @@ cache-dir = ".ruff"
 [tool.ruff.lint]
 preview = true
 extend-select = ["CPY001", "D", "I"]
-ignore = ["D100","D105"]
+ignore = ["D100", "D105"]
 
 [tool.ruff.lint.pydocstyle]
 convention = "google"

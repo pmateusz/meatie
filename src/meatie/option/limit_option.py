@@ -26,7 +26,7 @@ class LimitOption:
         The number of available tokens at a given time are controlled by the rate limiter instance used by the client.
         Meatie provides leaky bucket rate limiter implementation with constant replenishment rate and burst size. See meatie.Limiter.
 
-        Args:
+        Parameters:
             tokens: number of tokens consumed by the endpoint call
             sleep_func: the sleep function to use. Default behaviour is to rely on the Python standard library functions: time.sleep and asyncio.sleep for async functions.
         """
@@ -37,6 +37,7 @@ class LimitOption:
         self,
         descriptor: Union[EndpointDescriptor[PT, T], AsyncEndpointDescriptor[PT, T]],
     ) -> None:
+        """Apply the rate limit option to the endpoint descriptor."""
         if isinstance(descriptor, EndpointDescriptor):
             return self.__sync_descriptor(descriptor)
         return self.__async_descriptor(descriptor)

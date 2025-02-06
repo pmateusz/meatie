@@ -21,6 +21,7 @@ class PrivateOption:
         self,
         descriptor: Union[EndpointDescriptor[PT, T], AsyncEndpointDescriptor[PT, T]],
     ) -> None:
+        """Apply the private option to the endpoint descriptor."""
         if isinstance(descriptor, EndpointDescriptor):
             return self.__sync_descriptor(descriptor)
         return self.__async_descriptor(descriptor)
@@ -37,6 +38,9 @@ class PrivateOption:
         descriptor.register_operator(self.priority, _async_operator)
 
 
+private = PrivateOption()
+
+
 def _operator(ctx: Context[T]) -> T:
     ctx.client.authenticate(ctx.request)
     return ctx.proceed()
@@ -45,6 +49,3 @@ def _operator(ctx: Context[T]) -> T:
 async def _async_operator(ctx: AsyncContext[T]) -> T:
     await ctx.client.authenticate(ctx.request)
     return await ctx.proceed()
-
-
-private = PrivateOption()

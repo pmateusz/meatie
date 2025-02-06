@@ -3,7 +3,7 @@
 
 """Provides options for customizing the endpoint behaviour such as caching, rate limiting and retries."""
 
-__all__ = ["cache", "limit", "private", "retry", "body"]
+__all__ = ["cache", "limit", "retry", "body", "private"]
 
 from .body_option import body
 from .cache_option import cache

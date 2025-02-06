@@ -1,0 +1,27 @@
+site_name: Meatie
+repo_url: https://github.com/pmateusz/meatie
+repo_name: GitHub
+theme:
+  name: material
+
+nav:
+  - Home: index.md
+  - Cookbook: cookbook.md
+  - Reference: references.md
+
+plugins:
+  - search
+  - mkdocstrings:
+      default_handler: python
+      handlers:
+        python:
+          options:
+            docstring_style: google
+#            show_root_heading: true
+#            members_order: source
+#            annotations_path: brief
+#            separate_signature: true
+#            modernize_annotations: true
+#            show_signature: true
+#            show_signature_annotations: true
+#            line_length: 60
