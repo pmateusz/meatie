@@ -33,7 +33,6 @@ def endpoint(
         A class descriptor.
 
     Examples:
-
         from typing import Annotated
 
         from aiohttp import ClientSession

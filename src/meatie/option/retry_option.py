@@ -26,6 +26,7 @@ __all__ = ["RetryOption"]
 
 """
 
+
 class RetryOption:
     """Configure the strategy for retrying the endpoint calls that failed."""
 
