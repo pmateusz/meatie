@@ -77,52 +77,6 @@ Do you use a different HTTP client library in your project? See the example adap
 `requests`](https://github.com/pmateusz/meatie/blob/master/tests/examples/requests/tutorial/test_basics.py) and [
 `httpx`](https://github.com/pmateusz/meatie/blob/master/tests/examples/httpx/tutorial/test_basics.py).
 
-Meatie is a Python library that simplifies the implementation of REST API clients. The library generates code for
-calling REST endpoints based on method signatures annotated with type hints. Meatie takes care of mechanics related to
-HTTP communication, such as building URLs, encoding query parameters, and serializing the body in the HTTP requests and
-responses. Rate limiting, retries, and caching are available with some modest extra setup.
-
-Meatie works with all major HTTP client libraries (request, httpx, aiohttp) and offers seamless integration with
-Pydantic (v1 and v2). The minimum officially supported version is Python 3.9.
-
-## TL;DR
-
-Generate HTTP clients using type annotations.
-
-```python
-from typing import Annotated
-
-from aiohttp import ClientSession
-from meatie import api_ref, endpoint
-from meatie_aiohttp import Client
-from pydantic import BaseModel, Field
-
-
-class Todo(BaseModel):
-    user_id: int = Field(alias="userId")
-    id: int
-    title: str
-    completed: bool
-
-
-class JsonPlaceholderClient(Client):
-    def __init__(self) -> None:
-        super().__init__(ClientSession(base_url="https://jsonplaceholder.typicode.com"))
-
-    @endpoint("/todos")
-    async def get_todos(self, user_id: Annotated[int, api_ref("userId")] = None) -> list[Todo]: ...
-
-    @endpoint("/users/{user_id}/todos")
-    async def get_todos_by_user(self, user_id: int) -> list[Todo]: ...
-
-    @endpoint("/todos")
-    async def post_todo(self, todo: Annotated[Todo, api_ref("body")]) -> Todo: ...
-```
-
-Do you use a different HTTP client library in your project? See the example adapted for [
-`requests`](https://github.com/pmateusz/meatie/blob/master/tests/examples/requests/tutorial/test_basics.py) and [
-`httpx`](https://github.com/pmateusz/meatie/blob/master/tests/examples/httpx/tutorial/test_basics.py).
-
 ### Caching
 
 Cache result for a given TTL.
