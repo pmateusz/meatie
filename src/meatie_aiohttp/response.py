@@ -6,9 +6,12 @@ from typing import Any, Awaitable, Callable, Optional
 from aiohttp import ClientError, ClientResponse, ContentTypeError
 
 from meatie.error import ParseResponseError, ResponseError
+from meatie.types import AsyncResponse as BaseAsyncResponse
 
 
-class Response:
+class Response(BaseAsyncResponse):
+    """The async response implementation for aiohttp."""
+
     def __init__(
         self,
         response: ClientResponse,

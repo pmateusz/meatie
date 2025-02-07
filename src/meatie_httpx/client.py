@@ -20,6 +20,8 @@ from . import Response
 
 
 class Client(BaseClient):
+    """The sync client implementation using httpx."""
+
     def __init__(
         self,
         client: httpx.Client,

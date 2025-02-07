@@ -8,6 +8,8 @@ from meatie.error import ParseResponseError, ResponseError
 
 
 class Response:
+    """The sync response implementation using requests."""
+
     def __init__(
         self,
         response: requests.Response,

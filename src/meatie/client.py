@@ -19,7 +19,7 @@ class BaseClient:
         local_cache: Optional[Cache] = None,
         limiter: Optional[Limiter] = None,
     ):
-        """Creates a BaseAsyncClient.
+        """Creates a BaseClient.
 
         Args:
             local_cache: Cache implementation for storing the HTTP responses.

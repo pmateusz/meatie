@@ -6,9 +6,12 @@ from typing import Any, Awaitable, Callable, Optional
 import httpx
 
 from meatie.error import ParseResponseError, ResponseError
+from meatie.types import AsyncResponse as BaseAsyncResponse
 
 
-class AsyncResponse:
+class AsyncResponse(BaseAsyncResponse):
+    """The async response implementation using httpx."""
+
     def __init__(
         self,
         response: httpx.Response,

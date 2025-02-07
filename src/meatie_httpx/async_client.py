@@ -22,6 +22,8 @@ from .client import build_kwargs
 
 
 class AsyncClient(BaseAsyncClient):
+    """The async client implementation for httpx."""
+
     def __init__(
         self,
         client: httpx.AsyncClient,
