@@ -22,6 +22,8 @@ from . import Response
 
 
 class Client(BaseAsyncClient):
+    """The async client implementation for aiohttp."""
+
     def __init__(
         self,
         session: aiohttp.ClientSession,

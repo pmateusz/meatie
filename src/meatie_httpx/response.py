@@ -6,9 +6,12 @@ from typing import Any, Callable, Optional
 import httpx
 
 from meatie.error import ParseResponseError, ResponseError
+from meatie.types import Response as BaseResponse
 
 
-class Response:
+class Response(BaseResponse):
+    """The sync response implementation using httpx."""
+
     def __init__(
         self,
         response: httpx.Response,

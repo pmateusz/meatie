@@ -20,6 +20,8 @@ from . import Response
 
 
 class Client(BaseClient):
+    """The sync client implementation using requests."""
+
     def __init__(
         self,
         session: Session,
