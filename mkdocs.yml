@@ -17,11 +17,3 @@ plugins:
         python:
           options:
             docstring_style: google
-#            show_root_heading: true
-#            members_order: source
-#            annotations_path: brief
-#            separate_signature: true
-#            modernize_annotations: true
-#            show_signature: true
-#            show_signature_annotations: true
-#            line_length: 60
