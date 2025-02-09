@@ -5,9 +5,10 @@ from typing import Any, Callable, Optional
 import requests
 
 from meatie.error import ParseResponseError, ResponseError
+from meatie.types import Response as BaseResponse
 
 
-class Response:
+class Response(BaseResponse):
     """The sync response implementation using requests."""
 
     def __init__(
