@@ -5,9 +5,35 @@ theme:
   name: material
 
 nav:
-  - Home: index.md
-  - Cookbook: cookbook.md
-  - Reference: references.md
+- Home: index.md
+- Getting Started: getting_started.md
+- HTTP Backends:
+    - Overview: backends/overview.md
+    - AIOHTTP Integration: backends/aiohttp.md
+    - HTTPX Integration: backends/httpx.md
+    - Requests Integration: backends/requests.md
+    - Switching Backends: backends/switching.md
+- Advanced Usage:
+    - Overview: advanced/overview.md
+    - Caching: advanced/caching.md
+    - Rate Limiting: advanced/rate_limiting.md
+    - Retries: advanced/retries.md
+    - Authentication: advanced/auth.md
+    - Query Parameters: advanced/query_params.md
+    - JSON Serialization: advanced/serialization.md
+    - Error Handling: advanced/errors.md
+- Examples: examples.md
+    # TODO: Add examples here
+- Internals:
+    - Architecture Overview: internals/architecture.md
+    - Endpoint Descriptor: internals/endpoint_descriptor.md
+    - Request Lifecycle: internals/request_lifecycle.md
+- Contributing:
+    - Contributing Guide: contributing/guide.md
+    - Code of Conduct: contributing/code_of_conduct.md
+    - Development Setup: contributing/development.md
+    - Testing: contributing/testing.md
+- API Reference: references.md
 
 plugins:
   - search
