@@ -3,7 +3,9 @@ repo_url: https://github.com/pmateusz/meatie
 repo_name: GitHub
 theme:
     name: material
-
+    features:
+        - content.code.copy
+        - content.code.annotate
 nav:
 - Introduction:
     - Overview: index.md
@@ -51,3 +53,14 @@ plugins:
               python:
                   options:
                       docstring_style: google
+
+markdown_extensions:
+    - pymdownx.highlight:
+          anchor_linenums: true
+          line_spans: __span
+          pygments_lang_class: true
+    - pymdownx.inlinehilite
+    - pymdownx.snippets
+    - pymdownx.superfences
+    - admonition
+    - pymdownx.details
