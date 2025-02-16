@@ -2,44 +2,52 @@ site_name: Meatie
 repo_url: https://github.com/pmateusz/meatie
 repo_name: GitHub
 theme:
-  name: material
+    name: material
 
 nav:
-- Home: index.md
-- Getting Started: getting_started.md
+- Introduction:
+    - Overview: index.md
+    - Getting Started: getting_started.md
+    - Changelog: CHANGELOG.md
+
 - HTTP Backends:
     - Overview: backends/overview.md
     - AIOHTTP Integration: backends/aiohttp.md
     - HTTPX Integration: backends/httpx.md
     - Requests Integration: backends/requests.md
     - Switching Backends: backends/switching.md
+
 - Advanced Usage:
     - Overview: advanced/overview.md
-    - Caching: advanced/caching.md
-    - Rate Limiting: advanced/rate_limiting.md
-    - Retries: advanced/retries.md
     - Authentication: advanced/auth.md
     - Query Parameters: advanced/query_params.md
     - JSON Serialization: advanced/serialization.md
     - Error Handling: advanced/errors.md
-- Examples: examples.md
-    # TODO: Add examples here
+
+- Performance Features:
+    - Caching: advanced/caching.md
+    - Rate Limiting: advanced/rate_limiting.md
+    - Retries: advanced/retries.md
+
 - Internals:
     - Architecture Overview: internals/architecture.md
     - Endpoint Descriptor: internals/endpoint_descriptor.md
     - Request Lifecycle: internals/request_lifecycle.md
-- Contributing:
-    - Contributing Guide: contributing/guide.md
-    - Code of Conduct: contributing/code_of_conduct.md
-    - Development Setup: contributing/development.md
-    - Testing: contributing/testing.md
+
+- Examples: examples.md
+
+- Development:
+    - Contributing Guide: CONTRIBUTING.md
+    - Security Policy: SECURITY.md
+    - Code of Conduct: CODE_OF_CONDUCT.md
+
 - API Reference: references.md
 
 plugins:
-  - search
-  - mkdocstrings:
-      default_handler: python
-      handlers:
-        python:
-          options:
-            docstring_style: google
+    - search
+    - mkdocstrings:
+          default_handler: python
+          handlers:
+              python:
+                  options:
+                      docstring_style: google
