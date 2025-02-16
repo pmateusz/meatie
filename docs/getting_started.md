@@ -22,7 +22,7 @@ ensures the compatibility between `meatie` and the specific version of `httpx`.
     If you want to learn how to use Meatie with different HTTP clients, check
     out the [Backends section](./backends/overview.md).
 
-## Quick Start
+## First Steps
 
 We will create a simple client for the
 [JSONPlaceholder](https://jsonplaceholder.typicode.com/) API. We will use it to
