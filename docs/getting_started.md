@@ -128,7 +128,7 @@ Now, we can add the method to the client:
    You can specify it using the `method` parameter.
 
 ??? example "Full Code"
-    ```python
+    ```python linenums="1"
     import httpx
     from meatie import endpoint
     from meatie_httpx import Client
@@ -174,6 +174,11 @@ Now, we can add the method to the client:
     ```
 
 ## Next Steps
+
+That concludes our quick start guide. You should now have a basic understanding
+of what Meatie is and how to use it to create API clients really simply. Still,
+this is just the tip of the iceberg. There is much more to learn about Meatie.
+Here are some suggestions on where to go and what to do next:
 
 !!! tip
     Check out our [advanced topics](./advanced/overview.md) section to learn
