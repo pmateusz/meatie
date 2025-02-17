@@ -2,25 +2,21 @@
 
 This guide will walk you through creating your first API client with Meatie.
 For a general overview of Meatie and its features, see the
-[home page](./index.md).
+[home page](index.md).
 
 ## Installation
 
-For this guide, we will use the `httpx` library as the HTTP client. We will
-also use the `pydantic` library for defining the data models. To install the
-required libraries, run the following command:
+For this guide, we will use the `httpx` library as the HTTP client. We will also use the `pydantic` library for defining the data models. To install the required libraries, run the following command:
 
 ```bash
 pip install meatie[httpx] pydantic
 ```
 
-Using the `[httpx]` extra will install the `httpx` backend for Meatie. This
-ensures the compatibility between `meatie` and the specific version of `httpx`.
+Using the `[httpx]` extra will install the `httpx` backend for Meatie. This ensures the compatibility between `meatie` and the specific version of `httpx`.
 
 !!! note
-
     If you want to learn how to use Meatie with different HTTP clients, check
-    out the [Backends section](./backends/overview.md).
+    out the [Backends section](backends/overview.md).
 
 ## First Steps
 
@@ -50,9 +46,7 @@ class Post(BaseModel):
     body: str
 ```
 
-Next, we will create the client for the JSONPlaceholder API. As mentioned
-above, we will use the `httpx` library as a backend. Let's create the
-boilerplate to define a client:
+Next, we will create the client for the JSONPlaceholder API. As mentioned above, we will use the `httpx` library as a backend. Let's create the boilerplate to define a client:
 
 ```python
 import httpx
@@ -64,8 +58,7 @@ class JsonPlaceholderClient(Client):
         super().__init__(httpx.Client(base_url="https://jsonplaceholder.typicode.com"))
 ```
 
-Now, defining the endpoints is straightforward. We will create a method to get
-a post by number:
+Now, defining the endpoints is straightforward. We will create a method to get a post by number:
 
 ```python
     @endpoint("/posts/{post_id}") # (1)!
@@ -76,8 +69,7 @@ a post by number:
 2. The `...` (ellipsis) is a placeholder - Meatie will generate the method body
    and anything inside will be discarded.
 
-That's it! We have defined a client for the JSONPlaceholder API. We can now use
-it to get a post by its number:
+That's it! We have defined a client for the JSONPlaceholder API. We can now use it to get a post by its number:
 
 ```python
 with JsonPlaceholderClient() as client:
@@ -85,8 +77,7 @@ with JsonPlaceholderClient() as client:
     print(post)
 ```
 
-Using the client in a `with` block ensures that the client is properly closed
-after the block is executed, preventing any resource leaks.
+Using the client in a `with` block ensures that the client is properly closed after the block is executed, preventing any resource leaks.
 
 Let's add another endpoint to the client to get all posts:
 
@@ -123,9 +114,7 @@ Now, we can add the method to the client:
     def create_post(self, post: PostCreate) -> PostCreateResponse: ...
 ```
 
-1. Usually, the method is inferred from the function name, using a prefix (like
-   `get_`, `post_`, etc.). However, when the request method cannot be inferred,
-   You can specify it using the `method` parameter.
+1. Usually, the method is inferred from the function name, using a prefix (like `get_`, `post_`, etc.). However, when the request method cannot be inferred, you can specify it using the `method` parameter.
 
 ??? example "Full Code"
     ```python linenums="1"
@@ -181,15 +170,9 @@ this is just the tip of the iceberg. There is much more to learn about Meatie.
 Here are some suggestions on where to go and what to do next:
 
 !!! tip
-    Check out our [advanced topics](./advanced/overview.md) section to learn
+    Check out our [advanced topics](advanced/overview.md) section to learn
     more about things like authentication, error handling, custom serialization
     and more.
-
-!!! tip
-    Interested in how Meatie works under the hood? Check out the
-    [architecture](./internals/architecture.md) section, learn about the
-    [request lifecycle](./internals/request_lifecycle.md), or learn about the
-    [endpoint descriptor](./internals/endpoint_descriptor.md).
 
 !!! question
     Have a question or need help? Shoot us a message vie GitHub

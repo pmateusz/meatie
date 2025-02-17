@@ -39,4 +39,4 @@ responses. Rate limiting, retries, and caching are available with some modest ex
 Meatie works with all major HTTP client libraries (request, httpx, aiohttp) and offers seamless integration with
 Pydantic (v1 and v2). The minimum officially supported version is Python 3.9.
 
-If you want to get started quickly, check out our [Getting Started Guide](./getting_started.md).
+If you want to get started quickly, check out our [Getting Started Guide](getting_started.md).

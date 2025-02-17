@@ -10,7 +10,6 @@ nav:
 - Introduction:
     - Overview: index.md
     - Getting Started: getting_started.md
-    - Changelog: CHANGELOG.md
 
 - HTTP Backends:
     - Overview: backends/overview.md
@@ -27,23 +26,18 @@ nav:
     - Error Handling: advanced/errors.md
 
 - Performance Features:
-    - Caching: advanced/caching.md
-    - Rate Limiting: advanced/rate_limiting.md
-    - Retries: advanced/retries.md
-
-- Internals:
-    - Architecture Overview: internals/architecture.md
-    - Endpoint Descriptor: internals/endpoint_descriptor.md
-    - Request Lifecycle: internals/request_lifecycle.md
-
-- Examples: examples.md
+    - Overview: performance/overview.md
+    - Caching: performance/caching.md
+    - Rate Limiting: performance/rate_limiting.md
+    - Retries: performance/retries.md
 
 - Development:
     - Contributing Guide: CONTRIBUTING.md
     - Security Policy: SECURITY.md
     - Code of Conduct: CODE_OF_CONDUCT.md
 
-- API Reference: references.md
+# TODO: Make API Reference more organized
+- API Reference: api_reference/all_references.md
 
 plugins:
     - search
