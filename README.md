@@ -81,6 +81,13 @@ Do you use a different HTTP client library in your project? See the example adap
 
 https://meatie.readthedocs.io/
 
+## Installation
+
+Meatie is available on [pypi](https://pypi.org/project/meatie/). You can install it with:
+```bash
+pip install meatie
+```
+
 ## Features
 
 ### Caching
