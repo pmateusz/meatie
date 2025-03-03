@@ -59,6 +59,7 @@ test = [
 dev = [
     "mypy>=1.11",
     "meatie[aiohttp,httpx,pydantic,requests]",
+    "pre-commit>=4.1.0",
 ]
 
 [tool.uv]
