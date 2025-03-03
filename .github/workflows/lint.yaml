@@ -29,7 +29,7 @@ jobs:
           enable-cache: true
 
       - name: Install the project
-        run: uv sync --dev --python ${{ inputs.python_version || github.event.inputs.python_version }}
+        run: uv sync --no-default-groups --group dev --group lint --python ${{ inputs.python_version || github.event.inputs.python_version }}
 
       - name: Cache pre-commit hooks
         uses: actions/cache@v3
@@ -46,8 +46,7 @@ jobs:
         continue-on-error: true
 
       - name: Check for linting errors
+        if: failure()
         run: |
-          if [ ${{ steps.pre-commit.outcome }} == 'failure' ] || [ ${{ steps.mypy.outcome }} == 'failure' ]; then
-            echo "Linting checks failed. Please review the output above."
-            exit 1
-          fi
+          echo "Linting checks failed. Please review the output above."
+          exit 1
