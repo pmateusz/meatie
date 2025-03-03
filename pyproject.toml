@@ -60,6 +60,7 @@ dev = [
     "mypy>=1.11",
     "meatie[aiohttp,httpx,pydantic,requests]",
     "pre-commit>=4.1.0",
+    "types-requests>=2.32.0.20250301",
 ]
 
 [tool.uv]
