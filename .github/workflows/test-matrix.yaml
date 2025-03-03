@@ -38,7 +38,7 @@ jobs:
           cache-dependency-glob: "uv.lock"
 
       - name: Install dependencies
-        run: uv sync --no-install-project --extra=test
+        run: uv sync --no-install-project --group=test
 
       - name: Install aiohttp
         if: ${{ contains(matrix.dependencies, 'aiohttp') }}
