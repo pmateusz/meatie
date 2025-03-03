@@ -6,12 +6,21 @@ on:
         type: string
         description: 'Python version'
         required: true
+      upload_coverage:
+        type: boolean
+        description: 'Upload coverage'
+        default: false
   workflow_dispatch:
     inputs:
       python_version:
         type: string
         description: 'Python version'
         required: true
+      upload_coverage:
+        type: boolean
+        description: 'Upload coverage'
+        default: false
+
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -33,3 +42,12 @@ jobs:
 
       - name: Run tests
         run: uv run pytest
+
+      - name: Upload coverage reports to Codecov
+        if: ${{ inputs.upload_coverage || github.event.inputs.upload_coverage }}
+        uses: codecov/codecov-action@v3
+        with:
+          fail_ci_if_error: true
+          file: coverage.xml
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
