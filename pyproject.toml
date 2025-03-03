@@ -44,10 +44,10 @@ requests = [ "requests>=2.26" ]
 
 [dependency-groups]
 docs = [
-  "mkdocs>=1.2",
-  "mkdocs-material>=7.1",
-  "mkdocstrings>=0.28",
-  "mkdocstrings-python>=1.14.5",
+    "mkdocs>=1.2",
+    "mkdocs-material>=7.1",
+    "mkdocstrings>=0.28",
+    "mkdocstrings-python>=1.14.5",
 ]
 test = [
     "cryptography>=42.0.2",
@@ -56,17 +56,12 @@ test = [
     "pytest-cov>=6.0.0",
     "pytest-xdist[psutil]>=3.6.1",
 ]
-all-backends = [
-    "meatie[aiohttp,httpx,pydantic,requests]",
-]
 dev = [
     "mypy>=1.11",
-    "pre-commit>=4.1.0",
-    "types-requests>=2.32.0.20250301",
 ]
 
 [tool.uv]
-default-groups = [ "dev", "test", "docs", "all_backends" ]
+default-groups = [ "dev", "test" ]
 
 [tool.hatch.build.targets.wheel]
 include = [ "pyproject.toml", "README.md", "LICENSE.md", "CHANGELOG.md" ]

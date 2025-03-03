@@ -27,28 +27,37 @@ jobs:
         uses: astral-sh/setup-uv@v5
         with:
           enable-cache: true
+          cache-dependency-glob: "uv.lock"
+
+      - id: setup-python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ inputs.python_version }}
 
       - name: Install the project
-        run: uv sync --no-default-groups --group dev --python ${{ inputs.python_version || github.event.inputs.python_version }}
+        run: uv sync --all-extras --dev
 
-      - name: Cache pre-commit hooks
-        uses: actions/cache@v3
+      - name: Cache virtual environment
+        id: cache-venv
+        uses: actions/cache@v4
         with:
-          path: ~/.cache/pre-commit
-          key: pre-commit-${{ hashFiles('.pre-commit-config.yaml') }}
+          path: |
+            .ruff
+            .mypy
+            ~/.cache/uv
+            ~/.cache/pre-commit
+          key: lint/venv/branch/${{ env.branch }}/runner/${{ runner.os }}/python/${{ steps.setup-python.outputs.python-version }}/hash/${{ hashFiles('**/CACHEDIR.TAG', 'uv.lock') }}
 
-      - name: Run pre-commit
-        id: pre-commit
-        run: uv run pre-commit run --all
-        continue-on-error: true
+      - name: Install dependencies
+        if: ${{ steps.cache-venv.outputs.cache-hit != 'true' }}
+        run: |
+          uv sync --no-install-project --all-extras --dev
+          uv pip install pre-commit
+          uv run mypy --install-types --non-interactive src/**
+          uv cache prune --ci
 
       - name: Run mypy
-        id: mypy
-        run: uv run mypy src
-        continue-on-error: true
+        run: uv run mypy src/**
 
-      - name: Check for linting errors
-        if: steps.pre-commit.outcome == 'failure' || steps.mypy.outcome == 'failure'
-        run: |
-          echo "Linting checks failed. Please review the output above."
-          exit 1
+      - name: Run pre-commit
+        run: uv run pre-commit run --all
