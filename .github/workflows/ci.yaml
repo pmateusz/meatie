@@ -18,7 +18,6 @@ jobs:
     with:
       python_version: 3.12
   test:
-    needs: [ lint ]
     uses: ./.github/workflows/test.yaml
     with:
       python_version: 3.12
