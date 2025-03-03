@@ -2,18 +2,59 @@ site_name: Meatie
 repo_url: https://github.com/pmateusz/meatie
 repo_name: GitHub
 theme:
-  name: material
-
+    name: material
+    features:
+        - content.code.copy
+        - content.code.annotate
 nav:
-  - Home: index.md
-  - Cookbook: cookbook.md
-  - Reference: references.md
+- Introduction:
+    - Overview: index.md
+    - Getting Started: getting_started.md
+
+- HTTP Backends:
+    - Overview: backends/overview.md
+    - AIOHTTP Integration: backends/aiohttp.md
+    - HTTPX Integration: backends/httpx.md
+    - Requests Integration: backends/requests.md
+    - Switching Backends: backends/switching.md
+
+- Advanced Usage:
+    - Overview: advanced/overview.md
+    - Authentication: advanced/auth.md
+    - Query Parameters: advanced/query_params.md
+    - JSON Serialization: advanced/serialization.md
+    - Error Handling: advanced/errors.md
+
+- Performance Features:
+    - Overview: performance/overview.md
+    - Caching: performance/caching.md
+    - Rate Limiting: performance/rate_limiting.md
+    - Retries: performance/retries.md
+
+- Development:
+    - Contributing Guide: CONTRIBUTING.md
+    - Security Policy: SECURITY.md
+    - Code of Conduct: CODE_OF_CONDUCT.md
+
+# TODO: Make API Reference more organized
+- API Reference: api_reference/all_references.md
 
 plugins:
-  - search
-  - mkdocstrings:
-      default_handler: python
-      handlers:
-        python:
-          options:
-            docstring_style: google
+    - search
+    - mkdocstrings:
+          default_handler: python
+          handlers:
+              python:
+                  options:
+                      docstring_style: google
+
+markdown_extensions:
+    - pymdownx.highlight:
+          anchor_linenums: true
+          line_spans: __span
+          pygments_lang_class: true
+    - pymdownx.inlinehilite
+    - pymdownx.snippets
+    - pymdownx.superfences
+    - admonition
+    - pymdownx.details

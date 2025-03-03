@@ -1,3 +1,5 @@
+# API Reference
+
 ::: meatie
 ::: meatie.endpoint
 ::: meatie.api_reference
