@@ -107,7 +107,7 @@ addopts = [
     "--cov",
     "--cov-report=xml:coverage.xml",
     "--cov-report=term",
-    "-n auto",  # Automatically run tests in parallel, disable by running `pytest -n 1`
+    "-nauto",  # Automatically run tests in parallel, disable by running `pytest -n 1`
 ]
 
 [tool.coverage.run]
