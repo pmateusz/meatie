@@ -57,6 +57,7 @@ test = [
     "pytest-xdist[psutil]>=3.6.1",
 ]
 dev = [
+    "pip",
     "mypy>=1.11",
 ]
 
