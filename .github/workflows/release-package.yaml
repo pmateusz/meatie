@@ -5,65 +5,26 @@ on:
       - "*.*.*"
   workflow_dispatch: { }
 
-concurrency:
-  group: release-git-tag
 jobs:
-  check-branch:
-    uses: ./.github/workflows/check-branch.yaml
-    secrets: inherit
-  build-package:
-    needs: [ check-branch ]
+  ci:
+    uses: ./.github/workflows/ci.yaml
+
+  publish:
+    needs: [ ci ]
     timeout-minutes: 5
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
     steps:
       - name: Checkout branch
         uses: actions/checkout@v4
         with:
           fetch-depth: 2
-
-      - id: setup-python
-        uses: actions/setup-python@v5
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
         with:
-          python-version: '3.12'
-
-      - name: Restore poetry from cache
-        id: cache-poetry-restore
-        uses: actions/cache/restore@v3
-        with:
-          path: ~/.local
-          key: release-package/poetry/runner/${{ runner.os }}/python/${{ steps.setup-python.outputs.python-version }}
-
-      - if: steps.cache-poetry-restore.outputs.cache-hit != 'true'
-        name: Install poetry
-        uses: snok/install-poetry@v1
-        with:
-          virtualenvs-create: true
-          virtualenvs-in-project: true
-          installer-parallel: true
-
-      - name: Check poetry version
-        run: echo POETRY_VERSION=$(poetry --version | grep -oP '\d+.\d+.\d+') >> $GITHUB_ENV
-
-      - name: Save poetry cache
-        id: cache-poetry-save
-        uses: actions/cache/save@v4
-        with:
-          path: ~/.local
-          key: release-package/poetry/runner/${{ runner.os }}/python/${{ steps.setup-python.outputs.python-version }}/version/${{ env.POETRY_VERSION }}
-
-      - name: Install project and dependencies
-        run: poetry install --no-interaction
-
-      - name: Set project version
-        run: poetry version $(echo -n ${{ github.ref_name }} | grep -oP '\d+.\d+.\d+')
-
+          enable-cache: true
       - name: Build package
-        run: poetry build
-
-      - name: Configure repository
-        run: |
-          poetry config repositories.testpypi https://test.pypi.org/legacy/
-          poetry config pypi-token.pypi ${{ secrets.PYPI_TOKEN }}
-
+        run: uv build
       - name: Publish package
-        run: poetry publish
+        run: uv publish --trusted-publishing always

@@ -23,50 +23,13 @@ jobs:
         with:
           fetch-depth: 2
 
-      - id: setup-python
-        uses: actions/setup-python@v5
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
         with:
-          python-version: ${{ inputs.python_version }}
+          enable-cache: true
 
-      - name: Restore poetry from cache
-        id: cache-poetry-restore
-        uses: actions/cache/restore@v4
-        with:
-          path: ~/.local
-          key: test/poetry/runner/${{ runner.os }}/python/${{ steps.setup-python.outputs.python-version }}
+      - name: Install the project
+        run: uv sync --dev --python-version ${{ inputs.python_version || github.event.inputs.python_version }}
 
-      - name: Install poetry
-        if: ${{steps.cache-poetry-restore.outputs.cache-hit != 'true'}}
-        uses: snok/install-poetry@v1
-        with:
-          virtualenvs-create: true
-          virtualenvs-in-project: true
-          installer-parallel: true
-
-      - name: Check poetry version
-        run: echo POETRY_VERSION=$(poetry --version | grep -oP '\d+.\d+.\d+') >> $GITHUB_ENV
-
-      - name: Save poetry cache
-        id: cache-poetry-save
-        if: ${{steps.cache-poetry-restore.outputs.cache-hit != 'true'}}
-        uses: actions/cache/save@v4
-        with:
-          path: ~/.local
-          key: test/poetry/runner/${{ runner.os }}/python/${{ steps.setup-python.outputs.python-version }}/version/${{ env.POETRY_VERSION }}
-
-      - name: Cache virtual environment
-        id: cache-venv
-        uses: actions/cache@v4
-        with:
-          path: .venv
-          key: test/branch/${{ env.branch }}/runner/${{ runner.os }}/python/${{ steps.setup-python.outputs.python-version }}/hash/${{ hashFiles('poetry.lock') }}
-
-      - name: Install dependencies
-        if: ${{steps.cache-venv.outputs.cache-hit != 'true'}}
-        run: poetry install --no-interaction --no-root --with=test --with=pydantic --with=dev --with=requests --with=httpx --with=aiohttp
-
-      - name: Install project
-        run: poetry install --no-interaction --only-root
-
-      - name: Run pytest
-        run: poetry run pytest
+      - name: Run tests
+        run: uv run pytest

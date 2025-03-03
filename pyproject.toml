@@ -1,79 +1,117 @@
-[tool.poetry]
+[build-system]
+build-backend = "hatchling.build"
+requires = [ "hatchling" ]
+
+[project]
 name = "meatie"
 version = "0.1.7"
 description = "Meatie is a Python typed REST client library that eliminates the need for boilerplate code when integrating with external APIs. The library generates code for calling a REST API based on method signatures annotated with type hints. Meatie abstracts away mechanics related to HTTP communication, such as building URLs, encoding query parameters, parsing, and dumping Pydantic models. With some modest additional configuration effort, generated HTTP clients offer rate limiting, retries, and caching."
-authors = ["pmateusz <pmateusz@users.noreply.github.com>"]
 readme = "README.md"
-keywords = ["http-client", "api-client", "REST", "HTTP", "API", "requests", "httpx", "aiohttp", "pydantic", "asyncio", "type-hints"]
-homepage = "https://github.com/pmateusz/meatie"
-repository = "https://github.com/pmateusz/meatie"
+keywords = [
+  "aiohttp",
+  "API",
+  "api-client",
+  "asyncio",
+  "HTTP",
+  "http-client",
+  "httpx",
+  "pydantic",
+  "requests",
+  "REST",
+  "type-hints",
+]
 license = "BSD-3-Clause"
-include = ["pyproject.toml", "README.md", "LICENSE.md", "CHANGELOG.md"]
-packages = [
-    { include = "meatie", from = "src" },
-    { include = "meatie_aiohttp", from = "src" },
-    { include = "meatie_httpx", from = "src" },
-    { include = "meatie_requests", from = "src" },
+license-files = [ "LICENSE.md" ]
+authors = [ { name = "pmateusz", email = "pmateusz@users.noreply.github.com" } ]
+requires-python = ">=3.9"
+classifiers = [
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
 ]
 
-[tool.poetry.dependencies]
-python = ">=3.9"
-typing-extensions = ">=4.7.0"
+repository = "https://github.com/pmateusz/meatie"
 
-[tool.poetry.group.requests]
-optional = true
+[project.optional-dependencies]
+aiohttp = [ "aiohttp>=3.7" ]
+httpx = [ "httpx>=0.19" ]
+pydantic = [ "pydantic>=1.10" ]
+requests = [ "requests>=2.26" ]
 
-[tool.poetry.group.requests.dependencies]
-requests = ">=2.26.0"
+[dependency-groups]
+docs = [
+  "mkdocs>=1.2",
+  "mkdocs-material>=7.1",
+  "mkdocstrings>=0.28",
+  "mkdocstrings-python>=1.14.5",
+]
+test = [
+    "coverage>=7.4",
+    "cryptography>=42.0.2",
+    "pytest>=7.4.3",
+    "pytest-asyncio>=0.23.2"
+]
+dev = [
+    "mypy>=1.11",
+    "meatie[aiohttp,httpx,pydantic,requests]",
+]
 
-[tool.poetry.group.httpx]
-optional = true
+[tool.uv]
+default-groups = [ "dev", "test", "docs" ]
 
-[tool.poetry.group.httpx.dependencies]
-httpx = ">=0.19.0"
+[tool.hatch.build.targets.wheel]
+include = [ "pyproject.toml", "README.md", "LICENSE.md", "CHANGELOG.md" ]
+packages = [ "src/meatie", "src/meatie_aiohttp", "src/meatie_httpx", "src/meatie_requests" ]
 
-[tool.poetry.group.aiohttp]
-optional = true
+[tool.hatch.build.targets.sdist]
+include = [ "pyproject.toml", "README.md", "LICENSE.md", "CHANGELOG.md" ]
+packages = [ "src/meatie", "src/meatie_aiohttp", "src/meatie_httpx", "src/meatie_requests" ]
 
-[tool.poetry.group.aiohttp.dependencies]
-aiohttp = ">=3.7.0"
+[tool.ruff]
+line-length = 120
+fix = true
+cache-dir = ".ruff"
 
-[tool.poetry.group.test.dependencies]
-coverage = ">=7.4.0"
-pytest = ">=7.4.3"
-pytest-asyncio = ">=0.23.2"
-cryptography = ">=42.0.2"
+[tool.ruff.lint]
+preview = true
+extend-select = [ "CPY001", "D", "I" ]
+ignore = [ "D100", "D105" ]
 
-[tool.poetry.group.dev]
-optional = true
+per-file-ignores."src/meatie/internal/adapter/**" = [ "D" ]
+per-file-ignores."src/meatie/internal/cache.py" = [ "D" ]
+per-file-ignores."src/meatie/internal/limit/**" = [ "D" ]
+per-file-ignores."src/meatie/internal/retry/**" = [ "D" ]
+per-file-ignores."src/meatie_aiohttp/**" = [ "D" ]
+per-file-ignores."src/meatie_httpx/**" = [ "D" ]
+per-file-ignores."src/meatie_requests/**" = [ "D" ]
+per-file-ignores."test_*.py" = [ "D" ]
+per-file-ignores."tests/**" = [ "D" ]
 
-[tool.poetry.group.dev.dependencies]
-mypy = ">=1.11.0"
-
-[tool.poetry.group.pydantic]
-optional = true
-
-[tool.poetry.group.pydantic.dependencies]
-pydantic = ">=1.10.0"
-
-[tool.poetry.group.docs]
-optional = true
-
-[tool.poetry.group.docs.dependencies]
-mkdocs = ">=1.2.0"
-mkdocstrings = ">=0.28.0"
-mkdocstrings-python = ">=1.14.5"
-mkdocs-material = ">=7.1.0"
+flake8-copyright.min-file-size = 1024
+flake8-copyright.notice-rgx = "(?i)Copyright \\d{4} The Meatie Authors. All rights reserved.[\\r\\n]+#  Use of this source code is governed by a BSD-style license that can be found in the LICENSE file.[\\r\\n]*"
+pydocstyle.convention = "google"
 
 [tool.pytest.ini_options]
 log_cli = true
 asyncio_default_fixture_loop_scope = "session"
-pythonpath = ["src", "tests/shared"]
-addopts = ["--import-mode=importlib"]
+pythonpath = [ "src", "tests/shared" ]
+addopts = [ "--import-mode=importlib" ]
 
+[tool.coverage.run]
+branch = true
+omit = [ "src/meatie/aio/internal/adapter/pydantic_v1.py", "tests/*" ]
+
+[tool.coverage.report]
+exclude_also = [
+  "class .*\\bProtocol\\):",
+  "\\.\\.\\.",
+]
 
 [tool.mypy]
-mypy_path = ["$MYPY_CONFIG_FILE_DIR/src", "$MYPY_CONFIG_FILE_DIR/tests/shared"]
+mypy_path = [ "$MYPY_CONFIG_FILE_DIR/src", "$MYPY_CONFIG_FILE_DIR/tests/shared" ]
 cache_dir = "./.mypy"
 pretty = true
 allow_empty_bodies = true
@@ -94,45 +132,3 @@ warn_unreachable = true
 warn_redundant_casts = true
 warn_unused_ignores = true
 warn_unused_configs = true
-
-[tool.ruff]
-fix = true
-line-length = 120
-cache-dir = ".ruff"
-
-[tool.ruff.lint]
-preview = true
-extend-select = ["CPY001", "D", "I"]
-ignore = ["D100", "D105"]
-
-[tool.ruff.lint.pydocstyle]
-convention = "google"
-
-[tool.ruff.lint.flake8-copyright]
-notice-rgx = "(?i)Copyright \\d{4} The Meatie Authors. All rights reserved.[\\r\\n]+#  Use of this source code is governed by a BSD-style license that can be found in the LICENSE file.[\\r\\n]*"
-min-file-size = 1024
-
-[tool.ruff.lint.per-file-ignores]
-"src/meatie/internal/retry/**" = ["D"]
-"src/meatie/internal/limit/**" = ["D"]
-"src/meatie/internal/cache.py" = ["D"]
-"src/meatie/internal/adapter/**" = ["D"]
-"src/meatie_httpx/**" = ["D"]
-"src/meatie_requests/**" = ["D"]
-"src/meatie_aiohttp/**" = ["D"]
-"tests/**" = ["D"]
-"test_*.py" = ["D"]
-
-[tool.coverage.run]
-branch = true
-omit = ["src/meatie/aio/internal/adapter/pydantic_v1.py", "tests/*"]
-
-[tool.coverage.report]
-exclude_also = [
-    "class .*\\bProtocol\\):",
-    "\\.\\.\\."
-]
-
-[build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
