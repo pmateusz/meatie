@@ -8,25 +8,19 @@ jobs:
       branch: ${{ github.head_ref || github.ref_name }}
     strategy:
       matrix:
-        python_version: [ '3.9', '3.10', '3.11', '3.12', '3.13' ]
-        dependencies: [ 'test,aiohttp,requests,httpx' ]
-        pydantic: [ 'v2' ]
+        python_version: ['3.9', '3.10', '3.11', '3.12', '3.13']
+        dependencies: ['aiohttp', 'requests', 'httpx', 'pydantic-v2']
         include:
           - python_version: '3.12'
-            dependencies: 'test,aiohttp'
-            pydantic: 'v2'
+            dependencies: ['aiohttp', 'pydantic-v2']
           - python_version: '3.12'
-            dependencies: 'test,requests'
-            pydantic: 'v2'
+            dependencies: ['requests', 'pydantic-v2']
           - python_version: '3.12'
-            dependencies: 'test,httpx'
-            pydantic: 'v2'
+            dependencies: ['httpx', 'pydantic-v2']
           - python_version: '3.12'
-            dependencies: 'test,aiohttp,requests,httpx'
-            pydantic: 'v1'
+            dependencies: ['aiohttp','requests','httpx', 'pydantic-v1']
           - python_version: '3.12'
-            dependencies: 'test,aiohttp,requests,httpx'
-            pydantic: 'no'
+            dependencies: ['aiohttp','requests','httpx']
     steps:
       - uses: actions/checkout@v4
         with:
@@ -44,14 +38,26 @@ jobs:
           cache-dependency-glob: "uv.lock"
 
       - name: Install dependencies
-        run: uv sync --no-install-project --extra=${{ matrix.dependencies }}
+        run: uv sync --no-install-project --extra=test
+
+      - name: Install aiohttp
+        if: ${{ contains(matrix.dependencies, 'aiohttp') }}
+        run: uv pip -r pyproject.toml --extra=aiohttp
+
+      - name: Install requests
+        if: ${{ contains(matrix.dependencies, 'requests') }}
+        run: uv pip -r pyproject.toml --extra=requests
+
+      - name: Install httpx
+        if: ${{ contains(matrix.dependencies, 'httpx') }}
+        run: uv pip -r pyproject.toml --extra=httpx
 
       - name: Install pydantic v1
-        if: ${{ matrix.pydantic == 'v1' }}
+        if: ${{ contains(matrix.dependencies, 'pydantic-v1') }}
         run: uv pip install pydantic===1.10.13
 
       - name: Install pydantic v2
-        if: ${{ matrix.pydantic == 'v2' }}
+        if: ${{ contains(matrix.dependencies, 'pydantic-v2') }}
         run: uv pip -r pyproject.toml --extra=pydantic
 
       - name: Run pytest
