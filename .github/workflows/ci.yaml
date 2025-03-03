@@ -6,9 +6,19 @@ on:
     paths:
       - 'src/**'
       - 'tests/**'
-concurrency:
-  group: ci
+  workflow_call:
+  pull_request:
+    paths:
+      - 'src/**'
+      - 'tests/**'
+
 jobs:
-  check-branch:
-    uses: ./.github/workflows/check-branch.yaml
-    secrets: inherit
+  lint:
+    uses: ./.github/workflows/lint.yaml
+    with:
+      python_version: 3.12
+  test:
+    needs: [ lint ]
+    uses: ./.github/workflows/test.yaml
+    with:
+      python_version: 3.12

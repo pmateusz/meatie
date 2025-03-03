@@ -1,6 +1,10 @@
 version: 2
+
+# Currently, the "uv" ecosystem is in beta, so we need to enable beta ecosystems.
+# Reference: https://github.com/dependabot/dependabot-core/issues/10478#issuecomment-2691330949
+enable-beta-ecosystems: true
 updates:
-  - package-ecosystem: "pip"
+  - package-ecosystem: "uv"
     directory: "/"
     schedule:
       interval: "daily"
