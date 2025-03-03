@@ -802,8 +802,10 @@ requests = [
 ]
 
 [package.dev-dependencies]
-dev = [
+all-backends = [
     { name = "meatie", extra = ["aiohttp", "httpx", "pydantic", "requests"] },
+]
+dev = [
     { name = "mypy" },
     { name = "pre-commit" },
     { name = "types-requests" },
@@ -832,8 +834,8 @@ requires-dist = [
 provides-extras = ["aiohttp", "httpx", "pydantic", "requests"]
 
 [package.metadata.requires-dev]
+all-backends = [{ name = "meatie", extras = ["aiohttp", "httpx", "pydantic", "requests"] }]
 dev = [
-    { name = "meatie", extras = ["aiohttp", "httpx", "pydantic", "requests"] },
     { name = "mypy", specifier = ">=1.11" },
     { name = "pre-commit", specifier = ">=4.1.0" },
     { name = "types-requests", specifier = ">=2.32.0.20250301" },

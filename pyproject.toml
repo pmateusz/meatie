@@ -56,15 +56,17 @@ test = [
     "pytest-cov>=6.0.0",
     "pytest-xdist[psutil]>=3.6.1",
 ]
+all-backends = [
+    "meatie[aiohttp,httpx,pydantic,requests]",
+]
 dev = [
     "mypy>=1.11",
-    "meatie[aiohttp,httpx,pydantic,requests]",
     "pre-commit>=4.1.0",
     "types-requests>=2.32.0.20250301",
 ]
 
 [tool.uv]
-default-groups = [ "dev", "test", "docs" ]
+default-groups = [ "dev", "test", "docs", "all_backends" ]
 
 [tool.hatch.build.targets.wheel]
 include = [ "pyproject.toml", "README.md", "LICENSE.md", "CHANGELOG.md" ]
