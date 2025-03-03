@@ -42,15 +42,15 @@ jobs:
 
       - name: Install aiohttp
         if: ${{ contains(matrix.dependencies, 'aiohttp') }}
-        run: uv pip -r pyproject.toml --extra=aiohttp
+        run: uv pip install -r pyproject.toml --extra=aiohttp
 
       - name: Install requests
         if: ${{ contains(matrix.dependencies, 'requests') }}
-        run: uv pip -r pyproject.toml --extra=requests
+        run: uv pip install -r pyproject.toml --extra=requests
 
       - name: Install httpx
         if: ${{ contains(matrix.dependencies, 'httpx') }}
-        run: uv pip -r pyproject.toml --extra=httpx
+        run: uv pip install -r pyproject.toml --extra=httpx
 
       - name: Install pydantic v1
         if: ${{ contains(matrix.dependencies, 'pydantic-v1') }}
@@ -58,7 +58,7 @@ jobs:
 
       - name: Install pydantic v2
         if: ${{ contains(matrix.dependencies, 'pydantic-v2') }}
-        run: uv pip -r pyproject.toml --extra=pydantic
+        run: uv pip install -r pyproject.toml --extra=pydantic
 
       - name: Run pytest
         run: uv run pytest
