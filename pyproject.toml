@@ -4,7 +4,7 @@ requires = [ "hatchling" ]
 
 [project]
 name = "meatie"
-version = "0.1.7"
+version = "0.1.20"
 description = "Meatie is a Python typed REST client library that eliminates the need for boilerplate code when integrating with external APIs. The library generates code for calling a REST API based on method signatures annotated with type hints. Meatie abstracts away mechanics related to HTTP communication, such as building URLs, encoding query parameters, parsing, and dumping Pydantic models. With some modest additional configuration effort, generated HTTP clients offer rate limiting, retries, and caching."
 readme = "README.md"
 keywords = [
