@@ -38,15 +38,17 @@ jobs:
           key: pre-commit-${{ hashFiles('.pre-commit-config.yaml') }}
 
       - name: Run pre-commit
+        id: pre-commit
         run: uv run pre-commit run --all
         continue-on-error: true
 
       - name: Run mypy
+        id: mypy
         run: uv run mypy src
         continue-on-error: true
 
       - name: Check for linting errors
-        if: failure()
+        if: steps.pre-commit.outcome == 'failure' || steps.mypy.outcome == 'failure'
         run: |
           echo "Linting checks failed. Please review the output above."
           exit 1
