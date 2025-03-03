@@ -1,0 +1,58 @@
+name: Test Matrix
+on: [ workflow_dispatch ]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      branch: ${{ github.head_ref || github.ref_name }}
+    strategy:
+      matrix:
+        python_version: [ '3.9', '3.10', '3.11', '3.12', '3.13' ]
+        dependencies: [ 'test,aiohttp,requests,httpx' ]
+        pydantic: [ 'v2' ]
+        include:
+          - python_version: '3.12'
+            dependencies: 'test,aiohttp'
+            pydantic: 'v2'
+          - python_version: '3.12'
+            dependencies: 'test,requests'
+            pydantic: 'v2'
+          - python_version: '3.12'
+            dependencies: 'test,httpx'
+            pydantic: 'v2'
+          - python_version: '3.12'
+            dependencies: 'test,aiohttp,requests,httpx'
+            pydantic: 'v1'
+          - python_version: '3.12'
+            dependencies: 'test,aiohttp,requests,httpx'
+            pydantic: 'no'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - id: setup-python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python_version }}
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+          cache-dependency-glob: "uv.lock"
+
+      - name: Install dependencies
+        run: uv sync --no-install-project --extra=${{ matrix.dependencies }}
+
+      - name: Install pydantic v1
+        if: ${{ matrix.pydantic == 'v1' }}
+        run: uv pip install pydantic===1.10.13
+
+      - name: Install pydantic v2
+        if: ${{ matrix.pydantic == 'v2' }}
+        run: uv pip -r pyproject.toml --extra=pydantic
+
+      - name: Run pytest
+        run: uv run pytest

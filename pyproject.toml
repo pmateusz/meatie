@@ -105,16 +105,6 @@ addopts = [
     "-nauto",  # Automatically run tests in parallel, disable by running `pytest -n 1`
 ]
 
-[tool.coverage.run]
-branch = true
-omit = [ "src/meatie/aio/internal/adapter/pydantic_v1.py", "tests/*" ]
-
-[tool.coverage.report]
-exclude_also = [
-  "class .*\\bProtocol\\):",
-  "\\.\\.\\.",
-]
-
 [tool.mypy]
 mypy_path = [ "$MYPY_CONFIG_FILE_DIR/src", "$MYPY_CONFIG_FILE_DIR/tests/shared" ]
 cache_dir = "./.mypy"
