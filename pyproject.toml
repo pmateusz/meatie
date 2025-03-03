@@ -102,9 +102,6 @@ asyncio_default_fixture_loop_scope = "session"
 pythonpath = [ "src", "tests/shared" ]
 addopts = [
     "--import-mode=importlib",
-    "--cov",
-    "--cov-report=xml:coverage.xml",
-    "--cov-report=term",
     "-nauto",  # Automatically run tests in parallel, disable by running `pytest -n 1`
 ]
 

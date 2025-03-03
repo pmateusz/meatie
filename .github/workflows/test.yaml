@@ -28,9 +28,27 @@ jobs:
         uses: astral-sh/setup-uv@v5
         with:
           enable-cache: true
+          cache-dependency-glob: "uv.lock"
 
-      - name: Install the project
-        run: uv sync --no-default-groups --group test --group all-backends --python ${{ inputs.python_version || github.event.inputs.python_version }}
+      - id: setup-python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ inputs.python_version }}
+
+      - name: Cache virtual environment
+        id: cache-venv
+        uses: actions/cache@v4
+        with:
+          path: |
+            .venv
+            ~/.cache/uv
+          key: test/venv/branch/${{ env.branch }}/runner/${{ runner.os }}/python/${{ steps.setup-python.outputs.python-version }}/hash/${{ hashFiles('**/CACHEDIR.TAG', 'uv.lock') }}
+
+      - name: Install dependencies
+        if: ${{ steps.cache-venv.outputs.cache-hit != 'true' }}
+        run: |
+          uv sync --no-install-project --all-extras --dev
+          uv cache prune --ci
 
       - name: Run tests
         run: uv run pytest
