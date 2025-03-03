@@ -750,6 +750,9 @@ wheels = [
 name = "meatie"
 version = "0.1.20"
 source = { editable = "." }
+dependencies = [
+    { name = "typing-extensions" },
+]
 
 [package.optional-dependencies]
 aiohttp = [
@@ -790,6 +793,7 @@ requires-dist = [
     { name = "httpx", marker = "extra == 'httpx'", specifier = ">=0.19" },
     { name = "pydantic", marker = "extra == 'pydantic'", specifier = ">=1.10" },
     { name = "requests", marker = "extra == 'requests'", specifier = ">=2.26" },
+    { name = "typing-extensions", specifier = ">=4.7.0" },
 ]
 provides-extras = ["aiohttp", "httpx", "pydantic", "requests"]
 

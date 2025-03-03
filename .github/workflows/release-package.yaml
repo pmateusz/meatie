@@ -10,7 +10,7 @@ jobs:
     uses: ./.github/workflows/ci.yaml
 
   publish:
-    needs: [ ci ]
+    needs: [ci]
     timeout-minutes: 5
     runs-on: ubuntu-latest
     permissions:
@@ -24,6 +24,7 @@ jobs:
         uses: astral-sh/setup-uv@v5
         with:
           enable-cache: true
+          cache-dependency-glob: "uv.lock"
       - name: Build package
         run: uv build
       - name: Publish package

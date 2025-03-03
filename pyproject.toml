@@ -1,6 +1,6 @@
 [build-system]
+requires = ["hatchling"]
 build-backend = "hatchling.build"
-requires = [ "hatchling" ]
 
 [project]
 name = "meatie"
@@ -34,7 +34,9 @@ classifiers = [
 ]
 
 repository = "https://github.com/pmateusz/meatie"
-dependencies = []
+dependencies = [
+    "typing-extensions>=4.7.0",
+]
 
 [project.optional-dependencies]
 aiohttp = [ "aiohttp>=3.7" ]
@@ -62,11 +64,18 @@ dev = [
 ]
 
 [tool.uv]
+package = true
 default-groups = [ "dev", "test" ]
+
+[tool.uv.sources]
+meatie = { path = "./src/meatie" }
+meatie_httpx = { path = "./src/meatie_httpx" }
+meatie_aiohttp = { path = "./src/meatie_aiohttp" }
+meatie_requests = { path = "./src/meatie_request" }
 
 [tool.hatch.build.targets.wheel]
 include = [ "pyproject.toml", "README.md", "LICENSE.md", "CHANGELOG.md" ]
-packages = [ "src/meatie", "src/meatie_aiohttp", "src/meatie_httpx", "src/meatie_requests" ]
+packages = [ "meatie", "meatie_aiohttp", "meatie_httpx", "meatie_requests" ]
 
 [tool.hatch.build.targets.sdist]
 include = [ "pyproject.toml", "README.md", "LICENSE.md", "CHANGELOG.md" ]
