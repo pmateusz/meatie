@@ -25,7 +25,23 @@ jobs:
         with:
           enable-cache: true
           cache-dependency-glob: "uv.lock"
+      - name: Install build tools
+        run: uv pip install hatchling
+      - name: Set project version
+        run: uv run hatchling version $(echo -n ${{ github.ref_name }} | grep -oP '\d+.\d+.\d+')
       - name: Build package
         run: uv build
+      - name: Verify wheel package
+        run: |
+          uv venv
+          uv pip install dist/meatie-*.whl
+          source .venv/bin/activate
+          python -c "import meatie; print(meatie.__version__)"
+      - name: Verify tar.gz package
+        run: |
+          uv venv
+          uv pip install dist/meatie-*.tar.gz
+          source .venv/bin/activate
+          python -c "import meatie; print(meatie.__version__)"
       - name: Publish package
         run: uv publish --trusted-publishing always

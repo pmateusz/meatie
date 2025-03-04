@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "meatie"
-version = "0.1.20"
+dynamic = ["version"]
 description = "Meatie is a Python typed REST client library that eliminates the need for boilerplate code when integrating with external APIs. The library generates code for calling a REST API based on method signatures annotated with type hints. Meatie abstracts away mechanics related to HTTP communication, such as building URLs, encoding query parameters, parsing, and dumping Pydantic models. With some modest additional configuration effort, generated HTTP clients offer rate limiting, retries, and caching."
 readme = "README.md"
 keywords = [
@@ -32,10 +32,9 @@ classifiers = [
   "Programming Language :: Python :: 3.12",
   "Programming Language :: Python :: 3.13",
 ]
-
 repository = "https://github.com/pmateusz/meatie"
 dependencies = [
-    "typing-extensions>=4.7.0",
+    "typing-extensions>=4.7.0"
 ]
 
 [project.optional-dependencies]
@@ -67,18 +66,15 @@ dev = [
 package = true
 default-groups = [ "dev", "test" ]
 
-[tool.uv.sources]
-meatie = { path = "./src/meatie" }
-meatie_httpx = { path = "./src/meatie_httpx" }
-meatie_aiohttp = { path = "./src/meatie_aiohttp" }
-meatie_requests = { path = "./src/meatie_request" }
+[tool.hatch.version]
+path = "src/meatie/__init__.py"
 
 [tool.hatch.build.targets.wheel]
-include = [ "pyproject.toml", "README.md", "LICENSE.md", "CHANGELOG.md" ]
+include = [ "pyproject.toml", "README.md", "LICENSE.md" ]
 packages = [ "meatie", "meatie_aiohttp", "meatie_httpx", "meatie_requests" ]
 
 [tool.hatch.build.targets.sdist]
-include = [ "pyproject.toml", "README.md", "LICENSE.md", "CHANGELOG.md" ]
+include = [ "pyproject.toml", "README.md", "LICENSE.md" ]
 packages = [ "src/meatie", "src/meatie_aiohttp", "src/meatie_httpx", "src/meatie_requests" ]
 
 [tool.ruff]

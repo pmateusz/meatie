@@ -38,6 +38,5 @@ jobs:
         with:
           fail_ci_if_error: true
           file: coverage.xml
-          dry_run: true
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}

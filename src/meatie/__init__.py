@@ -4,7 +4,6 @@
 """Meatie is a metaprogramming library for building HTTP REST API clients based on methods annotated with type hints."""
 
 # isort:skip_file
-import importlib.metadata
 from .types import (
     Request,
     Response,
@@ -117,4 +116,4 @@ __all__ = [
     "endpoint",
 ]
 
-__version__ = importlib.metadata.version("meatie")
+__version__ = "0.0.1"

@@ -748,7 +748,6 @@ wheels = [
 
 [[package]]
 name = "meatie"
-version = "0.1.20"
 source = { editable = "." }
 dependencies = [
     { name = "typing-extensions" },
