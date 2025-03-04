@@ -1,14 +1,24 @@
 name: CI
 on:
+  workflow_call:
   push:
     branches:
       - master
     paths:
       - 'src/**'
       - 'tests/**'
+  pull_request:
+    paths:
+      - 'src/**'
+      - 'tests/**'
 concurrency:
   group: ci
 jobs:
-  check-branch:
-    uses: ./.github/workflows/check-branch.yaml
-    secrets: inherit
+  lint:
+    uses: ./.github/workflows/lint.yaml
+    with:
+      python_version: 3.12
+  test:
+    uses: ./.github/workflows/test.yaml
+    with:
+      python_version: 3.12

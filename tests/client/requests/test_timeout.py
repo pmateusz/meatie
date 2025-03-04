@@ -14,3 +14,6 @@ class TestRequestsTimeoutSuite(TimeoutSuite):
     def client_fixture(self) -> Generator[Client, None, None]:
         with Client(requests.Session(), session_params={"timeout": 0.005}) as client:
             yield client
+
+    def test_can_handle_timeout(self, http_server, client):
+        TimeoutSuite.test_can_handle_timeout(http_server, client)

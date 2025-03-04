@@ -6,12 +6,23 @@ on:
         type: string
         description: 'Python version'
         required: true
+      upload_code_coverage:
+        type: boolean
+        description: 'Upload code coverage'
+        required: false
+        default: false
   workflow_dispatch:
     inputs:
       python_version:
         type: string
         description: 'Python version'
         required: true
+      upload_code_coverage:
+        type: boolean
+        description: 'Upload code coverage'
+        required: false
+        default: false
+
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -23,50 +34,33 @@ jobs:
         with:
           fetch-depth: 2
 
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+          cache-dependency-glob: "uv.lock"
+
       - id: setup-python
         uses: actions/setup-python@v5
         with:
           python-version: ${{ inputs.python_version }}
 
-      - name: Restore poetry from cache
-        id: cache-poetry-restore
-        uses: actions/cache/restore@v4
-        with:
-          path: ~/.local
-          key: test/poetry/runner/${{ runner.os }}/python/${{ steps.setup-python.outputs.python-version }}
-
-      - name: Install poetry
-        if: ${{steps.cache-poetry-restore.outputs.cache-hit != 'true'}}
-        uses: snok/install-poetry@v1
-        with:
-          virtualenvs-create: true
-          virtualenvs-in-project: true
-          installer-parallel: true
-
-      - name: Check poetry version
-        run: echo POETRY_VERSION=$(poetry --version | grep -oP '\d+.\d+.\d+') >> $GITHUB_ENV
-
-      - name: Save poetry cache
-        id: cache-poetry-save
-        if: ${{steps.cache-poetry-restore.outputs.cache-hit != 'true'}}
-        uses: actions/cache/save@v4
-        with:
-          path: ~/.local
-          key: test/poetry/runner/${{ runner.os }}/python/${{ steps.setup-python.outputs.python-version }}/version/${{ env.POETRY_VERSION }}
-
-      - name: Cache virtual environment
-        id: cache-venv
-        uses: actions/cache@v4
-        with:
-          path: .venv
-          key: test/branch/${{ env.branch }}/runner/${{ runner.os }}/python/${{ steps.setup-python.outputs.python-version }}/hash/${{ hashFiles('poetry.lock') }}
-
       - name: Install dependencies
-        if: ${{steps.cache-venv.outputs.cache-hit != 'true'}}
-        run: poetry install --no-interaction --no-root --with=test --with=pydantic --with=dev --with=requests --with=httpx --with=aiohttp
+        run: uv sync --no-install-project --all-extras
 
-      - name: Install project
-        run: poetry install --no-interaction --only-root
+      - name: Run tests
+        if: ${{ !inputs.upload_code_coverage }}
+        run: uv run pytest
 
-      - name: Run pytest
-        run: poetry run pytest
+      - name: Run tests with coverage
+        if: ${{ inputs.upload_code_coverage }}
+        run: uv run pytest --cov=src --cov-branch --cov-report=xml:coverage.xml --cov-report=term
+
+      - name: Upload coverage reports to Codecov
+        if: ${{ inputs.upload_code_coverage }}
+        uses: codecov/codecov-action@v3
+        with:
+          fail_ci_if_error: true
+          file: coverage.xml
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
