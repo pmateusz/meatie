@@ -62,6 +62,10 @@ dev = [
     "mypy>=1.11",
 ]
 
+[tool.poetry]
+version = "0.0.0"
+# silence error: 'Either [project.version] or [tool.poetry.version] is required in package mode.'
+
 [tool.uv]
 package = true
 default-groups = [ "dev", "test" ]
