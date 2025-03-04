@@ -6,12 +6,22 @@ on:
         type: string
         description: 'Python version'
         required: true
+      upload_code_coverage:
+        type: boolean
+        description: 'Upload code coverage'
+        required: false
+        default: false
   workflow_dispatch:
     inputs:
       python_version:
         type: string
         description: 'Python version'
         required: true
+      upload_code_coverage:
+        type: boolean
+        description: 'Upload code coverage'
+        required: false
+        default: false
 
 jobs:
   test:
@@ -39,4 +49,18 @@ jobs:
         run: uv sync --no-install-project --all-extras
 
       - name: Run tests
+        if: ${{ !inputs.upload_code_coverage }}
         run: uv run pytest
+
+      - name: Run tests with coverage
+        if: ${{ inputs.upload_code_coverage }}
+        run: uv run pytest --cov=src --cov-branch --cov-report=xml:coverage.xml --cov-report=term
+
+      - name: Upload coverage reports to Codecov
+        if: ${{ inputs.upload_code_coverage }}
+        uses: codecov/codecov-action@v3
+        with:
+          fail_ci_if_error: true
+          file: coverage.xml
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
