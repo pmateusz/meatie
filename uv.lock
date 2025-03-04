@@ -768,19 +768,19 @@ requests = [
 ]
 
 [package.dev-dependencies]
-dev = [
+docs = [
+    { name = "mkdocs" },
+    { name = "mkdocs-material" },
+    { name = "mkdocstrings" },
+    { name = "mkdocstrings-python" },
+]
+mypy = [
     { name = "mypy" },
     { name = "pip" },
     { name = "types-docutils" },
     { name = "types-pygments" },
     { name = "types-requests" },
     { name = "types-setuptools" },
-]
-docs = [
-    { name = "mkdocs" },
-    { name = "mkdocs-material" },
-    { name = "mkdocstrings" },
-    { name = "mkdocstrings-python" },
 ]
 test = [
     { name = "cryptography" },
@@ -801,19 +801,19 @@ requires-dist = [
 provides-extras = ["aiohttp", "httpx", "pydantic", "requests"]
 
 [package.metadata.requires-dev]
-dev = [
+docs = [
+    { name = "mkdocs", specifier = ">=1.2" },
+    { name = "mkdocs-material", specifier = ">=7.1" },
+    { name = "mkdocstrings", specifier = ">=0.28" },
+    { name = "mkdocstrings-python", specifier = ">=1.14.5" },
+]
+mypy = [
     { name = "mypy", specifier = ">=1.11" },
     { name = "pip" },
     { name = "types-docutils" },
     { name = "types-pygments" },
     { name = "types-requests" },
     { name = "types-setuptools" },
-]
-docs = [
-    { name = "mkdocs", specifier = ">=1.2" },
-    { name = "mkdocs-material", specifier = ">=7.1" },
-    { name = "mkdocstrings", specifier = ">=0.28" },
-    { name = "mkdocstrings-python", specifier = ">=1.14.5" },
 ]
 test = [
     { name = "cryptography", specifier = ">=42.0.2" },

@@ -16,7 +16,7 @@ init:
 ## install: install project with optional dependencies
 .PHONY: install
 install:
-	uv sync --all-extras
+	uv sync --all-extras --group mypy --group test
 
 ## install: install pydantic v1
 .PHONY: install/pydantic/v1
