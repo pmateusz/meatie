@@ -13,8 +13,6 @@ jobs:
     needs: [ci]
     timeout-minutes: 5
     runs-on: ubuntu-latest
-    permissions:
-      id-token: write
     steps:
       - name: Checkout branch
         uses: actions/checkout@v4

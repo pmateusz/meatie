@@ -39,11 +39,8 @@ jobs:
         uses: actions/cache@v4
         with:
           path: |
-            .venv
             .ruff
             .mypy
-            ~/.cache/uv
-            ~/.cache/pre-commit
           key: lint/venv/branch/${{ env.branch }}/runner/${{ runner.os }}/python/${{ steps.setup-python.outputs.python-version }}/hash/${{ hashFiles('**/CACHEDIR.TAG', 'uv.lock') }}
 
       - name: Install dependencies

@@ -18,9 +18,9 @@ jobs:
           - python_version: '3.12'
             dependencies: ['httpx', 'pydantic-v2']
           - python_version: '3.12'
-            dependencies: ['aiohttp','requests','httpx', 'pydantic-v1']
+            dependencies: ['aiohttp', 'requests', 'httpx', 'pydantic-v1']
           - python_version: '3.12'
-            dependencies: ['aiohttp','requests','httpx']
+            dependencies: ['aiohttp', 'requests', 'httpx']
     steps:
       - uses: actions/checkout@v4
         with:

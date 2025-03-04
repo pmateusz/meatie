@@ -11,7 +11,8 @@ on:
     paths:
       - 'src/**'
       - 'tests/**'
-
+concurrency:
+  group: ci
 jobs:
   lint:
     uses: ./.github/workflows/lint.yaml
