@@ -60,6 +60,10 @@ test = [
 dev = [
     "pip",
     "mypy>=1.11",
+    "types-setuptools",
+    "types-requests",
+    "types-docutils",
+    "types-Pygments"
 ]
 
 [tool.poetry]
