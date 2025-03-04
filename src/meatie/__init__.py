@@ -116,4 +116,4 @@ __all__ = [
     "endpoint",
 ]
 
-__version__ = "0.0.1"
+__version__ = "0.0.0"  # This is a placeholder and will be replaced by the build system.
