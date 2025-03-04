@@ -44,7 +44,6 @@ jobs:
           key: lint/venv/branch/${{ env.branch }}/runner/${{ runner.os }}/python/${{ steps.setup-python.outputs.python-version }}/hash/${{ hashFiles('**/CACHEDIR.TAG') }}
 
       - name: Install dependencies
-        if: ${{ steps.cache-venv.outputs.cache-hit != 'true' }}
         run: |
           uv sync --no-install-project --all-extras --dev
           uv pip install pre-commit
