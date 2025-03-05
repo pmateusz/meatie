@@ -25,7 +25,9 @@ jobs:
           enable-cache: true
           cache-dependency-glob: "uv.lock"
       - name: Install build tools
-        run: uv pip install hatchling
+        run: |
+          uv venv
+          uv pip install hatchling
       - name: Set project version
         run: uv run hatchling version $(echo -n ${{ github.ref_name }} | grep -oP '\d+.\d+.\d+')
       - name: Build package
