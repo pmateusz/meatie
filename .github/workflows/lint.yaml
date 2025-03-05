@@ -46,7 +46,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          uv sync --no-install-project --all-extras --dev
+          uv sync --no-install-project --all-extras --group mypy
           uv pip install pre-commit
           uv run mypy --install-types --non-interactive src/**
           uv cache prune --ci
