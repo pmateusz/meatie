@@ -47,3 +47,8 @@ test/cover:
 .PHONY: audit
 audit:
 	pre-commit run --all && uv run mypy --install-types --non-interactive src/**
+
+## docs/serve: run mkdocs server in development mode
+.PHONY: docs/serve
+docs/serve:
+	uv run mkdocs serve
