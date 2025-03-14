@@ -163,7 +163,7 @@ Let's get started!
             ...
 
         @endpoint("/users/{id}")
-        def delete_user(self, id: str) -> None:
+        def delete_user(self, id: int) -> None:
             ...
 
 
