@@ -1,8 +1,6 @@
-# Tutorial
+# Getting Started
 
-## Getting Started
-
-In this tutorial, you'll learn how to implement a REST API client using the Meatie library. By completing this tutorial, you will learn how to:
+You'll learn how to implement a REST API client using the Meatie library. By completing this tutorial, you will learn how to:
 
 * Install the Meatie library with the HTTPX backend
 * Call a GET endpoint with an optional query parameter
@@ -13,6 +11,8 @@ In this tutorial, you'll learn how to implement a REST API client using the Meat
 The client will send HTTP requests to a mock REST API available at `https://jsonplaceholder.typicode.com`. This is a free online service that requires no additional setup.
 
 Let's get started!
+
+## Steps
 
 1. Install the Meatie library with the HTTPX library as an extra dependency.
 
@@ -29,7 +29,8 @@ Let's get started!
     class JsonPlaceholderClient(Client):
 
         def __init__(self) -> None:
-            super().__init__(httpx.Client(base_url="https://jsonplaceholder.typicode.com"))
+            super().__init__(
+                httpx.Client(base_url="https://jsonplaceholder.typicode.com"))
 
 
     if __name__ == '__main__':
@@ -49,7 +50,7 @@ Let's get started!
 
 1. Call the `GET /users` endpoint to fetch the list of users and print their usernames to the console.
 
-    ```py hl_lines="2 10 11 12 18 19 20"
+    ```py hl_lines="2 11 12 13 19 20 21"
     import httpx
     from meatie import endpoint
     from meatie_httpx import Client
@@ -57,7 +58,8 @@ Let's get started!
     class JsonPlaceholderClient(Client):
 
         def __init__(self) -> None:
-            super().__init__(httpx.Client(base_url="https://jsonplaceholder.typicode.com"))
+            super().__init__(
+                httpx.Client(base_url="https://jsonplaceholder.typicode.com"))
 
         @endpoint("/users")
         def get_users() -> list:
@@ -76,7 +78,7 @@ Let's get started!
 
 1. Add support for filtering by username using the query parameter `username`.
 
-    ```py hl_lines="12 19"
+    ```py hl_lines="13 20"
     import httpx
     from meatie import endpoint
     from meatie_httpx import Client
@@ -85,7 +87,8 @@ Let's get started!
     class JsonPlaceholderClient(Client):
 
         def __init__(self) -> None:
-            super().__init__(httpx.Client(base_url="https://jsonplaceholder.typicode.com"))
+            super().__init__(
+                httpx.Client(base_url="https://jsonplaceholder.typicode.com"))
 
         @endpoint("/users")
         def get_users(self, username: str = None) -> list:
@@ -104,7 +107,7 @@ Let's get started!
 
 1. Call the POST `/users` endpoint with the request body `{"username": "John"}` to create a new user.
 
-    ```py hl_lines="1 4 16 17 18 28 29"
+    ```py hl_lines="1 4 17 18 19 29 30"
     from typing import Annotated
 
     import httpx
@@ -114,7 +117,8 @@ Let's get started!
     class JsonPlaceholderClient(Client):
 
         def __init__(self) -> None:
-            super().__init__(httpx.Client(base_url="https://jsonplaceholder.typicode.com"))
+            super().__init__(
+                httpx.Client(base_url="https://jsonplaceholder.typicode.com"))
 
         @endpoint("/users")
         def get_users(self, username: str = None) -> list:
@@ -142,7 +146,7 @@ Let's get started!
 1. Call the DELETE `/users/7` endpoint to delete the user with ID `7`.
 
 
-    ```py hl_lines="20 21 22 35"
+    ```py hl_lines="21 22 23 36"
     from typing import Annotated
 
     import httpx
@@ -152,7 +156,8 @@ Let's get started!
     class JsonPlaceholderClient(Client):
 
         def __init__(self) -> None:
-            super().__init__(httpx.Client(base_url="https://jsonplaceholder.typicode.com"))
+            super().__init__(
+                httpx.Client(base_url="https://jsonplaceholder.typicode.com"))
 
         @endpoint("/users")
         def get_users(self, username: str = None) -> list:
@@ -191,9 +196,9 @@ Let's get started!
 
 1. Replace untyped data models in the `GET` and `POST` endpoints with a Pydantic model.
 
-    ```py hl_lines="6 8 9 17 21 34 36"
+    ```py hl_lines="6 8 9 18 22 35 37"
     from typing import Annotated
-
+in HTTP
     import httpx
     from meatie import endpoint, api_ref
     from meatie_httpx import Client
@@ -205,7 +210,8 @@ Let's get started!
     class JsonPlaceholderClient(Client):
 
         def __init__(self) -> None:
-            super().__init__(httpx.Client(base_url="https://jsonplaceholder.typicode.com"))
+            super().__init__(
+                httpx.Client(base_url="https://jsonplaceholder.typicode.com"))
 
         @endpoint("/users")
         def get_users(self, username: str = None) -> list[User]:
@@ -237,6 +243,6 @@ Let's get started!
     ```
 Congratulations on completing the tutorial! You are now ready to implement your own REST API client using Meatie.
 
-### Next steps
+## Next Step: Authentication
 
-Integrating with a REST API client might require authentication. Additionally, making a client production-ready might involve adding error handling, retries, and rate limiting. The links will point you to code examples. We are working on tutorials to cover these topics in the future.
+Some REST API endpoints may be private, meaning they are restricted for authenticated users only. Authentication in the REST API is typically implemented based on the `Authorization` header, which the client must provide in the HTTP request. Proceed to the [Authentication](./authentication.md) tutorial to add this feature to the existing client.

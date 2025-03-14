@@ -9,7 +9,9 @@ theme:
 nav:
   - Home: index.md
   - Cookbook: cookbook.md
-  - Tutorial: tutorial.md
+  - Tutorials:
+    - Getting Started: tutorials/getting_started.md
+    - Authentication: tutorials/authentication.md
   - Reference: references.md
 
 plugins:
