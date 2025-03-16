@@ -12,6 +12,8 @@ nav:
   - Tutorials:
     - Getting Started: tutorials/getting_started.md
     - Authentication: tutorials/authentication.md
+    - Rate Limiting: tutorials/rate_limiter.md
+    - Caching: tutorials/caching.md
   - Reference: references.md
 
 plugins:
