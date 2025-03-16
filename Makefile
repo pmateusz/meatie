@@ -52,3 +52,8 @@ audit:
 .PHONY: docs/serve
 docs/serve:
 	uv run mkdocs serve
+
+## docs/build: build mkdocs documentation
+.PHONY: docs/build
+docs/build:
+	uv run mkdocs build --strict --site-dir dist/html

@@ -20,7 +20,7 @@ Let's get started!
     pip install "meatie[httpx]"
     ```
 
-1. Copy the following code sample and save it as a `tutorial.py` Python script.
+2. Copy the following code sample and save it as a `tutorial.py` Python script.
 
     ```py
     import httpx
@@ -39,16 +39,15 @@ Let's get started!
             pass
 
         print("ok")
-
     ```
 
-1. Run the Python script and ensure it prints `ok` as the output.
+3. Run the Python script and ensure it prints `ok` as the output.
 
     ```shell
     python tutorial.py
     ```
 
-1. Call the `GET /users` endpoint to fetch the list of users and print their usernames to the console.
+4. Call the `GET /users` endpoint to fetch the list of users and print their usernames to the console.
 
     ```py hl_lines="2 11 12 13 19 20 21"
     import httpx
@@ -76,7 +75,7 @@ Let's get started!
         print("ok")
     ```
 
-1. Add support for filtering by username using the query parameter `username`.
+5. Add support for filtering by username using the query parameter `username`.
 
     ```py hl_lines="13 20"
     import httpx
@@ -105,7 +104,7 @@ Let's get started!
         print("ok")
     ```
 
-1. Call the POST `/users` endpoint with the request body `{"username": "John"}` to create a new user.
+6. Call the POST `/users` endpoint with the request body `{"username": "John"}` to create a new user.
 
     ```py hl_lines="1 4 17 18 19 29 30"
     from typing import Annotated
@@ -143,7 +142,7 @@ Let's get started!
         print("ok")
     ```
 
-1. Call the DELETE `/users/7` endpoint to delete the user with ID `7`.
+7. Call the DELETE `/users/7` endpoint to delete the user with ID `7`.
 
 
     ```py hl_lines="21 22 23 36"
@@ -188,17 +187,16 @@ Let's get started!
         print("ok")
     ```
 
-1. Install the `pydantic` library.
+8. Install the `pydantic` library.
 
     ```shell
     pip install pydantic
     ```
 
-1. Replace untyped data models in the `GET` and `POST` endpoints with a Pydantic model.
+9. Replace untyped data models in the `GET` and `POST` endpoints with a Pydantic model.
 
-    ```py hl_lines="6 8 9 18 22 35 37"
+    ```py hl_lines="5 7 8 17 21 34 36"
     from typing import Annotated
-in HTTP
     import httpx
     from meatie import endpoint, api_ref
     from meatie_httpx import Client
@@ -222,7 +220,7 @@ in HTTP
             ...
 
         @endpoint("/users/{id}")
-        def delete_user(self, id: str) -> None:
+        def delete_user(self, id: int) -> None:
             ...
 
 
@@ -241,6 +239,7 @@ in HTTP
 
         print("ok")
     ```
+
 Congratulations on completing the tutorial! You are now ready to implement your own REST API client using Meatie.
 
 ## Next Step: Authentication
