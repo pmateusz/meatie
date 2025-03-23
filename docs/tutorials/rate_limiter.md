@@ -1,6 +1,6 @@
 # Rate Limiting
 
-In this tutorial, you will learn how to manage HTTP requests to avoid exceeding API rate limits. 
+In this tutorial, you will learn how to manage HTTP requests to avoid exceeding API rate limits.
 
 You will extend the Python script developed in the [Authentication](./authentication.md) tutorial to enforce a rate limit of 2 requests per second.
 

@@ -84,9 +84,15 @@ https://meatie.readthedocs.io/
 ## Installation
 
 Meatie is available on [pypi](https://pypi.org/project/meatie/). You can install it with:
-```bash
+
+```shell
 pip install meatie
 ```
+
+## Add Meatie to the Awesome Python list 📢
+
+If you've had a positive experience with Meatie and would like to support the project, please consider helping us by approving our [pull request](https://github.com/vinta/awesome-python/pull/2662) in the Awesome Python repository.
+Your support is greatly appreciated!
 
 ## Features
 
