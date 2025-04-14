@@ -121,13 +121,13 @@ class RetryOperator:
         last_result: Optional[T] = None
         stopped = False
         while not stopped:
-            retry_ctx.error = None
-            retry_ctx.response = None
             if retry_ctx.attempt_number > 1:
                 wait_time = self.__wait(retry_ctx)
                 if wait_time > 0.0:
                     self.__sleep_func(wait_time)
 
+            retry_ctx.error = None
+            retry_ctx.response = None
             try:
                 last_result = operation_ctx.proceed()
                 retry_ctx.response = operation_ctx.response
@@ -176,13 +176,13 @@ class AsyncRetryOperator:
         last_result: Optional[T] = None
         stopped = False
         while not stopped:
-            retry_ctx.error = None
-            retry_ctx.response = None
             if retry_ctx.attempt_number > 1:
                 wait_time = self.__wait(retry_ctx)
                 if wait_time > 0.0:
                     await self.__sleep_func(wait_time)
 
+            retry_ctx.error = None
+            retry_ctx.response = None
             try:
                 last_result = await operation_ctx.proceed()
                 retry_ctx.response = operation_ctx.response
