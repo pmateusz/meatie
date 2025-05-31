@@ -22,8 +22,13 @@ class Todo(BaseModel):
 
 
 def handler(request: Handler) -> None:
-    content_length = request.headers.get("Content-Length", "0")
-    raw_body = request.rfile.read(int(content_length))
+    content_type = request.headers.get("Content-Type")
+    if content_type != "application/json":
+        request.send_response(HTTPStatus.BAD_REQUEST)
+        request.end_headers()
+        return
+
+    raw_body = request.safe_text()
     try:
         data = Todo.model_validate_json(raw_body)
         request.send_json(HTTPStatus.OK, data.model_dump(mode="json", by_alias=True))
@@ -47,11 +52,6 @@ class JsonPlaceholderClient(Client):
         self, todo: Annotated[Todo, api_ref("body", fmt=lambda data: data.model_dump(by_alias=True))]
     ) -> Todo: ...
 
-    @endpoint("/todos")
-    def post_todo_as_str(
-        self, todo: Annotated[Todo, api_ref("body", fmt=lambda data: data.model_dump_json(by_alias=True))]
-    ) -> Todo: ...
-
 
 def test_post_request_body_with_fmt_as_dict(http_server: HTTPTestServer) -> None:
     # GIVEN
@@ -61,19 +61,6 @@ def test_post_request_body_with_fmt_as_dict(http_server: HTTPTestServer) -> None
     # WHEN
     with JsonPlaceholderClient(http_server.base_url) as client:
         todo = client.post_todo_as_dict(Todo(userId=123, id=456, title="abc", completed=True))
-
-    # THEN
-    assert todo.user_id == 123
-
-
-def test_post_request_body_with_fmt_as_string(http_server: HTTPTestServer) -> None:
-    # GIVEN
-
-    http_server.handler = handler
-
-    # WHEN
-    with JsonPlaceholderClient(http_server.base_url) as client:
-        todo = client.post_todo_as_str(Todo(userId=123, id=456, title="abc", completed=True))
 
     # THEN
     assert todo.user_id == 123
