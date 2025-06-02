@@ -3,6 +3,10 @@ repo_url: https://github.com/pmateusz/meatie
 repo_name: GitHub
 theme:
   name: material
+  favicon: assets/favicon.png
+  palette:
+    primary: brown
+    scheme: slate
   features:
     - content.code.copy
 
