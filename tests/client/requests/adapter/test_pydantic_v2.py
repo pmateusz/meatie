@@ -5,11 +5,11 @@ from typing import Annotated
 import pytest
 from http_test import HTTPTestServer
 from http_test.handlers import echo_json_handler
-from httpx import Client as HttpxClient
 from pydantic import BaseModel, Field
+from requests import Session
 
 from meatie import api_ref, endpoint
-from meatie_httpx import Client
+from meatie_requests import Client
 
 pydantic = pytest.importorskip("pydantic", minversion="2.0.0")
 
@@ -29,7 +29,7 @@ class Params:
 
 class JsonPlaceholderClient(Client):
     def __init__(self, base_url: str) -> None:
-        super().__init__(HttpxClient(base_url=base_url))
+        super().__init__(Session(), prefix=base_url)
 
     @endpoint("/todos")
     def post_todo_as_dict(

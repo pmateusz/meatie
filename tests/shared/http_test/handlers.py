@@ -5,6 +5,7 @@ import urllib.parse
 from decimal import Decimal
 from http import HTTPStatus
 from http.server import BaseHTTPRequestHandler, SimpleHTTPRequestHandler
+from json import JSONDecodeError
 from typing import Any, Callable, Optional
 from urllib.parse import parse_qs, urlparse
 
@@ -89,6 +90,24 @@ def echo_handler(handler: Handler) -> None:
 
     content_type = handler.headers.get_content_type()
     handler.send_bytes(HTTPStatus.OK, content_type, raw_body_opt)
+
+
+def echo_json_handler(handler: Handler) -> None:
+    content_type = handler.headers.get("Content-Type")
+    raw_body = handler.safe_text()
+    if content_type != "application/json" or raw_body is None:
+        handler.send_response(HTTPStatus.BAD_REQUEST)
+        handler.end_headers()
+        return
+
+    try:
+        body = json.loads(raw_body)
+    except JSONDecodeError:
+        handler.send_response(HTTPStatus.BAD_REQUEST)
+        handler.end_headers()
+        return
+
+    handler.send_json(HTTPStatus.OK, body)
 
 
 def diagnostic_handler(handler: Handler) -> None:
