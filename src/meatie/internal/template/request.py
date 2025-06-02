@@ -123,7 +123,11 @@ class RequestTemplate(Generic[RequestBodyType]):
 
             if param.kind == Kind.BODY:
                 if param.formatter is not None:
-                    body_data = param.formatter(value)
+                    raw_value = param.formatter(value)
+                    if isinstance(raw_value, (str, bytes)):
+                        body_data = raw_value
+                    else:
+                        body_json = raw_value
                 else:
                     body_json = self.request_encoder.to_content(value)
                 continue
