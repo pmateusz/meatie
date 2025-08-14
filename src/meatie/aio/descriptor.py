@@ -13,12 +13,12 @@ from typing import (
 
 from typing_extensions import Self
 
-from meatie import AsyncResponse, Request
 from meatie.internal.adapter import TypeAdapter
 from meatie.internal.template import RequestTemplate, get_method
 from meatie.internal.types import PT, ResponseBodyType
+from meatie.types import AsyncResponse, Request
 
-from . import BaseAsyncClient
+from .client import BaseAsyncClient
 
 AsyncOperator = Callable[["AsyncContext[ResponseBodyType]"], Awaitable[ResponseBodyType]]
 

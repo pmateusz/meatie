@@ -4,7 +4,7 @@
 import re
 from typing import get_args
 
-from meatie import Method
+from meatie.types import Method
 
 __all__ = ["get_method"]
 

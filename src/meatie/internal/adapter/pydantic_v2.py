@@ -7,8 +7,9 @@ from typing import Any, Generic, get_args, get_origin
 import pydantic
 from typing_extensions import Union, is_typeddict
 
-from meatie import AsyncResponse, ParseResponseError, Response
+from meatie.error import ParseResponseError
 from meatie.internal.types import T
+from meatie.types import AsyncResponse, Response
 
 from . import JsonAdapter, TypeAdapter
 

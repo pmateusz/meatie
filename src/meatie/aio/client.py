@@ -5,7 +5,9 @@ from typing import Any, Optional, TypeVar
 
 from typing_extensions import Self
 
-from meatie import INF, Cache, Limiter, Rate, Request
+from meatie.internal.cache import Cache
+from meatie.internal.limit import Limiter, Rate
+from meatie.types import INF, Request
 
 
 class BaseAsyncClient:

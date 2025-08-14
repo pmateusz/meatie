@@ -25,12 +25,10 @@ jobs:
         with:
           enable-cache: true
           cache-dependency-glob: "uv.lock"
-      - name: Install build tools
-        run: |
-          uv venv
-          uv pip install hatchling
+      - name: Setup virtual environment
+        run: uv venv
       - name: Set project version
-        run: uv run hatchling version $(echo -n ${{ github.ref_name }} | grep -oP '\d+.\d+.\d+')
+        run: uv version $(echo -n ${{ github.ref_name }} | grep -oP '\d+.\d+.\d+')
       - name: Build package
         run: uv build
       - name: Verify wheel package
@@ -40,6 +38,8 @@ jobs:
           uv pip install dist/meatie-*.whl
           uv pip install -r pyproject.toml --extra httpx --extra requests --extra aiohttp
           python -c "import meatie; import meatie_httpx; import meatie_requests; import meatie_aiohttp"
+          deactivate
+          rm -Rf .venv
       - name: Verify tar.gz package
         run: |
           uv venv
@@ -47,5 +47,7 @@ jobs:
           uv pip install dist/meatie-*.tar.gz
           uv pip install -r pyproject.toml --extra httpx --extra requests --extra aiohttp
           python -c "import meatie; import meatie_httpx; import meatie_requests; import meatie_aiohttp"
+          deactivate
+          rm -Rf .venv
       - name: Publish package
         run: uv publish --trusted-publishing always

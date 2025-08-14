@@ -4,7 +4,7 @@ from typing import Any, TypeVar
 
 from typing_extensions import Optional, ParamSpec, Protocol, Self
 
-from meatie import AsyncResponse, Request, Response
+from meatie.types import AsyncResponse, Request, Response
 
 __all__ = [
     "VT",

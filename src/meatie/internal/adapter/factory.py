@@ -15,17 +15,15 @@ from typing import (
     get_origin,
 )
 
-from meatie import AsyncResponse, Response
 from meatie.internal.types import T
+from meatie.types import AsyncResponse, Response
 
-from . import (
-    BytesAdapter,
-    ClientResponseAdapter,
-    JsonAdapter,
-    NoneAdapter,
-    StringAdapter,
-    TypeAdapter,
-)
+from .bytes_ import BytesAdapter
+from .client_response import ClientResponseAdapter
+from .json_ import JsonAdapter
+from .none_ import NoneAdapter
+from .string_ import StringAdapter
+from .types import TypeAdapter
 
 
 def _is_model_type_no_pydantic(value: type[Any]) -> bool:  # pragma: no cover

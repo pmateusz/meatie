@@ -3,8 +3,7 @@
 
 """Aiohttp client implementation for meatie."""
 
-# isort:skip_file
-from .response import Response
 from .client import Client
+from .response import Response
 
 __all__ = ["Response", "Client"]

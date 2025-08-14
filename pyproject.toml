@@ -1,6 +1,6 @@
 [project]
 name = "meatie"
-dynamic = ["version"]
+version = "0.0.0"
 description = "Meatie is a Python typed REST client library that eliminates the need for boilerplate code when integrating with external APIs. The library generates code for calling a REST API based on method signatures annotated with type hints. Meatie abstracts away mechanics related to HTTP communication, such as building URLs, encoding query parameters, parsing, and dumping Pydantic models. With some modest additional configuration effort, generated HTTP clients offer rate limiting, retries, and caching."
 readme = "README.md"
 keywords = [
@@ -55,7 +55,7 @@ test = [
 ]
 mypy = [
     "pip",
-    "mypy>=1.11",
+    "mypy>=1.17",
     "types-setuptools",
     "types-requests",
     "types-docutils",
@@ -67,20 +67,12 @@ managed = true
 package = true
 default-groups = [ "test" ]
 
-[tool.hatch.version]
-path = "src/meatie/__init__.py"
-
-[tool.hatch.build.targets.wheel]
-packages = ["src/meatie", "src/meatie_aiohttp", "src/meatie_requests", "src/meatie_httpx", "meatie", "meatie_aiohttp", "meatie_requests", "meatie_httpx"]
-# `uv run` requires ["src/meatie", "src/meatie_aiohttp", "src/meatie_requests", "src/meatie_httpx"]
-# `uv build` requires ["meatie", "meatie_aiohttp", "meatie_requests", "meatie_httpx"]
-
-[tool.hatch.build.targets.sdist]
-packages = ["src/meatie", "src/meatie_aiohttp", "src/meatie_requests", "src/meatie_httpx"]
+[tool.uv.build-backend]
+module-name = ["meatie", "meatie_aiohttp", "meatie_httpx", "meatie_requests"]
 
 [build-system]
-requires = ["hatchling"]
-build-backend = "hatchling.build"
+requires = ["uv_build>=0.8.10,<0.9.0"]
+build-backend = "uv_build"
 
 [tool.ruff]
 line-length = 120

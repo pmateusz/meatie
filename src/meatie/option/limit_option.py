@@ -4,11 +4,11 @@ import asyncio
 import time
 from typing import Awaitable, Callable, Union
 
-from meatie import Duration
 from meatie.aio import AsyncContext, AsyncEndpointDescriptor
 from meatie.descriptor import Context, EndpointDescriptor
 from meatie.internal.limit import Tokens
 from meatie.internal.types import PT, T
+from meatie.types import Duration
 
 __all__ = ["limit"]
 

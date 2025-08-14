@@ -9,10 +9,12 @@ from typing import (
     get_type_hints,
 )
 
-from meatie import AsyncEndpointDescriptor, EndpointDescriptor, Method
+from meatie.aio import AsyncEndpointDescriptor
+from meatie.descriptor import EndpointDescriptor
 from meatie.internal.adapter import TypeAdapter, get_adapter
 from meatie.internal.template import PathTemplate, RequestTemplate
 from meatie.internal.types import PT, T
+from meatie.types import Method
 
 
 def endpoint(

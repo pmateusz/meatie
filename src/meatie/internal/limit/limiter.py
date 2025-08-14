@@ -5,9 +5,10 @@
 import time as sys_time
 from typing import Optional
 
-from meatie import Time
+from meatie.types import Time
 
-from . import Rate, Reservation, Tokens
+from .rate import Rate
+from .reservation import Reservation, Tokens
 
 
 class Limiter:

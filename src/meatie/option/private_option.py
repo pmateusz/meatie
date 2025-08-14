@@ -2,8 +2,8 @@
 #  Use of this source code is governed by a BSD-style license that can be found in the LICENSE file.
 from typing import Union
 
-from meatie import Context, EndpointDescriptor
 from meatie.aio import AsyncContext, AsyncEndpointDescriptor
+from meatie.descriptor import Context, EndpointDescriptor
 from meatie.internal.types import PT, T
 
 __all__ = ["private"]

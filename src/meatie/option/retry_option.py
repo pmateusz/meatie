@@ -5,20 +5,12 @@ import time
 from http import HTTPStatus
 from typing import Awaitable, Callable, Optional, Union
 
-from meatie import (
-    Condition,
-    Context,
-    Duration,
-    EndpointDescriptor,
-    RetryContext,
-    RetryError,
-    has_status,
-    never,
-    zero,
-)
 from meatie.aio import AsyncContext, AsyncEndpointDescriptor
-from meatie.internal.retry import WaitFunc
+from meatie.descriptor import Context, EndpointDescriptor
+from meatie.error import RetryError
+from meatie.internal.retry import Condition, RetryContext, WaitFunc, has_status, never, zero
 from meatie.internal.types import PT, T
+from meatie.types import Duration
 
 __all__ = ["RetryOption"]
 
