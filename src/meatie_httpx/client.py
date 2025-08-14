@@ -5,18 +5,19 @@ from typing import Any, Optional
 import httpx
 from typing_extensions import Self
 
-from meatie import BaseClient, Cache
-from meatie.error import (
+from meatie import (
+    BaseClient,
+    Cache,
     MeatieError,
     ProxyError,
+    Request,
     RequestError,
     ServerError,
     Timeout,
     TransportError,
 )
-from meatie.types import Request
 
-from . import Response
+from .response import Response
 
 
 class Client(BaseClient):

@@ -3,11 +3,12 @@
 
 import time
 
-from . import BaseCondition, Condition, RetryContext
+from .condition import BaseCondition, Condition
+from .context import RetryContext
 
 __all__ = ["after", "after_attempt", "never"]
 
-from meatie import Duration
+from meatie.types import Duration
 
 
 class StopAfterAttempt(BaseCondition):

@@ -4,8 +4,8 @@ from typing import Any, Callable, Optional
 
 import requests
 
-from meatie.error import ParseResponseError, ResponseError
-from meatie.types import Response as BaseResponse
+from meatie import ParseResponseError, ResponseError
+from meatie import Response as BaseResponse
 
 
 class Response(BaseResponse):

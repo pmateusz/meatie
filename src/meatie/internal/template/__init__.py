@@ -3,7 +3,6 @@
 
 """Internal package for building HTTP requests based on Python signatures."""
 
-# isort: skip_file
 from .method import get_method
 from .parameter import Kind, Parameter
 from .path import PathTemplate

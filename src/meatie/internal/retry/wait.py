@@ -5,9 +5,9 @@ import random
 from abc import abstractmethod
 from typing import Callable
 
-from meatie import HOUR, Duration
+from meatie.types import HOUR, Duration
 
-from . import RetryContext
+from .context import RetryContext
 
 __all__ = ["zero", "uniform", "jit", "exponential", "fixed", "WaitFunc"]
 

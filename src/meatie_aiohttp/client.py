@@ -18,7 +18,7 @@ from meatie import (
     TransportError,
 )
 
-from . import Response
+from .response import Response
 
 
 class Client(BaseAsyncClient):

@@ -3,9 +3,10 @@
 
 from typing import Any, Awaitable, Callable, Optional, Union
 
-from meatie import AsyncResponse, EndpointDescriptor, Response
 from meatie.aio import AsyncEndpointDescriptor
+from meatie.descriptor import EndpointDescriptor
 from meatie.internal.types import PT, T
+from meatie.types import AsyncResponse, Response
 
 __all__ = ["body"]
 

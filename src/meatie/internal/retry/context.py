@@ -4,7 +4,7 @@
 
 from typing import Optional, Union
 
-from meatie import AsyncResponse, Response, Time
+from meatie.types import AsyncResponse, Response, Time
 
 
 class RetryContext:
