@@ -4,8 +4,10 @@
 
 from typing import Union
 
-from ... import ResponseError
-from . import BaseCondition, RetryContext
+from meatie.error import ResponseError
+
+from .condition import BaseCondition
+from .context import RetryContext
 
 __all__ = ["always", "has_status", "has_exception_type", "has_exception_cause_type"]
 

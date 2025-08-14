@@ -5,8 +5,8 @@ from typing import Any, Awaitable, Callable, Optional
 
 import httpx
 
-from meatie.error import ParseResponseError, ResponseError
-from meatie.types import AsyncResponse as BaseAsyncResponse
+from meatie import AsyncResponse as BaseAsyncResponse
+from meatie import ParseResponseError, ResponseError
 
 
 class AsyncResponse(BaseAsyncResponse):

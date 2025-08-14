@@ -3,63 +3,62 @@
 
 """Meatie is a metaprogramming library for building HTTP REST API clients based on methods annotated with type hints."""
 
-# isort:skip_file
-from .types import (
-    Request,
-    Response,
-    AsyncResponse,
-    Method,
-    Duration,
-    Time,
-    INF,
-    MINUTE,
-    HOUR,
-    DAY,
-)
+from .aio import AsyncContext, AsyncEndpointDescriptor, BaseAsyncClient
 from .api_reference import api_ref
+from .client import BaseClient
+from .descriptor import Context, EndpointDescriptor
+from .endpoint import endpoint
 from .error import (
+    HttpStatusError,
     MeatieError,
-    RetryError,
-    RequestError,
-    RateLimitExceeded,
-    TransportError,
+    ParseResponseError,
     ProxyError,
+    RateLimitExceeded,
+    RequestError,
+    ResponseError,
+    RetryError,
     ServerError,
     Timeout,
-    HttpStatusError,
-    ResponseError,
-    ParseResponseError,
-)
-from .internal.retry import (
-    RetryContext,
-    BaseCondition,
-    Condition,
-    after,
-    after_attempt,
-    always,
-    never,
-    has_status,
-    has_exception_type,
-    has_exception_cause_type,
-    zero,
-    uniform,
-    exponential,
-    fixed,
-    jit,
+    TransportError,
 )
 from .internal.cache import Cache
 from .internal.limit import Limiter, Rate
-from .client import BaseClient
-from .descriptor import EndpointDescriptor, Context
-from .aio import BaseAsyncClient, AsyncEndpointDescriptor, AsyncContext
-from .option import (
-    limit,
-    cache,
-    retry,
-    private,
-    body,
+from .internal.retry import (
+    BaseCondition,
+    Condition,
+    RetryContext,
+    after,
+    after_attempt,
+    always,
+    exponential,
+    fixed,
+    has_exception_cause_type,
+    has_exception_type,
+    has_status,
+    jit,
+    never,
+    uniform,
+    zero,
 )
-from .endpoint import endpoint
+from .option import (
+    body,
+    cache,
+    limit,
+    private,
+    retry,
+)
+from .types import (
+    DAY,
+    HOUR,
+    INF,
+    MINUTE,
+    AsyncResponse,
+    Duration,
+    Method,
+    Request,
+    Response,
+    Time,
+)
 
 __all__ = [
     "Duration",
@@ -115,5 +114,3 @@ __all__ = [
     "body",
     "endpoint",
 ]
-
-__version__ = "0.0.0"  # This is a placeholder and will be replaced by the build system.

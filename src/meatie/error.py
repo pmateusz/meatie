@@ -4,7 +4,7 @@ from typing import Union
 
 from typing_extensions import deprecated
 
-from meatie import AsyncResponse, Response
+from meatie.types import AsyncResponse, Response
 
 
 class MeatieError(Exception):

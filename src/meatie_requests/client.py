@@ -6,17 +6,19 @@ import requests.exceptions
 from requests import Session
 from typing_extensions import Self
 
-from meatie import BaseClient, Cache, Request
-from meatie.error import (
+from meatie import (
+    BaseClient,
+    Cache,
     MeatieError,
     ProxyError,
+    Request,
     RequestError,
     ServerError,
     Timeout,
     TransportError,
 )
 
-from . import Response
+from .response import Response
 
 
 class Client(BaseClient):

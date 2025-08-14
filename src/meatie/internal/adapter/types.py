@@ -6,8 +6,8 @@ from typing import (
     Protocol,
 )
 
-from meatie import AsyncResponse, Response
 from meatie.internal.types import T
+from meatie.types import AsyncResponse, Response
 
 
 class TypeAdapter(Protocol[T]):

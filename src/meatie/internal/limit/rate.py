@@ -2,7 +2,7 @@
 #  Use of this source code is governed by a BSD-style license that can be found in the LICENSE file.
 
 
-from meatie import INF, Duration
+from meatie.types import INF, Duration
 
 from . import Tokens
 

@@ -3,7 +3,8 @@
 from json import JSONDecodeError
 from typing import Any
 
-from meatie import AsyncResponse, ParseResponseError, Response, ResponseError
+from meatie.error import ParseResponseError, ResponseError
+from meatie.types import AsyncResponse, Response
 
 
 class _JsonAdapter:

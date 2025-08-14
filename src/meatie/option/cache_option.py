@@ -5,9 +5,11 @@ import abc
 import urllib.parse
 from typing import Generic, Union
 
-from meatie import Cache, Context, Duration, EndpointDescriptor, Request
 from meatie.aio import AsyncContext, AsyncEndpointDescriptor
+from meatie.descriptor import Context, EndpointDescriptor
+from meatie.internal.cache import Cache
 from meatie.internal.types import PT, T
+from meatie.types import Duration, Request
 
 __all__ = ["cache"]
 
