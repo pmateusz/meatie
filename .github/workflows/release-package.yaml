@@ -31,10 +31,6 @@ jobs:
         run: uv version $(echo -n ${{ github.ref_name }} | grep -oP '\d+.\d+.\d+')
       - name: Build package
         run: uv build
-      - name: Verify package import from wheel
-        run: uv run --with dist/meatie-*.whl --no-project -- python -c "import meatie; import meatie_httpx; import meatie_requests; import meatie_aiohttp"
-      - name: Verify package import from source
-        run: uv run --with dist/meatie-*.tar.gz --no-project -- python -c "import meatie; import meatie_httpx; import meatie_requests; import meatie_aiohttp"
       - name: Verify wheel package
         run: |
           uv venv
