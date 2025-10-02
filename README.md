@@ -23,7 +23,7 @@
 
 [10]: https://github.com/pmateusz/meatie
 
-[11]: https://static.pepy.tech/badge/meatie
+[11]: https://img.shields.io/pypi/dm/meatie
 
 [12]: https://pepy.tech/project/meatie
 
