@@ -4,9 +4,12 @@ import inspect
 from collections.abc import Callable
 from typing import (
     Any,
+    Awaitable,
     Optional,
     Union,
+    cast,
     get_type_hints,
+    overload,
 )
 
 from meatie.aio import AsyncEndpointDescriptor
@@ -17,11 +20,30 @@ from meatie.internal.types import PT, T
 from meatie.types import Method
 
 
+@overload
 def endpoint(
     path: str,
     *args: Any,
     method: Optional[Method] = None,
-) -> Callable[[Callable[..., T]], Callable[..., T]]:
+) -> Callable[[Callable[PT, Awaitable[T]]], Callable[PT, Awaitable[T]]]: ...
+
+
+@overload
+def endpoint(
+    path: str,
+    *args: Any,
+    method: Optional[Method] = None,
+) -> Callable[[Callable[PT, T]], Callable[PT, T]]: ...
+
+
+def endpoint(
+    path: str,
+    *args: Any,
+    method: Optional[Method] = None,
+) -> Union[
+    Callable[[Callable[PT, Awaitable[T]]], Callable[PT, Awaitable[T]]],
+    Callable[[Callable[PT, T]], Callable[PT, T]],
+]:
     """Class descriptor for decorating methods that represent API endpoints.
 
     Inspects the method signature to create an endpoint descriptor that can be used to make HTTP requests.
@@ -32,7 +54,9 @@ def endpoint(
         method: HTTP method for making the request. Inferred from the method name by default.
 
     Returns:
-        A class descriptor.
+        A decorator that preserves the callable signature of the decorated method.
+        For async methods, returns a callable with Awaitable return type.
+        For sync methods, returns a callable with direct return type.
 
     Examples:
         ```python
@@ -76,6 +100,9 @@ def endpoint(
         for option in args:
             option(descriptor)
 
-        return descriptor  # type: ignore[return-value]
+        # Cast the descriptor to the expected callable type.
+        # The descriptor protocol ensures this works at runtime: when accessed on an instance,
+        # the descriptor's __get__ method returns a bound callable with the correct signature.
+        return cast(Callable[PT, T], descriptor)
 
     return class_descriptor
