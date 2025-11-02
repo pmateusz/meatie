@@ -4,10 +4,12 @@ import inspect
 from collections.abc import Callable
 from typing import (
     Any,
+    Awaitable,
     Optional,
     Union,
     cast,
     get_type_hints,
+    overload,
 )
 
 from meatie.aio import AsyncEndpointDescriptor
@@ -18,11 +20,33 @@ from meatie.internal.types import PT, T
 from meatie.types import Method
 
 
+@overload
 def endpoint(
     path: str,
     *args: Any,
     method: Optional[Method] = None,
-) -> Callable[[Callable[PT, T]], Callable[PT, T]]:
+) -> Callable[[Callable[PT, Awaitable[T]]], Callable[PT, Awaitable[T]]]: ...
+
+
+# The mypy error overload-cannot-match is a known limitation of the type checker when dealing with Awaitable and generic TypeVars.
+# The most pragmatic and recommended solution is to use a targeted # type: ignore on the line where mypy gets confused.
+# It's important to understand that this does not weaken the type hints for the end-user; it's simply a way to work around a mypy-specific issue.
+@overload
+def endpoint(  # type: ignore[overload-cannot-match]
+    path: str,
+    *args: Any,
+    method: Optional[Method] = None,
+) -> Callable[[Callable[PT, T]], Callable[PT, T]]: ...
+
+
+def endpoint(
+    path: str,
+    *args: Any,
+    method: Optional[Method] = None,
+) -> Union[
+    Callable[[Callable[PT, Awaitable[T]]], Callable[PT, Awaitable[T]]],
+    Callable[[Callable[PT, T]], Callable[PT, T]],
+]:
     """Class descriptor for decorating methods that represent API endpoints.
 
     Inspects the method signature to create an endpoint descriptor that can be used to make HTTP requests.
@@ -72,9 +96,9 @@ def endpoint(
         is_coroutine = inspect.iscoroutinefunction(func)
         descriptor: Union[EndpointDescriptor[PT, T], AsyncEndpointDescriptor[PT, T]]
         if is_coroutine:
-            descriptor = AsyncEndpointDescriptor(request_template, response_decoder)
+            descriptor = AsyncEndpointDescriptor[PT, T](request_template, response_decoder)
         else:
-            descriptor = EndpointDescriptor(request_template, response_decoder)
+            descriptor = EndpointDescriptor[PT, T](request_template, response_decoder)
 
         for option in args:
             option(descriptor)
