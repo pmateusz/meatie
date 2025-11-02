@@ -86,7 +86,7 @@ def endpoint(
 
         signature = inspect.signature(func)
         type_hints = get_type_hints(func)
-        request_template: RequestTemplate[T] = RequestTemplate.from_signature(
+        request_template: RequestTemplate[Any] = RequestTemplate.from_signature(
             signature, type_hints, path_template, method
         )
 

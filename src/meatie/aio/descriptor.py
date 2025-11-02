@@ -109,7 +109,9 @@ class AsyncEndpointDescriptor(Generic[PT, ResponseBodyType]):
     def __get__(self, instance: None, owner: None) -> Self: ...
 
     @overload
-    def __get__(self, instance: BaseAsyncClient, owner: type[object]) -> Callable[PT, Awaitable[ResponseBodyType]]: ...
+    def __get__(
+        self, instance: BaseAsyncClient, owner: type[BaseAsyncClient]
+    ) -> Callable[PT, Awaitable[ResponseBodyType]]: ...
 
     def __get__(
         self, instance: Optional[BaseAsyncClient], owner: Optional[type[object]] = None
@@ -121,7 +123,7 @@ class AsyncEndpointDescriptor(Generic[PT, ResponseBodyType]):
         priority_operator_pair.sort()
         operators = [operator for _, operator in priority_operator_pair]
 
-        return BoundAsyncEndpointDescriptor(  # type: ignore[return-value]
+        return BoundAsyncEndpointDescriptor[PT, ResponseBodyType](
             instance,
             operators,
             self.template,
