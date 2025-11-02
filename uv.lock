@@ -887,7 +887,7 @@ docs = [
     { name = "mkdocstrings-python", specifier = ">=1.14.5" },
 ]
 mypy = [
-    { name = "mypy", specifier = ">=1.17" },
+    { name = "mypy", specifier = ">=1.18.2" },
     { name = "pip" },
     { name = "types-docutils" },
     { name = "types-pygments" },

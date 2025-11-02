@@ -8,16 +8,10 @@ from typing import Annotated
 import pytest
 
 from meatie import api_ref, endpoint
-from meatie_aiohttp import Client as AsyncClient
 
 pydantic = pytest.importorskip("pydantic")
 BaseModel: type = pydantic.BaseModel
 Field = pydantic.Field
-
-try:
-    from aiohttp import ClientSession
-except ImportError:
-    pytest.skip("aiohttp not available", allow_module_level=True)
 
 
 class Todo(BaseModel):
@@ -27,11 +21,8 @@ class Todo(BaseModel):
     completed: bool
 
 
-class TypedAsyncClient(AsyncClient):
-    """Test client with endpoint signatures for type checking."""
-
-    def __init__(self) -> None:
-        super().__init__(ClientSession(base_url="https://example.com"))
+class TypedAsyncClient:
+    """Test client with endpoint signatures for type checking. The client is for test purposes only as it is not bind to any HTTP client library."""
 
     @endpoint("/todos")
     async def get_todos(self) -> list[Todo]: ...
