@@ -3,7 +3,7 @@
 import asyncio
 import time
 from http import HTTPStatus
-from typing import Awaitable, Callable, Optional, Union
+from typing import Awaitable, Callable, Generic, Optional, Union
 
 from meatie.aio import AsyncContext, AsyncEndpointDescriptor
 from meatie.descriptor import Context, EndpointDescriptor
@@ -70,7 +70,7 @@ class RetryOption:
         if sleep_func is None:
             sleep_func = time.sleep
 
-        operator = RetryOperator(self.__on, self.__wait, self.__stop, sleep_func)
+        operator = RetryOperator[T](self.__on, self.__wait, self.__stop, sleep_func)
         descriptor.register_operator(self.priority, operator)
 
     def __async_descriptor(self, descriptor: AsyncEndpointDescriptor[PT, T]) -> None:
@@ -78,14 +78,14 @@ class RetryOption:
         if sleep_func is None:
             sleep_func = asyncio.sleep
 
-        operator = AsyncRetryOperator(self.__on, self.__wait, self.__stop, sleep_func)
+        operator = AsyncRetryOperator[T](self.__on, self.__wait, self.__stop, sleep_func)
         descriptor.register_operator(self.priority, operator)
 
 
 retry = RetryOption
 
 
-class RetryOperator:
+class RetryOperator(Generic[T]):
     """Executes the retry strategy for synchronous endpoint calls."""
 
     def __init__(
@@ -140,7 +140,7 @@ class RetryOperator:
         raise RetryError()
 
 
-class AsyncRetryOperator:
+class AsyncRetryOperator(Generic[T]):
     """Executes the retry strategy for asynchronous endpoint calls."""
 
     def __init__(
