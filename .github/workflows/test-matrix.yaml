@@ -1,5 +1,5 @@
 name: Test Matrix
-on: [ workflow_dispatch ]
+on: [workflow_dispatch]
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -8,19 +8,19 @@ jobs:
       branch: ${{ github.head_ref || github.ref_name }}
     strategy:
       matrix:
-        python_version: ['3.9', '3.10', '3.11', '3.12', '3.13']
-        dependencies: ['aiohttp', 'requests', 'httpx', 'pydantic-v2']
+        python_version: ["3.9", "3.10", "3.11", "3.12", "3.13", "3.14"]
+        dependencies: ["aiohttp", "requests", "httpx", "pydantic-v2"]
         include:
-          - python_version: '3.12'
-            dependencies: ['aiohttp', 'pydantic-v2']
-          - python_version: '3.12'
-            dependencies: ['requests', 'pydantic-v2']
-          - python_version: '3.12'
-            dependencies: ['httpx', 'pydantic-v2']
-          - python_version: '3.12'
-            dependencies: ['aiohttp', 'requests', 'httpx', 'pydantic-v1']
-          - python_version: '3.12'
-            dependencies: ['aiohttp', 'requests', 'httpx']
+          - python_version: "3.12"
+            dependencies: ["aiohttp", "pydantic-v2"]
+          - python_version: "3.12"
+            dependencies: ["requests", "pydantic-v2"]
+          - python_version: "3.12"
+            dependencies: ["httpx", "pydantic-v2"]
+          - python_version: "3.12"
+            dependencies: ["aiohttp", "requests", "httpx", "pydantic-v1"]
+          - python_version: "3.12"
+            dependencies: ["aiohttp", "requests", "httpx"]
     steps:
       - uses: actions/checkout@v4
         with:
