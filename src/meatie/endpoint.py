@@ -4,9 +4,12 @@ import inspect
 from collections.abc import Callable
 from typing import (
     Any,
+    Awaitable,
     Optional,
     Union,
+    cast,
     get_type_hints,
+    overload,
 )
 
 from meatie.aio import AsyncEndpointDescriptor
@@ -17,11 +20,33 @@ from meatie.internal.types import PT, T
 from meatie.types import Method
 
 
+@overload
 def endpoint(
     path: str,
     *args: Any,
     method: Optional[Method] = None,
-) -> Callable[[Callable[..., T]], Callable[..., T]]:
+) -> Callable[[Callable[PT, Awaitable[T]]], Callable[PT, Awaitable[T]]]: ...
+
+
+# The mypy error overload-cannot-match is a known limitation of the type checker when dealing with Awaitable and generic TypeVars.
+# The most pragmatic and recommended solution is to use a targeted # type: ignore on the line where mypy gets confused.
+# It's important to understand that this does not weaken the type hints for the end-user; it's simply a way to work around a mypy-specific issue.
+@overload
+def endpoint(  # type: ignore[overload-cannot-match]
+    path: str,
+    *args: Any,
+    method: Optional[Method] = None,
+) -> Callable[[Callable[PT, T]], Callable[PT, T]]: ...
+
+
+def endpoint(
+    path: str,
+    *args: Any,
+    method: Optional[Method] = None,
+) -> Union[
+    Callable[[Callable[PT, Awaitable[T]]], Callable[PT, Awaitable[T]]],
+    Callable[[Callable[PT, T]], Callable[PT, T]],
+]:
     """Class descriptor for decorating methods that represent API endpoints.
 
     Inspects the method signature to create an endpoint descriptor that can be used to make HTTP requests.
@@ -32,7 +57,9 @@ def endpoint(
         method: HTTP method for making the request. Inferred from the method name by default.
 
     Returns:
-        A class descriptor.
+        A decorator that preserves the callable signature of the decorated method.
+        For async methods, returns a callable with Awaitable return type.
+        For sync methods, returns a callable with direct return type.
 
     Examples:
         ```python
@@ -59,15 +86,15 @@ def endpoint(
 
         signature = inspect.signature(func)
         type_hints = get_type_hints(func)
-        request_template: RequestTemplate[T] = RequestTemplate.from_signature(
+        request_template: RequestTemplate[Any] = RequestTemplate.from_signature(
             signature, type_hints, path_template, method
         )
 
         return_type = type_hints["return"]
         response_decoder: TypeAdapter[T] = get_adapter(return_type)
 
-        descriptor: Union[EndpointDescriptor[PT, T], AsyncEndpointDescriptor[PT, T]]
         is_coroutine = inspect.iscoroutinefunction(func)
+        descriptor: Union[EndpointDescriptor[PT, T], AsyncEndpointDescriptor[PT, T]]
         if is_coroutine:
             descriptor = AsyncEndpointDescriptor[PT, T](request_template, response_decoder)
         else:
@@ -76,6 +103,9 @@ def endpoint(
         for option in args:
             option(descriptor)
 
-        return descriptor  # type: ignore[return-value]
+        # Cast the descriptor to the expected callable type.
+        # The descriptor protocol ensures this works at runtime: when accessed on an instance,
+        # the descriptor's __get__ method returns a bound callable with the correct signature.
+        return cast(Callable[PT, T], descriptor)
 
     return class_descriptor

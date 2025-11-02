@@ -2,7 +2,6 @@
 #  Use of this source code is governed by a BSD-style license that can be found in the LICENSE file.
 from typing import (
     Any,
-    Awaitable,
     Callable,
     Generic,
     Iterable,
@@ -68,11 +67,11 @@ class EndpointDescriptor(Generic[PT, ResponseBodyType]):
     def __get__(self, instance: None, owner: None) -> Self: ...
 
     @overload
-    def __get__(self, instance: BaseClient, owner: type[object]) -> Callable[PT, Awaitable[ResponseBodyType]]: ...
+    def __get__(self, instance: BaseClient, owner: type[BaseClient]) -> Callable[PT, ResponseBodyType]: ...
 
     def __get__(
         self, instance: Optional[BaseClient], owner: Optional[type[object]] = None
-    ) -> Union[Self, Callable[PT, Awaitable[ResponseBodyType]]]:
+    ) -> Union[Self, Callable[PT, ResponseBodyType]]:
         if instance is None or owner is None:
             return self
 
@@ -80,7 +79,7 @@ class EndpointDescriptor(Generic[PT, ResponseBodyType]):
         priority_operator_pair.sort()
         operators = [operator for _, operator in priority_operator_pair]
 
-        return BoundEndpointDescriptor(  # type: ignore[return-value]
+        return BoundEndpointDescriptor[PT, ResponseBodyType](
             instance,
             operators,
             self.template,

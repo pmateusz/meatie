@@ -2,7 +2,7 @@
 #  Use of this source code is governed by a BSD-style license that can be found in the LICENSE file.
 import asyncio
 import time
-from typing import Awaitable, Callable, Union
+from typing import Awaitable, Callable, Generic, Union
 
 from meatie.aio import AsyncContext, AsyncEndpointDescriptor
 from meatie.descriptor import Context, EndpointDescriptor
@@ -54,7 +54,7 @@ class LimitOption:
         sleep_func: Callable[[float], None] = time.sleep
         if self.sleep_func is not None:
             sleep_func = self.sleep_func  # type: ignore[assignment]
-        operator = LimitOperator(self.tokens, sleep_func)
+        operator = LimitOperator[T](self.tokens, sleep_func)
         descriptor.register_operator(self.priority, operator)
 
     def __async_descriptor(self, descriptor: AsyncEndpointDescriptor[PT, T]) -> None:
@@ -64,14 +64,14 @@ class LimitOption:
         sleep_func: Callable[[float], Awaitable[None]] = asyncio.sleep
         if self.sleep_func is not None:
             sleep_func = self.sleep_func  # type: ignore[assignment]
-        operator = AsyncLimitOperator(self.tokens, sleep_func)
+        operator = AsyncLimitOperator[T](self.tokens, sleep_func)
         descriptor.register_operator(self.priority, operator)
 
 
 limit = LimitOption
 
 
-class LimitOperator:
+class LimitOperator(Generic[T]):
     """Delays the endpoint calls that exceed the rate limit."""
 
     def __init__(self, tokens: Tokens, sleep_func: Callable[[Duration], None]) -> None:
@@ -94,7 +94,7 @@ class LimitOperator:
         return ctx.proceed()
 
 
-class AsyncLimitOperator:
+class AsyncLimitOperator(Generic[T]):
     """Delays the endpoint calls that exceed the rate limit."""
 
     def __init__(self, tokens: Tokens, sleep_func: Callable[[Duration], Awaitable[None]]) -> None:

@@ -27,6 +27,7 @@ classifiers = [
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
   "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
 ]
 repository = "https://github.com/pmateusz/meatie"
 dependencies = [
@@ -55,11 +56,12 @@ test = [
 ]
 mypy = [
     "pip",
-    "mypy>=1.17",
+    "mypy>=1.18.2",
     "types-setuptools",
     "types-requests",
     "types-docutils",
-    "types-Pygments"
+    "types-Pygments",
+    "types-PySocks"
 ]
 
 [tool.uv]

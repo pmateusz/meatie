@@ -858,6 +858,7 @@ mypy = [
     { name = "pip" },
     { name = "types-docutils" },
     { name = "types-pygments" },
+    { name = "types-pysocks" },
     { name = "types-requests" },
     { name = "types-setuptools" },
 ]
@@ -887,10 +888,11 @@ docs = [
     { name = "mkdocstrings-python", specifier = ">=1.14.5" },
 ]
 mypy = [
-    { name = "mypy", specifier = ">=1.17" },
+    { name = "mypy", specifier = ">=1.18.2" },
     { name = "pip" },
     { name = "types-docutils" },
     { name = "types-pygments" },
+    { name = "types-pysocks" },
     { name = "types-requests" },
     { name = "types-setuptools" },
 ]
@@ -1723,6 +1725,15 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/54/7a/04c95c518bf90f38645e24b2d6d8e0c85a8cfb8735bfb3756e10a506c687/types_pygments-2.19.0.20250219.tar.gz", hash = "sha256:a4a279338c96f3d4f2eb2c4d7c6c5593c88108b185bb5c664f943f781170cd14", size = 18463, upload-time = "2025-02-19T02:41:41.481Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/ba/7f/c5d2558a29d675fbf146e48879cd3e179a9bfd3c34a54c1954bf6940d749/types_Pygments-2.19.0.20250219-py3-none-any.whl", hash = "sha256:5e3e1f660665b3a2ea946dda794b8d5b05772d789181704b523d646e8a7f4382", size = 25599, upload-time = "2025-02-19T02:41:39.761Z" },
+]
+
+[[package]]
+name = "types-pysocks"
+version = "1.7.1.20251001"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/24/d7/421deaee04ffe69dc1449cbf57dc4d4d92e8f966f4a35b482ea3811b7980/types_pysocks-1.7.1.20251001.tar.gz", hash = "sha256:50a0e737d42527abbec09e891c64f76a9f66f302e673cd149bc112c15764869f", size = 8785, upload-time = "2025-10-01T03:04:13.85Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/36/07/6a8aafa0fa5fc0880a37c98b41348bf91bc28f76577bdac68f78bcf8a124/types_pysocks-1.7.1.20251001-py3-none-any.whl", hash = "sha256:dd9abcfc7747aeddf1bab270c8daab3a1309c3af9e07c8c2c52038ab8539f06c", size = 9620, upload-time = "2025-10-01T03:04:13.042Z" },
 ]
 
 [[package]]
