@@ -9,7 +9,6 @@ from typing import (
     Union,
     cast,
     get_type_hints,
-    overload,
 )
 
 from meatie.aio import AsyncEndpointDescriptor
@@ -18,25 +17,6 @@ from meatie.internal.adapter import TypeAdapter, get_adapter
 from meatie.internal.template import PathTemplate, RequestTemplate
 from meatie.internal.types import PT, T
 from meatie.types import Method
-
-
-@overload
-def endpoint(
-    path: str,
-    *args: Any,
-    method: Optional[Method] = None,
-) -> Callable[[Callable[PT, Awaitable[T]]], Callable[PT, Awaitable[T]]]: ...
-
-
-# The mypy error overload-cannot-match is a known limitation of the type checker when dealing with Awaitable and generic TypeVars.
-# The most pragmatic and recommended solution is to use a targeted # type: ignore on the line where mypy gets confused.
-# It's important to understand that this does not weaken the type hints for the end-user; it's simply a way to work around a mypy-specific issue.
-@overload
-def endpoint(  # type: ignore[overload-cannot-match]
-    path: str,
-    *args: Any,
-    method: Optional[Method] = None,
-) -> Callable[[Callable[PT, T]], Callable[PT, T]]: ...
 
 
 def endpoint(
