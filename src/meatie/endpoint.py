@@ -4,7 +4,6 @@ import inspect
 from collections.abc import Callable
 from typing import (
     Any,
-    Awaitable,
     Optional,
     Union,
     cast,
@@ -23,10 +22,7 @@ def endpoint(
     path: str,
     *args: Any,
     method: Optional[Method] = None,
-) -> Union[
-    Callable[[Callable[PT, Awaitable[T]]], Callable[PT, Awaitable[T]]],
-    Callable[[Callable[PT, T]], Callable[PT, T]],
-]:
+) -> Callable[[Callable[PT, T]], Callable[PT, T]]:
     """Class descriptor for decorating methods that represent API endpoints.
 
     Inspects the method signature to create an endpoint descriptor that can be used to make HTTP requests.
