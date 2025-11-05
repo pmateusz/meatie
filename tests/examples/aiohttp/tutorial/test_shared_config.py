@@ -1,28 +1,28 @@
 #  Copyright 2025 The Meatie Authors. All rights reserved.
 #  Use of this source code is governed by a BSD-style license that can be found in the LICENSE file.
 from typing import Annotated, TypeVar, override
-from typing_extensions import ParamSpec, Callable, Any
 
 import pytest
 from aiohttp import ClientSession
 from pydantic import BaseModel, Field
+from typing_extensions import Any, Callable, ParamSpec
 
 from meatie import (
-    Limiter,
-    Rate,
-    RetryContext,
-    Method,
-    api_ref,
-    endpoint,
-    limit,
-    private,
     MINUTE,
-    Request,
     HttpStatusError,
+    Limiter,
+    Method,
+    Rate,
+    Request,
+    RetryContext,
     after_attempt,
+    api_ref,
     cache,
+    endpoint,
     fixed,
     jit,
+    limit,
+    private,
     retry,
 )
 from meatie_aiohttp import Client
