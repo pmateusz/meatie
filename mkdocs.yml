@@ -18,6 +18,7 @@ nav:
     - Authentication: tutorials/authentication.md
     - Rate Limiting: tutorials/rate_limiter.md
     - Caching: tutorials/caching.md
+    - Shared Configuration: tutorials/shared_config.md
   - Reference: references.md
 
 plugins:
