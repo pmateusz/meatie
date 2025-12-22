@@ -2,18 +2,18 @@
 #  Use of this source code is governed by a BSD-style license that can be found in the LICENSE file.
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import asdict, dataclass
 from typing import Annotated, Any
 
 import pytest
-from pydantic import BaseModel, Field
 
 from meatie import api_ref, endpoint
 from meatie_aiohttp import Client
 
 
-class Todo(BaseModel):
-    user_id: int = Field(alias="userId")
+@dataclass
+class Todo:
+    user_id: int
     id: int
     title: str
     completed: bool
@@ -30,7 +30,10 @@ def bool_formatter(value: bool) -> str:
 
 
 def todo_formatter(value: Todo) -> dict[str, Any]:
-    return value.model_dump(by_alias=True)
+    """Convert Todo to dict with userId alias."""
+    data = asdict(value)
+    data["userId"] = data.pop("user_id")
+    return data
 
 
 def date_formatter(value: str) -> str:
@@ -70,7 +73,7 @@ async def test_query_param_formatted_with_future_annotations(mock_tools) -> None
 async def test_body_param_formatted_with_future_annotations(mock_tools) -> None:
     """Test that body parameter formatter is applied when using future annotations."""
     # GIVEN
-    todo = Todo.model_construct(user_id=1, id=201, title="test", completed=False)
+    todo = Todo(user_id=1, id=201, title="test", completed=False)
     session = mock_tools.session_with_json_response(json={"userId": 1, "id": 201, "title": "test", "completed": False})
 
     class TestClient(Client):
