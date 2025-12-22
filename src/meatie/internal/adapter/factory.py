@@ -95,6 +95,9 @@ def get_adapter(value_type: Union[type[T], GenericAlias, None]) -> TypeAdapter[T
         if _PydanticTypeAdapterFactory is None:
             return JsonAdapter
 
+        if origin is None:
+            return JsonAdapter
+
         args = get_args(value_type)
         if issubclass(origin, Sequence):
             if _is_model_type(args[0]):

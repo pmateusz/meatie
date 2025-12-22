@@ -187,6 +187,4 @@ async def test_multiple_formatted_params_with_future_annotations(mock_tools) -> 
         await client.get_records(id=255, active=True, page=2)
 
     # THEN - all formatters/renames should be applied
-    session.request.assert_awaited_once_with(
-        "GET", "/data/0xff/records", params={"active": "true", "pageNumber": 2}
-    )
+    session.request.assert_awaited_once_with("GET", "/data/0xff/records", params={"active": "true", "pageNumber": 2})
