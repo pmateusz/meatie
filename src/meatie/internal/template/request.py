@@ -160,7 +160,7 @@ class RequestTemplate(Generic[RequestBodyType]):
             ValueError: if arguments are found invalid.
         """
         signature = inspect.signature(func)
-        type_hints = get_type_hints(func)
+        type_hints = get_type_hints(func, include_extras=True)
         return cls.from_signature(signature, type_hints, template, method)
 
     @classmethod
@@ -193,7 +193,7 @@ class RequestTemplate(Generic[RequestBodyType]):
 
             param_type = type_hints[param_name]
             sig_param = signature.parameters[param_name]
-            api_ref = ApiReference.from_signature(sig_param)
+            api_ref = ApiReference.from_signature(sig_param, param_type)
             assert api_ref.name is not None
 
             kind = Kind.QUERY

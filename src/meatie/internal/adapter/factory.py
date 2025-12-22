@@ -15,6 +15,8 @@ from typing import (
     get_origin,
 )
 
+from typing_extensions import Annotated
+
 from meatie.internal.types import T
 from meatie.types import AsyncResponse, Response
 
@@ -75,11 +77,27 @@ def get_adapter(value_type: Union[type[T], GenericAlias, None]) -> TypeAdapter[T
     if value_type is str:
         return StringAdapter  # type: ignore[return-value]
 
+    # Handle Annotated types: check base type but pass full Annotated type to pydantic
+    origin = get_origin(value_type)
+    if origin is Annotated:
+        base_type = get_args(value_type)[0]
+        # Check if base type is a pydantic model
+        if _is_model_type(base_type):
+            if _PydanticTypeAdapterFactory is None:
+                return JsonAdapter
+            # Pass the full Annotated type to preserve metadata (discriminators, etc.)
+            return _PydanticTypeAdapterFactory(value_type)  # type: ignore[arg-type]
+        # For non-pydantic Annotated types, use base type for further processing
+        value_type = base_type
+        origin = get_origin(value_type)
+
     if isinstance(value_type, GenericAlias):
         if _PydanticTypeAdapterFactory is None:
             return JsonAdapter
 
-        origin = get_origin(value_type)
+        if origin is None:
+            return JsonAdapter
+
         args = get_args(value_type)
         if issubclass(origin, Sequence):
             if _is_model_type(args[0]):
