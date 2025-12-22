@@ -46,17 +46,18 @@ class ApiReference:
         Args:
             parameter: The parameter from the function signature.
             resolved_annotation: The resolved type hint (from get_type_hints with include_extras=True).
-                If provided, this is used instead of parameter.annotation to handle stringified annotations
-                from `from __future__ import annotations`.
+                If provided, this is tried first, then falls back to parameter.annotation.
         """
-        # Use resolved_annotation if provided, otherwise fall back to parameter.annotation
-        annotation = resolved_annotation if resolved_annotation is not None else parameter.annotation
-
-        for arg in get_args(annotation):
-            if isinstance(arg, cls):
-                if arg.name is None:
-                    return cls(name=parameter.name, fmt=arg.fmt, unwrap=arg.unwrap)
-                return arg
+        # Try resolved annotation first (handles stringified annotations from future imports)
+        # If not found, fall back to parameter.annotation (handles local functions in tests)
+        for annotation in [resolved_annotation, parameter.annotation]:
+            if annotation is None:
+                continue
+            for arg in get_args(annotation):
+                if isinstance(arg, cls):
+                    if arg.name is None:
+                        return cls(name=parameter.name, fmt=arg.fmt, unwrap=arg.unwrap)
+                    return arg
         return cls(name=parameter.name, fmt=None, unwrap=None)
 
 
