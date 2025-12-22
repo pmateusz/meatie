@@ -40,9 +40,19 @@ class ApiReference:
         return False
 
     @classmethod
-    def from_signature(cls, parameter: inspect.Parameter) -> Self:
-        """Create an ApiReference from the Python method parameter."""
-        for arg in get_args(parameter.annotation):
+    def from_signature(cls, parameter: inspect.Parameter, resolved_annotation: Optional[Any] = None) -> Self:
+        """Create an ApiReference from the Python method parameter.
+
+        Args:
+            parameter: The parameter from the function signature.
+            resolved_annotation: The resolved type hint (from get_type_hints with include_extras=True).
+                If provided, this is used instead of parameter.annotation to handle stringified annotations
+                from `from __future__ import annotations`.
+        """
+        # Use resolved_annotation if provided, otherwise fall back to parameter.annotation
+        annotation = resolved_annotation if resolved_annotation is not None else parameter.annotation
+
+        for arg in get_args(annotation):
             if isinstance(arg, cls):
                 if arg.name is None:
                     return cls(name=parameter.name, fmt=arg.fmt, unwrap=arg.unwrap)

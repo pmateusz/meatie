@@ -61,7 +61,7 @@ def endpoint(
         path_template = PathTemplate.from_string(path)
 
         signature = inspect.signature(func)
-        type_hints = get_type_hints(func)
+        type_hints = get_type_hints(func, include_extras=True)
         request_template: RequestTemplate[Any] = RequestTemplate.from_signature(
             signature, type_hints, path_template, method
         )
