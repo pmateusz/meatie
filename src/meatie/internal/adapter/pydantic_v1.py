@@ -7,7 +7,7 @@ from typing import Any, Generic, Union, get_args, get_origin
 
 import pydantic
 import pydantic.json
-from typing_extensions import is_typeddict
+from typing_extensions import Annotated, is_typeddict
 
 from meatie.error import ParseResponseError
 from meatie.internal.types import T
@@ -53,6 +53,10 @@ class PydanticV1TypeAdapterFactory:
             return issubclass(value, pydantic.BaseModel) or is_dataclass(value) or is_typeddict(value)
 
         origin = get_origin(value)
+        if origin is Annotated:
+            base_type = get_args(value)[0]
+            return cls.is_model_type(base_type)
+
         if origin is Union:
             for arg in get_args(value):
                 if not cls.is_model_type(arg):

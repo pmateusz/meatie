@@ -157,3 +157,39 @@ async def test_can_handle_type_adapter_with_discriminated_column(http_server: HT
     assert instrument.instrument_type == "spot"
     assert instrument.base == "BTC"
     assert instrument.quote == "USDT"
+
+
+@pytest.mark.asyncio()
+async def test_can_handle_list_of_discriminated_union(http_server: HTTPTestServer) -> None:
+    # GIVEN
+    def handler(request: Handler) -> None:
+        request.send_json(
+            HTTPStatus.OK,
+            [
+                {"instrument_type": "currency", "symbol": "USD"},
+                {"instrument_type": "spot", "symbol": "BTC/USDT", "base": "BTC", "quote": "USDT"},
+                {
+                    "instrument_type": "perpetual",
+                    "symbol": "BTC-PERP",
+                    "base": "BTC",
+                    "quote": "USDT",
+                    "settlement": "USDT",
+                },
+            ],
+        )
+
+    http_server.handler = handler
+
+    class ExchangeClient(Client):
+        @endpoint("/")
+        async def get_instruments(self) -> list[Instrument]: ...
+
+    # WHEN
+    async with ExchangeClient(ClientSession(http_server.base_url)) as client:
+        instruments = await client.get_instruments()
+
+    # THEN
+    assert len(instruments) == 3
+    assert isinstance(instruments[0], Currency)
+    assert isinstance(instruments[1], Spot)
+    assert isinstance(instruments[2], Perpetual)
