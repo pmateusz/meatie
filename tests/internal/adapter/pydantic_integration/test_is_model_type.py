@@ -9,6 +9,8 @@ from typing_extensions import TypedDict
 pydantic = pytest.importorskip("pydantic")
 
 try:
+    from pydantic import TypeAdapter  # noqa: F401
+
     from meatie.internal.adapter.pydantic_v2 import PydanticV2TypeAdapterFactory as AdapterFactory
 except ImportError:
     from meatie.internal.adapter.pydantic_v1 import PydanticV1TypeAdapterFactory as AdapterFactory
