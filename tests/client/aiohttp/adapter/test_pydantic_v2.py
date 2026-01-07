@@ -168,7 +168,13 @@ async def test_can_handle_list_of_discriminated_union(http_server: HTTPTestServe
             [
                 {"instrument_type": "currency", "symbol": "USD"},
                 {"instrument_type": "spot", "symbol": "BTC/USDT", "base": "BTC", "quote": "USDT"},
-                {"instrument_type": "perpetual", "symbol": "BTC-PERP", "base": "BTC", "quote": "USDT", "settlement": "USDT"},
+                {
+                    "instrument_type": "perpetual",
+                    "symbol": "BTC-PERP",
+                    "base": "BTC",
+                    "quote": "USDT",
+                    "settlement": "USDT",
+                },
             ],
         )
 
